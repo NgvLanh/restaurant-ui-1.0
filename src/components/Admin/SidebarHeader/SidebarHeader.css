@@ -1,0 +1,30 @@
+._sidebar_header {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+}
+
+._sidebar_header ._name {
+    color: black;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+._sidebar_header ._branch {
+    color: rgb(66, 66, 66);
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+._sidebar_header ._name_item {
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+._sidebar_header .dropdown-menu *:focus {
+    color: black !important;
+}
+
+._sidebar_header .dropdown-toggle::after {
+    display: none;
+}

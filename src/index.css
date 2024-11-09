@@ -1,0 +1,47 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+._outline_none *:focus {
+  background-color: white;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.admin_sidebar {
+  transition: width .3s ease;
+}
+
+.accordion-button {
+  padding: 0.5rem;
+}
+
+.accordion-button::after {
+  flex-shrink: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-left: auto;
+  content: "";
+  background-repeat: no-repeat;
+  background-size: 0.75rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-toggle:focus {
+  border: none;
+}
+
+.breadcrumb {
+  margin: 0;
+}
