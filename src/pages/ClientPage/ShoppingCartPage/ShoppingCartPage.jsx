@@ -5,10 +5,11 @@ import Footer from "../../../components/client/footer/Footer";
 import { formatCurrency } from "../../../utils/FormatUtils";
 import OrderConfirmationModal from "../../../components/Client/Modals/OrderConfirmationModal";
 import AddressModal from "../../../components/Client/Modals/AddressModal";
+import { getCartItemsByUserId } from "../../../services/CartItemService/CartItemService";
 
 const ShoppingCartPage = () => {
     const userInfo = JSON.parse(localStorage.getItem('user_info'));
-    const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cart_temp')) || []);
+    const [cartItems, setCartItems] = useState([]);
     const [addresses, setAddresses] = useState(JSON.parse(localStorage.getItem('user_addresses')) || []);
     const [selectAll, setSelectAll] = useState(false);
     const [address, setAddress] = useState("");
@@ -18,8 +19,18 @@ const ShoppingCartPage = () => {
     const [showAddressModal, setShowAddressModal] = useState(false);
 
     useEffect(() => {
-        localStorage.setItem("cart_temp", JSON.stringify(cartItems));
-    }, [cartItems]);
+        fetchCart();
+    }, []);
+
+
+    const fetchCart = async () => {
+        if (userInfo) {
+            const items = await getCartItemsByUserId(userInfo?.id);
+            setCartItems(items || []); 
+        } else {
+            setCartItems(JSON.parse(localStorage.getItem('cart_temp')) || []);
+        }
+    };
 
     const handleUpdateQuantity = (id, newQuantity) => {
         const updatedItems = cartItems.map((item) =>
@@ -51,9 +62,9 @@ const ShoppingCartPage = () => {
         setSelectAll(allSelected);
     };
 
-    const total = cartItems.reduce((sum, item) => {
-        return item.isSelected ? sum + item.price * item.quantity : sum;
-    }, 0);
+    // const total = cartItems?.reduce((sum, item) => {
+    //     return item.isSelected ? sum + item.price * item.quantity : sum;
+    // }, 0);
 
     const handleApplyDiscount = () => {
         alert(`Áp dụng mã giảm giá: ${discountCode}`);
@@ -92,7 +103,7 @@ const ShoppingCartPage = () => {
                 <div className="row">
                     <div className="col-md-8">
                         <div className="mb-3 d-flex align-items-center">
-                            {cartItems.length > 0 && (
+                            {cartItems?.length > 0 && (
                                 <>
                                     <input
                                         type="checkbox"
@@ -104,9 +115,9 @@ const ShoppingCartPage = () => {
                                 </>
                             )}
                         </div>
-                        {cartItems.length > 0 ? (
+                        {cartItems?.length > 0 ? (
                             <>
-                                {cartItems.map((item) => (
+                                {cartItems?.map((item) => (
                                     <CartItem
                                         key={item.id}
                                         item={item}
@@ -123,7 +134,7 @@ const ShoppingCartPage = () => {
                     <div className="col-md-4">
                         <div className="card p-3">
                             <h4 className="mb-3">Tóm Tắt Đơn Hàng</h4>
-                            <p className="fw-bold">Tổng Cộng: {formatCurrency(total)}</p>
+                            <p className="fw-bold">Tổng Cộng: {formatCurrency(0)}</p>
 
                             <div className="mb-3">
                                 <label className="form-label">Chọn Địa Chỉ Giao Hàng</label>
@@ -179,7 +190,7 @@ const ShoppingCartPage = () => {
                 onHide={() => setShowOrderModal(false)}
                 onConfirm={confirmOrder}
                 cartItems={cartItems}
-                total={total}
+                total={0}
                 address={selectedAddress}
             />
 

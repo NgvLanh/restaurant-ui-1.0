@@ -19,7 +19,7 @@ const DataTable = ({
                     type="text"
                     placeholder="Tìm kiếm theo tên"
                     onChange={(e) => onSearch(e.target.value)}
-                    className="max-w-sm"
+                    style={{ maxWidth: '350px' }}
                 />
                 <Dropdown>
                     <Dropdown.Toggle variant="outline-primary" className="d-flex align-items-center">

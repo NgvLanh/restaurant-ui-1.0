@@ -19,7 +19,8 @@ const createDish = async (request) => {
         const response = await ApiRequest({
             method: 'POST',
             path: 'dishes',
-            data: request
+            data: request,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {
@@ -32,9 +33,10 @@ const createDish = async (request) => {
 const updateDish = async (dishId, request) => {
     try {
         const response = await ApiRequest({
-            method: 'PUT',
+            method: 'PATCH',
             path: `dishes/${dishId}`,
-            data: request
+            data: request,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {
@@ -48,7 +50,8 @@ const deleteDish = async (dishId) => {
     try {
         const response = await ApiRequest({
             method: 'DELETE',
-            path: `dishes/${dishId}`
+            path: `dishes/${dishId}`,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {
@@ -70,5 +73,16 @@ const getAllDishesByCategoryId = async (categoryId) => {
     }
 };
 
+const getAllDishesPageable = async (searchKey = '', currentPage, pageSize) => {
+    try {
+        const response = await ApiRequest({
+            path: `dishes?name=${searchKey}&page=${currentPage}&size=${pageSize}`
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi lấy danh sách món ăn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách món ăn' };
+    }
+};
 
-export { getAllDishes, createDish, updateDish, deleteDish, getAllDishesByCategoryId };
+export { getAllDishes, createDish, updateDish, deleteDish, getAllDishesByCategoryId, getAllDishesPageable };

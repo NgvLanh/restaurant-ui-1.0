@@ -1,4 +1,4 @@
-import { BiClipboard, BiPencil, BiTrash } from "react-icons/bi";
+import { BiChevronDown, BiClipboard, BiDownload, BiEdit, BiPencil, BiPlus, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
 import DataTable from "../../../components/Admin/DataTable/DataTable"
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
@@ -7,65 +7,15 @@ import { createBranchStatus, deleteBranchStatus, getAllBranchStatusPageable, upd
 import ReusableModal from "../../../components/Admin/ReusableModal/ReusableModal";
 import { debounce } from "../../../utils/Debounce";
 import AlertUtils from "../../../utils/AlertUtils";
-
-const columnMapping = {
-  id: 'Mã',
-  name: 'Tên Trạng Thái',
-  colorCode: 'Mã Màu'
-};
-
-const formInputs = [
-  {
-    name: 'name',
-    label: 'Tên trạng thái',
-    type: 'text',
-    placeholder: 'Tên trạng thái',
-    validation: {
-      required: 'Tên trạng thái không được để trống',
-      minLength: { value: 3, message: 'Tên đăng nhập phải có ít nhất 3 ký tự' }
-    }
-  },
-  {
-    name: 'colorCode',
-    label: 'Màu (Không bắt buộc)',
-    type: 'color',
-    placeholder: 'Nhập email',
-    // validation: {
-    //   required: 'Email là bắt buộc',
-    //   pattern: {
-    //     value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-    //     message: 'Email không hợp lệ'
-    //   }
-    // }
-  }
-];
-
-const columns = [
-  {
-    label: 'Mã trạng thái',
-    key: 'id',
-    searchable: false,
-    sortable: true,
-  },
-  {
-    label: 'Tên trạng thái',
-    key: 'name',
-    searchable: true,
-    sortable: true,
-  },
-  {
-    label: 'Mã màu',
-    key: 'colorCode',
-    searchable: true,
-    sortable: true,
-  }
-];
+import BranchStatusModal from "./Modals/BranchStatusModal";
+import { Button, Dropdown, Form, Table } from "react-bootstrap";
+import { FcDeleteColumn } from "react-icons/fc";
+import { MdDelete } from "react-icons/md";
 
 
 const BranchStatusPage = () => {
 
   const [branchStatuses, setBranchStatuses] = useState([]);
-  const [current, setCurrent] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [searchKey, setSearchKey] = useState('');
@@ -86,13 +36,13 @@ const BranchStatusPage = () => {
 
   const handleSearch = (key) => {
     setSearchKey(key);
-    setCurrent(0);
+    setCurrentPage(0);
   }
 
   const handleModalSubmit = async (data) => {
-    const successMessage = current ? 'Cập nhật thành công' : 'Thêm mới thành công';
-    if (current) {
-      const response = await updateBranchStatus(current?.id, data);
+    const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
+    if (initialValues) {
+      const response = await updateBranchStatus(initialValues?.id, data);
       if (response?.status) {
         AlertUtils.success(successMessage);
         setShowModal(false);
@@ -111,18 +61,16 @@ const BranchStatusPage = () => {
     fetchBranchStatuses();
   };
 
-
   const openEditModal = (data) => {
-    setCurrent(data);
-    setInitialValues(data);
+    setInitialValues(data)
     setShowModal(true);
   };
 
   const openCreateModal = () => {
-    setCurrent(null);
-    setInitialValues(null);
+    setInitialValues(null)
     setShowModal(true);
   };
+
   const handleDelete = async (id) => {
     const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
     if (result) {
@@ -138,31 +86,76 @@ const BranchStatusPage = () => {
 
   const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
-
-  const actions = [
-    // { label: '', icon: <BiClipboard size={16} />, onClick: (item) => console.log('Copy:', item) },
-    { label: '', icon: <BiPencil size={16} />, onClick: (item) => { openEditModal(item) } },
-    { label: '', icon: <BiTrash size={16} />, onClick: (item) => { handleDelete(item.id) } }
-  ];
-
   return (
     <>
       <PageHeader title="Trạng thái chi nhánh" />
 
-      <DataTable columns={columns}
-        data={branchStatuses}
-        onSort={null}
-        onSearch={debouncedSearch}
-        actions={actions}
-        onAdd={openCreateModal}
-      />
+      <div className="bg-white shadow rounded-lg p-4">
+        <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
+          <Form.Control
+            type="text"
+            placeholder="Tìm kiếm theo tên"
+            onChange={(e) => debouncedSearch(e.target.value)}
+            style={{ maxWidth: '350px', borderRadius: '8px' }}
+          />
+          <div className="action">
+            <Button
+              className="d-flex align-items-center btn-primary rounded-3 px-4"
+              onClick={() => {
+                setInitialValues(null);
+                setShowModal(true);
+              }}
+            >
+              <BiPlus className="me-2" />
+              Thêm
+            </Button>
+          </div>
+        </div>
 
-      <ReusableModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        title={current ? 'Cập nhật thông tin' : 'Thêm mới thông tin'}
-        onSubmit={handleModalSubmit}
-        inputs={formInputs}
+        <Table striped bordered hover responsive className="shadow-sm rounded">
+          <thead>
+            <tr>
+              <th className="text-center">STT</th>
+              <th>Tên trạng thái</th>
+              <th className="text-center">Màu</th>
+              <th className="text-center">Tuỳ chọn</th>
+            </tr>
+          </thead>
+          <tbody>
+            {branchStatuses?.length > 0 ? (
+              branchStatuses?.map((row, index) => (
+                <tr key={row.id} className="align-middle">
+                  <td className="text-center">{index + 1}</td>
+                  <td>{row.name}</td>
+                  <td className="text-center" style={{ backgroundColor: row.colorCode }}></td>
+                  <td className="text-center">
+                    <span className="d-flex justify-content-center align-items-center gap-3" style={{ cursor: 'pointer' }}>
+                      <span onClick={() => {
+                        setInitialValues(row);
+                        setShowModal(true);
+                      }}>
+                        <BiEdit size={16} />
+                      </span>
+                      <span onClick={() => { handleDelete(row.id) }}>
+                        <MdDelete size={16} />
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center">Không có dữ liệu</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
+
+      <BranchStatusModal
+        showModal={showModal}
+        closeModal={() => setShowModal(false)}
+        handleData={handleModalSubmit}
         initialValues={initialValues}
       />
 

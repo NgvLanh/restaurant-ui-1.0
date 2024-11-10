@@ -19,7 +19,8 @@ const createCategory = async (request) => {
         const response = await ApiRequest({
             method: 'POST',
             path: 'categories',
-            data: request
+            data: request,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {
@@ -32,9 +33,10 @@ const createCategory = async (request) => {
 const updateCategory = async (categoryId, request) => {
     try {
         const response = await ApiRequest({
-            method: 'PUT',
+            method: 'PATCH',
             path: `categories/${categoryId}`,
-            data: request
+            data: request,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {
@@ -48,7 +50,8 @@ const deleteCategory = async (categoryId) => {
     try {
         const response = await ApiRequest({
             method: 'DELETE',
-            path: `categories/${categoryId}`
+            path: `categories/${categoryId}`,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {
@@ -57,4 +60,18 @@ const deleteCategory = async (categoryId) => {
     }
 };
 
-export { getAllCategories, createCategory, updateCategory, deleteCategory };
+// Lấy danh sách tất cả danh mục
+const getAllCategoriesPageable = async (searchKey = '', currentPage, pageSize) => {
+    try {
+        const response = await ApiRequest({
+            path: `categories?name=${searchKey}&page=${currentPage}&size=${pageSize}`,
+            headers: 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi lấy danh sách danh mục: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách danh mục' };
+    }
+};
+
+export { getAllCategories, createCategory, updateCategory, deleteCategory, getAllCategoriesPageable };

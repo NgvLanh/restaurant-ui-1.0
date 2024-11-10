@@ -5,7 +5,6 @@ const getAllBranches = async () => {
     try {
         const response = await ApiRequest({
             path: 'branches',
-            headers: 'Bearer '
         });
         return response?.data?.content;
     } catch (error) {

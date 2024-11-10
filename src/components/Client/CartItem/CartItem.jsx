@@ -34,7 +34,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
                 <img src={item.image} alt={item.name} className="img-fluid rounded" />
             </div>
             <div className="col-4">
-                <h5>{item.name} / <small>{item.category.name}</small></h5>
+                <h5>{item.name} / <small>{item.category?.name}</small></h5>
                 <p className="text-muted">{item.description}</p>
                 <p className="fw-bold">{formatCurrency(item.price)}</p>
             </div>

@@ -1,12 +1,16 @@
 import React from "react";
 import { Dropdown, Image } from "react-bootstrap";
+import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 export function NavUser({ user }) {
+    const [cookie, setCookie, removeCookie] = useCookies(['user_token']);
+    const userInfo = JSON.parse(localStorage.getItem('user_info'));
     const navigate = useNavigate();
 
     const logout = () => {
         localStorage.clear();
+        removeCookie('user_token');
         navigate("/home");
     };
 
@@ -18,17 +22,17 @@ export function NavUser({ user }) {
                     <Image
                         // src={user.avatar}
                         src="/assets/img/banhmi.jpg"
-                        alt={user.name}
+                        alt={user.fullName}
                         roundedCircle
                         className="me-2"
                         style={{ width: "32px", height: "32px" }}
                     />
                     <div className="d-flex flex-column justify-content-start">
                         <div className="fw-semibold text-truncate text-start" style={{ maxWidth: "120px" }}>
-                            {user.name}
+                            {userInfo?.fullName}
                         </div>
                         <div className="text-muted text-truncate text-start" style={{ maxWidth: "120px", fontSize: "0.8em" }}>
-                            {user.email}
+                            {userInfo?.email}
                         </div>
                     </div>
                 </div>
@@ -41,14 +45,14 @@ export function NavUser({ user }) {
                         <Image
                             // src={user.avatar}
                             src="/assets/img/banhmi.jpg"
-                            alt={user.name}
+                            alt={userInfo?.fullName}
                             roundedCircle
                             className="me-2"
                             style={{ width: "32px", height: "32px" }}
                         />
                         <div>
-                            <div className="fw-semibold">{user.name}</div>
-                            <div className="text-muted" style={{ fontSize: "0.8em" }}>{user.email}</div>
+                            <div className="fw-semibold">{userInfo?.fullName}</div>
+                            <div className="text-muted" style={{ fontSize: "0.8em" }}>{userInfo?.email}</div>
                         </div>
                     </div>
                 </Dropdown.Header>

@@ -1,9 +1,23 @@
+import { useEffect, useState } from "react"
 import { NavGeneral } from "../NavGeneral/NavGeneral"
 import { NavMain } from "../NavMain/NavMain"
 import { NavUser } from "../NavUser/NavUser"
 import { SidebarHeader } from "../SidebarHeader/SidebarHeader"
+import { getAllBranches } from "../../../services/BranchService/BranchService"
 
 const Sidebar = () => {
+
+    const [branches, setBranches] = useState([]);
+
+
+    useEffect(() => {
+        fetchBranches();
+    }, []);
+
+    const fetchBranches = async () => {
+        const response = await getAllBranches();
+        setBranches(response);
+    };
 
     const data = {
         user: {
@@ -11,16 +25,6 @@ const Sidebar = () => {
             email: "nguyenlanh121004@gmail.com",
             avatar: "assets/img/banhmi.jpg",
         },
-        teams: [
-            {
-                name: "Cái Răng, Cần Thơ",
-                plan: "Chi nhánh",
-            },
-            {
-                name: "Bình Thuỷ, Cần Thơ",
-                plan: "Chi nhánh",
-            }
-        ],
         navMain: [
             {
                 title: "Chi nhánh",
@@ -163,7 +167,7 @@ const Sidebar = () => {
             minHeight: "100vh",
             zIndex: 99
         }}>
-            <SidebarHeader teams={data?.teams} />
+            <SidebarHeader teams={branches} />
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                 <NavMain items={data.navMain} />
                 <NavGeneral projects={data.projects} />

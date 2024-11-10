@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown, Button, ButtonGroup, Nav } from "react-bootstrap";
 import "./SidebarHeader.css"
 
 export const SidebarHeader = ({ teams }) => {
     const [activeTeam, setActiveTeam] = useState(teams[0] || null);
+    const [branches, setBranches] = useState([]);
+
+
+    useEffect(() => {
+        if (teams.length > 0) {
+            setActiveTeam(JSON.parse(localStorage.getItem('branch_info')) || teams[0]);
+        }
+    }, [teams]);
 
     const handleActiveTeam = (team) => {
-        console.log(team);
         setActiveTeam(team);
+        localStorage.setItem('branch_info', JSON.stringify(team));
+        window.location.reload();
     };
 
     return (
@@ -15,7 +24,7 @@ export const SidebarHeader = ({ teams }) => {
             <Dropdown as={ButtonGroup} className="w-100 mb-3">
                 <Dropdown.Toggle split className="d-flex align-items-center w-100 bg-white border-0 rounded-3" >
                     <div className="d-flex align-items-center justify-content-center bg-dark rounded-3"
-                     style={{ width: "32px", height: "32px" }}>
+                        style={{ width: "32px", height: "32px" }}>
                         <i className="fas fa-map"></i>
                     </div>
                     <div className="ms-2 text-start flex-grow-1 py-1">

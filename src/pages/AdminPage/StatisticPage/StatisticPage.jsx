@@ -1,7 +1,10 @@
+import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
 
 const StatisticPage = () => {
     return (
-        <div>StatisticPage</div>
+        <>
+            <PageHeader title="Thống kê" />
+        </>
     )
 }
 

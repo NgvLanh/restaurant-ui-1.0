@@ -1,23 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginService } from '../../../services/AuthService/AuthService';
 import AlertUtils from '../../../utils/AlertUtils';
 import { useCookies } from 'react-cookie';
 import { asyncCartService } from '../../../services/CartService/CartService'
+import { getAllBranches } from '../../../services/BranchService/BranchService';
 
 const LoginForm = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
+
+    const [branches, setBranches] = useState([])
     const [cookie, setCookie] = useCookies(['user_token']);
     const cartTemp = JSON.parse(localStorage.getItem('cart_temp'))
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchBranches();
+    }, []);
+
+    const fetchBranches = async () => {
+        setBranches(await getAllBranches());
+    }
 
     const onSubmit = async (reuqest) => {
         const response = await loginService(reuqest);
         if (response?.status) {
             AlertUtils.success('Đăng nhập thành công');
             saveLocalAndCookie(response?.data);
-            syncCartWithServer();
+            roleRoute(response?.data?.info);
+            // syncCartWithServer(response?.data);
         } else {
             AlertUtils.error(response?.message);
         }
@@ -29,20 +41,23 @@ const LoginForm = () => {
     }
 
     const roleRoute = (data) => {
-        const role = data?.role[0];
+        const role = data?.roles[0];
         if (role === 'ADMIN') {
+            const defaultBranch = branches[0];
+            localStorage.setItem('branch_info', JSON.stringify(defaultBranch));
+            navigate('/admin');
+        } else if (role === 'NON_ADMIN') {
             navigate('/admin');
         } else {
             navigate('/home');
         }
-        navigate(0);
     }
 
-    const syncCartWithServer = async () => {
+    const syncCartWithServer = async (data) => {
         const userInfo = JSON.parse(localStorage.getItem('user_info'));
-        console.log(userInfo);
         console.log(await asyncCartService(cartTemp, userInfo?.id));
-        // roleRoute(data?.info);
+        
+        localStorage.removeItem('cart_temp');
     }
 
     return (

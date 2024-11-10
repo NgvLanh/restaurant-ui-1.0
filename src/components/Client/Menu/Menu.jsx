@@ -27,24 +27,8 @@ const Menus = () => {
     };
 
     const handleAddToCart = (dish, quantity) => {
-        if (userInfo) {
-            console.log(userInfo);
-            localStorage.removeItem('cart_temp');
-        } else {
-            const cartItems = JSON.parse(localStorage.getItem('cart_temp')) || [];
-            const existingItem = cartItems.find((e) => e.id === dish.id);
-
-            if (existingItem) {
-                existingItem.quantity += Number(quantity);
-            } else {
-                cartItems.push({ ...dish, quantity: Number(quantity), status: false });
-            }
-
-            localStorage.setItem('cart_temp', JSON.stringify(cartItems));
-        }
+        
     };
-
-
 
     const handleOpenModal = (dish) => {
         setSelectedDish(dish);

@@ -1,4 +1,4 @@
-import { BiClipboard, BiPencil, BiTrash } from "react-icons/bi";
+import { BiClipboard, BiEdit, BiPencil, BiPlus, BiTrash, BiUser } from "react-icons/bi";
 import DataTable from "../../../components/Admin/DataTable/DataTable"
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
@@ -7,133 +7,15 @@ import ReusableModal from "../../../components/Admin/ReusableModal/ReusableModal
 import { debounce } from "../../../utils/Debounce";
 import AlertUtils from "../../../utils/AlertUtils";
 import { createBranch, deleteBranch, getAllBranchesPageable, updateBranch } from "../../../services/BranchService/BranchService";
+import { MdDelete } from "react-icons/md";
+import { Button, Form, Table } from "react-bootstrap";
+import BranchModal from "./Modals/BranchModal";
 
-const columnMapping = {
-    id: 'Mã',
-    name: 'Tên Chi Nhánh',
-    phoneNumber: 'Số Điện Thoại',
-    address: 'Địa Chỉ',
-    wardName: 'Phường/Xã',
-    // wardId: 'Mã Phường/Xã',
-    districtName: 'Quận/Huyện',
-    // districtId: 'Mã Quận/Huyện',
-    provinceName: 'Thành Phố',
-    // provinceId: 'Mã Thành Phố',
-    branchStatus: 'Trạng Thái Chi Nhánh',
-};
 
-const formInputs = [
-    {
-        name: 'name',
-        label: 'Tên Chi Nhánh',
-        type: 'text',
-        placeholder: 'Nhập tên chi nhánh',
-        colSize: 6, // Kích thước cột
-        validation: {
-            required: 'Tên chi nhánh không được để trống',
-            maxLength: { value: 100, message: 'Tên chi nhánh không được vượt quá 100 ký tự' }
-        }
-    },
-    {
-        name: 'phoneNumber',
-        label: 'Số Điện Thoại',
-        type: 'text',
-        placeholder: 'Nhập số điện thoại',
-        colSize: 6,
-        validation: {
-            required: 'Số điện thoại không được để trống',
-            pattern: { value: /^\d{10,11}$/, message: 'Số điện thoại phải có 10 hoặc 11 chữ số' }
-        }
-    },
-    {
-        name: 'provinceId',
-        label: 'Mã Thành Phố',
-        type: 'select',
-        placeholder: 'Chọn mã thành phố',
-        colSize: 6,
-        validation: {
-            required: 'Thành phố không được để trống',
-        }
-    },
-    {
-        name: 'districtId',
-        label: 'Mã Quận/Huyện',
-        type: 'select',
-        placeholder: 'Chọn mã quận/huyện',
-        colSize: 6,
-        validation: {
-            required: 'Quận/Huyện không được để trống',
-        }
-    },
-    {
-        name: 'wardId',
-        label: 'Mã Phường/Xã',
-        type: 'select',
-        placeholder: 'Chọn mã phường/xã',
-        colSize: 6,
-        validation: {
-            required: 'Phường/Xã không được để trống',
-        }
-    },
-    {
-        name: 'branchStatus',
-        label: 'Trạng Thái Chi Nhánh',
-        type: 'select',
-        placeholder: 'Chọn trạng thái chi nhánh',
-        colSize: 6,
-        validation: {
-            required: 'Trạng thái chi nhánh không được để trống',
-        }
-    },
-    {
-        name: 'address',
-        label: 'Địa Chỉ',
-        type: 'textarea',
-        placeholder: 'Nhập địa chỉ',
-        colSize: 12,
-        validation: {
-            maxLength: { value: 255, message: 'Địa chỉ không được vượt quá 255 ký tự' }
-        }
-    }
-];
-
-const columns = [
-    {
-        label: 'Mã chi nhánh',
-        key: 'id',
-        searchable: false,
-        sortable: true,
-    },
-    {
-        label: 'Tên chi nhánh',
-        key: 'name',
-        searchable: true,
-        sortable: true,
-    },
-    {
-        label: 'Số điện thoại',
-        key: 'phoneNumber',
-        searchable: true,
-        sortable: true,
-    },
-    {
-        label: 'Địa chỉ',
-        key: 'address',
-        searchable: true,
-        sortable: false,
-    },
-    {
-        label: 'Thành phố',
-        key: 'provinceName',
-        searchable: true,
-        sortable: false,
-    },
-];
 
 const BranchListPage = () => {
-
+    const userInfo = JSON.parse(localStorage.getItem('user_info'));
     const [branches, setBranches] = useState([]);
-    const [current, setCurrent] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState({});
     const [searchKey, setSearchKey] = useState('');
@@ -154,13 +36,13 @@ const BranchListPage = () => {
 
     const handleSearch = (key) => {
         setSearchKey(key);
-        setCurrent(0);
+        setCurrentPage(0);
     }
 
     const handleModalSubmit = async (data) => {
-        const successMessage = current ? 'Cập nhật thành công' : 'Thêm mới thành công';
-        if (current) {
-            const response = await updateBranch(current?.id, data);
+        const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
+        if (initialValues) {
+            const response = await updateBranch(initialValues?.id, data);
             if (response?.status) {
                 AlertUtils.success(successMessage);
                 setShowModal(false);
@@ -179,21 +61,6 @@ const BranchListPage = () => {
         fetchBranches();
     };
 
-
-    const openEditModal = (data) => {
-        console.log(`Edit`);
-        setCurrent(data);
-        setInitialValues(data);
-        setShowModal(true);
-    };
-
-    const openCreateModal = () => {
-        console.log(`Created`);
-        setCurrent(null);
-        setInitialValues(null);
-        setShowModal(true);
-    };
-
     const handleDelete = async (id) => {
         const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
         if (result) {
@@ -210,33 +77,86 @@ const BranchListPage = () => {
     const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
 
-
-
-    const actions = [
-        // { label: '', icon: <BiClipboard size={16} />, onClick: (item) => console.log('Copy:', item) },
-        { label: '', icon: <BiPencil size={16} />, onClick: (item) => { openEditModal(item) } },
-        { label: '', icon: <BiTrash size={16} />, onClick: (item) => { handleDelete(item.id) } }
-    ];
-
     return (
         <>
             <PageHeader title="Trạng thái chi nhánh" />
 
-            <DataTable
-                columns={columns}
-                data={branches}
-                onSort={null}
-                onSearch={debouncedSearch}
-                actions={actions}
-                onAdd={openCreateModal}
-            />
+            <div className="bg-white shadow rounded-lg p-4">
+                <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
+                    <Form.Control
+                        type="text"
+                        placeholder="Tìm kiếm theo tên"
+                        onChange={(e) => debouncedSearch(e.target.value)}
+                        style={{ maxWidth: '350px', borderRadius: '8px' }}
+                    />
+                    <div className="action">
+                        <Button
+                            className="d-flex align-items-center btn-primary rounded-3 px-4"
+                            onClick={() => {
+                                setInitialValues(null);
+                                setShowModal(true);
+                            }}
+                        >
+                            <BiPlus className="me-2" />
+                            Thêm
+                        </Button>
+                    </div>
+                </div>
 
-            <ReusableModal
-                show={showModal}
-                onClose={() => setShowModal(false)}
-                title={current ? 'Cập nhật thông tin' : 'Thêm mới thông tin'}
-                onSubmit={handleModalSubmit}
-                inputs={formInputs}
+                <Table striped bordered hover responsive className="shadow-sm rounded">
+                    <thead>
+                        <tr>
+                            <th className="text-center">STT</th>
+                            <th>Tên chi nhánh</th>
+                            <th className="text-center">Quận/Huyện</th>
+                            <th className="text-center">Thành phố</th>
+                            <th className="text-center">Trạng thái</th>
+                            <th className="text-center">Tuỳ chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {branches?.length > 0 ? (
+                            branches?.map((row, index) => (
+                                <tr key={row.id} className="align-middle">
+                                    <td className="text-center">{index + 1}</td>
+                                    <td>{row.name}</td>
+                                    <td>{row.districtName}</td>
+                                    <td>{row.provinceName}</td>
+                                    <td>{row.branchStatus?.name}</td>
+                                    <td className="text-center">
+                                        <span className="d-flex justify-content-center align-items-center gap-3" style={{ cursor: 'pointer' }}>
+                                            <span onClick={() => {
+                                                setInitialValues(row);
+                                                setShowModal(true);
+                                            }}>
+                                                <BiEdit size={16} />
+                                            </span>
+                                            <span onClick={() => { handleDelete(row.id) }}>
+                                                <MdDelete size={16} />
+                                            </span>
+                                            {
+                                                userInfo?.roles[0] &&
+                                                <span onClick={() => { handleDelete(row.id) }}>
+                                                    <BiUser size={16} />
+                                                </span>
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={6} className="text-center">Không có dữ liệu</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </Table>
+            </div>
+
+            <BranchModal
+                showModal={showModal}
+                closeModal={() => setShowModal(false)}
+                handleData={handleModalSubmit}
                 initialValues={initialValues}
             />
 

@@ -27,7 +27,7 @@ const OrderConfirmationModal = ({ show, onHide, onConfirm, cartItems, total, add
                         </tr>
                     </thead>
                     <tbody>
-                        {cartItems.map((item) => (
+                        {cartItems?.map((item) => (
                             <tr key={item.id}>
                                 <td>{item.name}</td>
                                 <td>{item.quantity}</td>
