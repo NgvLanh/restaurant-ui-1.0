@@ -1,20 +1,20 @@
 import { BiClipboard, BiEdit, BiPencil, BiPlus, BiTrash, BiUser } from "react-icons/bi";
-import DataTable from "../../../components/Admin/DataTable/DataTable"
-import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
+import DataTable from "../../../components/Admin/DataTable/DataTable";
+import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import { useEffect, useMemo, useState } from "react";
 import ReusableModal from "../../../components/Admin/ReusableModal/ReusableModal";
 import { debounce } from "../../../utils/Debounce";
 import AlertUtils from "../../../utils/AlertUtils";
-import { createBranch, deleteBranch, getAllBranchesPageable, updateBranch } from "../../../services/BranchService/BranchService";
+import { createBranch, deleteBranch, getAllBranchesPageable, updateBranch, createNonAdmin, updateBranch01 } from "../../../services/BranchService/BranchService";
 import { MdDelete } from "react-icons/md";
 import { Button, Form, Table } from "react-bootstrap";
 import BranchModal from "./Modals/BranchModal";
-
-
+import UserModal from "./Modals/UserModal";
 
 const BranchListPage = () => {
     const userInfo = JSON.parse(localStorage.getItem('user_info'));
+    const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
     const [branches, setBranches] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState({});
@@ -22,7 +22,7 @@ const BranchListPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
-
+    const [showUserModal, setShowUserModal] = useState(false); // State for UserModal
 
     useEffect(() => {
         fetchBranches();
@@ -32,12 +32,12 @@ const BranchListPage = () => {
         const response = await getAllBranchesPageable(searchKey, currentPage, pageSize);
         setTotalPages(response?.data?.totalPages);
         setBranches(response?.data?.content);
-    }
+    };
 
     const handleSearch = (key) => {
         setSearchKey(key);
         setCurrentPage(0);
-    }
+    };
 
     const handleModalSubmit = async (data) => {
         const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
@@ -61,6 +61,42 @@ const BranchListPage = () => {
         fetchBranches();
     };
 
+    const handleSetRole = async (data) => {
+        try {
+            const { confirmPassword, ...reRequest } = data;
+            const userResponse = await createNonAdmin(reRequest);
+            if (userResponse?.status && userResponse?.data?.id) {
+                const user = userResponse?.data;
+
+                if (initialValues?.id) {
+                    // Chỉ gửi userId thay vì một đối tượng user
+                    const updatedBranchData = { ...initialValues, user };
+                    // console.log(initialValues?.id, userResponse?.data);
+                    const branchResponse = await updateBranch01(initialValues?.id, updatedBranchData);
+
+                    if (branchResponse?.status) {
+                        AlertUtils.success('Tạo người dùng và cập nhật chi nhánh thành công!');
+                        setShowUserModal(false);
+                    } else {
+                        AlertUtils.error(branchResponse?.message || 'Cập nhật chi nhánh thất bại!');
+                    }
+                } else {
+                    AlertUtils.error('ID của chi nhánh không hợp lệ.');
+                }
+            } else {
+                AlertUtils.error(userResponse?.message || 'Tạo người dùng thất bại!');
+            }
+        } catch (error) {
+            AlertUtils.error('Đã xảy ra lỗi trong quá trình tạo người dùng hoặc cập nhật chi nhánh.');
+            console.error(error);
+        }
+
+        // fetchBranches(); // Cập nhật danh sách chi nhánh sau khi thay đổi
+    };
+
+
+
+
     const handleDelete = async (id) => {
         const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
         if (result) {
@@ -72,10 +108,14 @@ const BranchListPage = () => {
             }
         }
         fetchBranches();
-    }
+    };
+
+    const handleUserModalOpen = (branch) => {
+        setInitialValues(branch); // Lưu thông tin chi nhánh, bao gồm branchId
+        setShowUserModal(true); // Mở UserModal
+    };
 
     const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
-
 
     return (
         <>
@@ -135,10 +175,14 @@ const BranchListPage = () => {
                                                 <MdDelete size={16} />
                                             </span>
                                             {
-                                                userInfo?.roles[0] &&
-                                                <span onClick={() => { handleDelete(row.id) }}>
-                                                    <BiUser size={16} />
-                                                </span>
+                                                (
+                                                    <span onClick={() => {
+                                                        setInitialValues(row); // Lưu thông tin chi nhánh
+                                                        handleUserModalOpen(row);   // Truyền row (bao gồm cả branchId)
+                                                    }}>
+                                                        <BiUser size={16} />
+                                                    </span>
+                                                )
                                             }
                                         </span>
                                     </td>
@@ -153,11 +197,20 @@ const BranchListPage = () => {
                 </Table>
             </div>
 
+            {/* BranchModal */}
             <BranchModal
                 showModal={showModal}
                 closeModal={() => setShowModal(false)}
                 handleData={handleModalSubmit}
                 initialValues={initialValues}
+            />
+
+            {/* UserModal */}
+            <UserModal
+                showModal={showUserModal}
+                closeModal={() => setShowUserModal(false)}
+                initialValues={initialValues}  // Truyền thông tin chi nhánh (bao gồm branchId)
+                handleData={handleSetRole}         // Gửi dữ liệu người dùng và branchId đến handleSetRole
             />
 
             <RenderPagination
@@ -167,7 +220,7 @@ const BranchListPage = () => {
                 totalPages={totalPages}
             />
         </>
-    )
-}
+    );
+};
 
-export default BranchListPage
+export default BranchListPage;
