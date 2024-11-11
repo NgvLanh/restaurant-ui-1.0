@@ -16,7 +16,7 @@ export const NavGeneral = ({
                         className="d-flex align-items-center border-0"
                     >
                         <Link to={item.url} className="d-flex text-secondary align-items-center text-decoration-none"
-                            style={{ fontSize: '0.1rem', fontWeight: '600' }}>
+                            style={{fontWeight: '600' }}>
                             <span className="me-2">{item.icon}</span>
                             <span>{item.name}</span>
                         </Link>

@@ -1,6 +1,6 @@
 import { BiChevronDown, BiClipboard, BiDownload, BiEdit, BiPencil, BiPlus, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
-import DataTable from "../../../components/Admin/DataTable/DataTable"
-import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
+import DataTable from "../../../components/Admin/DataTable/DataTable";
+import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import { useEffect, useMemo, useState } from "react";
 import { createBranchStatus, deleteBranchStatus, getAllBranchStatusPageable, updateBranchStatus } from "../../../services/BranchStatusService/BranchStatusService";
@@ -12,7 +12,6 @@ import { Button, Dropdown, Form, Table } from "react-bootstrap";
 import { FcDeleteColumn } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
 
-
 const BranchStatusPage = () => {
 
   const [branchStatuses, setBranchStatuses] = useState([]);
@@ -22,7 +21,6 @@ const BranchStatusPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
-
 
   useEffect(() => {
     fetchBranchStatuses();
@@ -89,31 +87,45 @@ const BranchStatusPage = () => {
   return (
     <>
       <PageHeader title="Trạng thái chi nhánh" />
-
-      <div className="bg-white shadow rounded-lg p-4">
+  
+      <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
           <Form.Control
             type="text"
             placeholder="Tìm kiếm theo tên"
             onChange={(e) => debouncedSearch(e.target.value)}
-            style={{ maxWidth: '350px', borderRadius: '8px' }}
+            style={{
+              maxWidth: '350px',
+              padding: '10px 16px',
+              borderRadius: '20px',
+              border: '1px solid #e0e0e0',
+              fontSize: '14px',
+            }}
           />
           <div className="action">
             <Button
-              className="d-flex align-items-center btn-primary rounded-3 px-4"
+              className="d-flex align-items-center rounded-pill px-4"
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
               }}
+              style={{
+                fontSize: '14px',
+                padding: '10px 20px',
+                backgroundColor: '#AB7742',
+                borderColor: '#3A8DFF',
+                color: 'white',
+                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
+              }}
             >
               <BiPlus className="me-2" />
-              Thêm
+              Thêm trạng thái
             </Button>
           </div>
         </div>
-
-        <Table striped bordered hover responsive className="shadow-sm rounded">
-          <thead>
+  
+        <Table borderless hover responsive className="rounded-4">
+          <thead style={{ backgroundColor: '#f5f5f5' }}>
             <tr>
               <th className="text-center">STT</th>
               <th>Tên trạng thái</th>
@@ -123,20 +135,52 @@ const BranchStatusPage = () => {
           </thead>
           <tbody>
             {branchStatuses?.length > 0 ? (
-              branchStatuses?.map((row, index) => (
-                <tr key={row.id} className="align-middle">
+              branchStatuses.map((row, index) => (
+                <tr key={row.id} className="align-middle" style={{ backgroundColor: '#ffffff' }}>
                   <td className="text-center">{index + 1}</td>
                   <td>{row.name}</td>
-                  <td className="text-center" style={{ backgroundColor: row.colorCode }}></td>
                   <td className="text-center">
-                    <span className="d-flex justify-content-center align-items-center gap-3" style={{ cursor: 'pointer' }}>
-                      <span onClick={() => {
-                        setInitialValues(row);
-                        setShowModal(true);
-                      }}>
+                    <div
+                      style={{
+                        backgroundColor: row.colorCode,
+                        width: '35px',
+                        height: '35px',
+                        borderRadius: '50%',
+                        margin: '0 auto',
+                        border: '1px solid #ddd',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      }}
+                    ></div>
+                  </td>
+                  <td className="text-center">
+                    <span className="d-flex justify-content-center align-items-center gap-3">
+                      <span
+                        onClick={() => {
+                          setInitialValues(row);
+                          setShowModal(true);
+                        }}
+                        style={{
+                          padding: '8px',
+                          backgroundColor: '#f0f0f0',
+                          borderRadius: '12px',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.3s ease',
+                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                        }}
+                      >
                         <BiEdit size={16} />
                       </span>
-                      <span onClick={() => { handleDelete(row.id) }}>
+                      <span
+                        onClick={() => { handleDelete(row.id) }}
+                        style={{
+                          padding: '8px',
+                          backgroundColor: '#f0f0f0',
+                          borderRadius: '12px',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.3s ease',
+                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                        }}
+                      >
                         <MdDelete size={16} />
                       </span>
                     </span>
@@ -151,14 +195,14 @@ const BranchStatusPage = () => {
           </tbody>
         </Table>
       </div>
-
+  
       <BranchStatusModal
         showModal={showModal}
         closeModal={() => setShowModal(false)}
         handleData={handleModalSubmit}
         initialValues={initialValues}
       />
-
+  
       <RenderPagination
         currentPage={currentPage}
         pageSize={pageSize}
@@ -166,7 +210,9 @@ const BranchStatusPage = () => {
         totalPages={totalPages}
       />
     </>
-  )
+  );
+  
+  
 }
 
-export default BranchStatusPage
+export default BranchStatusPage;

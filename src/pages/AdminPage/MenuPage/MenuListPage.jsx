@@ -97,20 +97,34 @@ const MenuListPage = () => {
     <>
       <PageHeader title="Danh mục món ăn" />
 
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
           <Form.Control
             type="text"
             placeholder="Tìm kiếm theo tên"
             onChange={(e) => debouncedSearch(e.target.value)}
-            style={{ maxWidth: '350px', borderRadius: '8px' }}
+            style={{
+              maxWidth: '350px',
+              padding: '10px 16px',
+              borderRadius: '20px',
+              border: '1px solid #e0e0e0',
+              fontSize: '14px',
+            }}
           />
           <div className="action d-flex gap-2">
             <Button
-              className="d-flex align-items-center btn-primary rounded-3 px-4"
+             className="d-flex align-items-center rounded-pill px-4"
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
+              }}
+              style={{
+                fontSize: '14px',
+                padding: '10px 20px',
+                backgroundColor: '#AB7742',
+                borderColor: '#3A8DFF',
+                color: 'white',
+                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
               }}
             >
               <BiPlus className="me-2" />
@@ -119,8 +133,18 @@ const MenuListPage = () => {
             <Button
               className="d-flex align-items-center rounded-3"
               onClick={toggleGridView}
+              style={{
+                padding: '10px 16px',
+                backgroundColor: '#f5f5f5',
+                borderColor: '#ddd',
+                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+              }}
             >
-              {!isGridView ? <BiGridAlt /> : <CiBoxList />}
+              {!isGridView ? (
+                <BiGridAlt style={{ color: 'black' }} />
+              ) : (
+                <CiBoxList style={{ color: 'black' }} />
+              )}
             </Button>
           </div>
         </div>
