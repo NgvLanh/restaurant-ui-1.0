@@ -12,10 +12,17 @@ const ProtectRoute = ({ element }) => {
     }, []);
 
     const routerRole = async () => {
-        const role = userInfo?.roles[0];
-        if (userInfo === undefined || (role !== 'ADMIN' && role !== 'NON_ADMIN')) {
-            const introspect = await getUserService();
-            if (introspect?.roles[0] !== 'ADMIN' || introspect?.roles[0] !== 'NON_ADMIN') {
+        if (!userInfo) {
+            navigate('/login');
+            AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
+        } else {
+            try {
+                const introspect = await getUserService();
+                if (introspect.roles[0] !== 'ADMIN' && introspect.roles[0] !== 'NON_ADMIN') {
+                    navigate('/login');
+                    AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
+                }
+            } catch (error) {
                 navigate('/login');
                 AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
             }
