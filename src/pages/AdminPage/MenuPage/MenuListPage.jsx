@@ -86,7 +86,6 @@ const MenuListPage = () => {
   }
 
   const handleToggleStatus = (id, currentStatus) => {
-
     console.log(!currentStatus);
     // handleModalSubmit(id, !currentStatus);
   };

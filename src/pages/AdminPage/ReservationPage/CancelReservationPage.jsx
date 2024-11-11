@@ -75,7 +75,7 @@ const CancelReservationPage = () => {
     <>
         <PageHeader title="Bàn đã huỷ" />
 
-        <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
+        <div className="bg-white shadow-lg p-4 rounded-4">
             <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
                 <Form.Control
                     type="text"
@@ -127,10 +127,10 @@ const CancelReservationPage = () => {
                         reservations.map((row, index) => (
                             <tr key={row.id} className="align-middle" style={{ backgroundColor: '#ffffff' }}>
                                 <td className="text-center">{index + 1}</td>
-                                <td className="text-center">{row.time}</td>
-                                <td className="text-center">{row.customer}</td>
-                                <td className="text-center">{row.phone}</td>
-                                <td className="text-center">{row.reason}</td>
+                                <td className="text-center">{row.startTime}</td>
+                                <td className="text-center">{row.fullName}</td>
+                                <td className="text-center">{row.phoneNumber}</td>
+                                <td className="text-center">{row.notes}</td>
                                 <td className="text-center">
                                     <span className="d-flex justify-content-center align-items-center gap-3">
                                         <span
