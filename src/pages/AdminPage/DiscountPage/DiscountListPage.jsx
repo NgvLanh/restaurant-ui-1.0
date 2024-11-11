@@ -36,9 +36,9 @@ const DiscountListPage = () => {
   }
   return (
     <>
-      <PageHeader title="Trạng thái chi nhánh" />
+      <PageHeader title="Phiếu Giảm Giá" />
 
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
           {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
           <div className="d-flex gap-3" style={{ maxWidth: '350px' }}>
@@ -61,7 +61,13 @@ const DiscountListPage = () => {
             <Form.Select
               onChange={(e) => handleStatusChange(e.target.value)}
               className="rounded-3 px-4"
-              style={{ maxWidth: '200px' }}
+              style={{
+                maxWidth: '250px',
+                padding: '15px',
+                fontSize: '13px',
+                border: '1px solid #ccc',
+                borderRadius: '0.375rem',
+              }}
             >
               <option value="">Tất cả trạng thái</option>
               <option value="paid">Đã thanh toán</option>
@@ -72,8 +78,8 @@ const DiscountListPage = () => {
         </div>
 
 
-        <Table striped bordered hover responsive className="shadow-sm rounded">
-          <thead>
+        <Table borderless hover responsive className="rounded-4">
+          <thead style={{ backgroundColor: '#f5f5f5' }}>
             <tr>
               <th className="text-center">STT</th>
               <th>Tên trạng thái</th>

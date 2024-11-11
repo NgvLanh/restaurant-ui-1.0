@@ -73,70 +73,107 @@ const CancelReservationPage = () => {
 
   return (
     <>
-      <PageHeader title="Bàn đã huỷ" />
+        <PageHeader title="Bàn đã huỷ" />
 
-      <div className="bg-white shadow rounded-lg p-4">
-        <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-          <Form.Control
-            type="text"
-            placeholder="Tìm kiếm theo tên"
-            onChange={(e) => debouncedSearch(e.target.value)}
-            style={{ maxWidth: '350px', borderRadius: '8px' }}
-          />
-          <div className="action">
-            <Button
-              className="d-flex align-items-center btn-primary rounded-3 px-4"
-              onClick={() => {
-                setInitialValues(null);
-                setShowModal(true);
-              }}
-            >
-              <BiPlus className="me-2" />
-              Thêm
-            </Button>
-          </div>
+        <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
+            <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
+                <Form.Control
+                    type="text"
+                    placeholder="Tìm kiếm theo tên"
+                    onChange={(e) => debouncedSearch(e.target.value)}
+                    style={{
+                        maxWidth: '350px',
+                        padding: '10px 16px',
+                        borderRadius: '20px',
+                        border: '1px solid #e0e0e0',
+                        fontSize: '14px',
+                    }}
+                />
+                <div className="action">
+                    <Button
+                        className="d-flex align-items-center rounded-pill px-4"
+                        onClick={() => {
+                            setInitialValues(null);
+                            setShowModal(true);
+                        }}
+                        style={{
+                            fontSize: '14px',
+                            padding: '10px 20px',
+                            backgroundColor: '#AB7742',
+                            borderColor: '#3A8DFF',
+                            color: 'white',
+                            boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
+                        }}
+                    >
+                        <BiPlus className="me-2" />
+                        Thêm
+                    </Button>
+                </div>
+            </div>
+
+            <Table borderless hover responsive className="rounded-4">
+                <thead style={{ backgroundColor: '#f5f5f5' }}>
+                    <tr>
+                        <th className="text-center">STT</th>
+                        <th className="text-center">Thời gian</th>
+                        <th className="text-center">Khách hàng</th>
+                        <th className="text-center">Số điện thoại</th>
+                        <th className="text-center">Lý do</th>
+                        <th className="text-center">Tuỳ chọn</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {reservations?.length > 0 ? (
+                        reservations.map((row, index) => (
+                            <tr key={row.id} className="align-middle" style={{ backgroundColor: '#ffffff' }}>
+                                <td className="text-center">{index + 1}</td>
+                                <td className="text-center">{row.time}</td>
+                                <td className="text-center">{row.customer}</td>
+                                <td className="text-center">{row.phone}</td>
+                                <td className="text-center">{row.reason}</td>
+                                <td className="text-center">
+                                    <span className="d-flex justify-content-center align-items-center gap-3">
+                                        <span
+                                            onClick={() => {
+                                                setInitialValues(row);
+                                                setShowModal(true);
+                                            }}
+                                            style={{
+                                                padding: '8px',
+                                                backgroundColor: '#f0f0f0',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.3s ease',
+                                                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                                            }}
+                                        >
+                                            <BiEdit size={16} />
+                                        </span>
+                                        <span
+                                            onClick={() => { handleDelete(row.id) }}
+                                            style={{
+                                                padding: '8px',
+                                                backgroundColor: '#f0f0f0',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.3s ease',
+                                                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                                            }}
+                                        >
+                                            <MdDelete size={16} />
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={6} className="text-center">Không có dữ liệu</td>
+                        </tr>
+                    )}
+                </tbody>
+            </Table>
         </div>
-
-        <Table striped bordered hover responsive className="shadow-sm rounded">
-          <thead>
-            <tr>
-              <th className="text-center">STT</th>
-              <th className="text-center">Thời gian</th>
-              <th className="text-center">Khách hàng</th>
-              <th className="text-center">Số điện thoại</th>
-              <th className="text-center">Lý do</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservations?.length > 0 ? (
-              reservations?.map((row, index) => (
-                <tr key={row.id} className="align-middle">
-                  <td className="text-center">{index + 1}</td>
-                  <td>{row.name}</td>
-                  <td className="text-center" style={{ backgroundColor: row.colorCode }}></td>
-                  <td className="text-center">
-                    <span className="d-flex justify-content-center align-items-center gap-3" style={{ cursor: 'pointer' }}>
-                      <span onClick={() => {
-                        setInitialValues(row);
-                        setShowModal(true);
-                      }}>
-                        <BiEdit size={16} />
-                      </span>
-                      <span onClick={() => { handleDelete(row.id) }}>
-                        <MdDelete size={16} />
-                      </span>
-                    </span>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="text-center">Không có dữ liệu</td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </div>
 
       {/* <BranchStatusModal
         showModal={showModal}
@@ -145,14 +182,18 @@ const CancelReservationPage = () => {
         initialValues={initialValues}
       /> */}
 
-      <RenderPagination
-        currentPage={currentPage}
-        pageSize={pageSize}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-      />
+        <RenderPagination
+            currentPage={currentPage}
+            pageSize={pageSize}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+        />
     </>
-  )
+);
+
+
+
+
 }
 
 export default CancelReservationPage

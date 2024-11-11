@@ -13,7 +13,7 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const [districtId, setDistrictId] = useState("");
     const [wardId, setWardId] = useState("");
     const [branchStatuses, setBranchStatuses] = useState([]);
-
+    const [users,setUsers] = useState([]);
     const tokenShipping = import.meta.env.VITE_TOKEN_SHIPPING || "";
     const idShop = import.meta.env.VITE_ID_SHOP || "";
 
@@ -34,6 +34,7 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
                 setValue("wardId", initialValues.wardId);
 
                 setValue("branchStatus", initialValues.branchStatus?.id);
+                setValue("user", initialValues.user?.id)
                 setValue("address", initialValues.address);
             } else {
                 reset();
