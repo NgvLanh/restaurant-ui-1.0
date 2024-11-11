@@ -25,7 +25,13 @@ import OrderListPage from "../pages/AdminPage/OrderPage/OrderListPage";
 import DiscountListPage from "../pages/AdminPage/DiscountPage/DiscountListPage";
 import SettingPage from "../pages/AdminPage/SettingPage/SettingPage";
 import StatisticPage from "../pages/AdminPage/StatisticPage/StatisticPage";
+import StatisticalTablePage from "../pages/AdminPage/StatisticPage/StatisticalTablePage";
+import StatisticalCusSumMonth from "../pages/AdminPage/StatisticPage/StatisticalCusSumMonth";
+import StatisticalInvoice from "../pages/AdminPage/StatisticPage/StatisticalInvoice";
+import StatisticalBranch from "../pages/AdminPage/StatisticPage/StatisticalBranch";
+import StatisticalDiscount from "../pages/AdminPage/StatisticPage/StatisticalDiscount";
 import MapPage from "../pages/AdminPage/MapPage/MapPage";
+import ProtectRoute from "./ProtectRoute";
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -53,7 +59,7 @@ export const router = createBrowserRouter((
                 <Route path="dining-table" element={<DiningTablePage />} />
 
             </Route>
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<ProtectRoute element={<AdminLayout />} />}>
                 <Route>
                     <Route index element={<DashboardPage />} />
                     <Route path="dashboard" element={<DashboardPage />} />
@@ -93,6 +99,11 @@ export const router = createBrowserRouter((
                 </Route>
 
                 <Route path="statistics" element={<StatisticPage />} />
+                <Route path="statistical-table" element={<StatisticalTablePage />} />
+                <Route path="statistical-customer" element={<StatisticalCusSumMonth />} />
+                <Route path="statistical-invoice" element={<StatisticalInvoice />} />
+                <Route path="statistical-branch" element={<StatisticalBranch />} />
+                <Route path="statistical-discount" element={<StatisticalDiscount />} />
                 <Route path="map" element={<MapPage />} />
 
             </Route>

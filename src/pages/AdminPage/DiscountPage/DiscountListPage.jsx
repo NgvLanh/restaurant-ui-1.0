@@ -101,6 +101,7 @@ const DiscountListPage = () => {
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
+     
               }}
             >
               <BiPlus className="me-2" />
@@ -110,6 +111,7 @@ const DiscountListPage = () => {
         </div>
         <Table striped bordered hover responsive className="shadow-sm rounded">
           <thead>
+
             <tr>
               <th>STT</th>
               <th>Mã</th>

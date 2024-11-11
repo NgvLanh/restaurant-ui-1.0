@@ -37,7 +37,7 @@ const OrderListPage = () => {
     <>
       <PageHeader title="Trạng thái hoá đơn" />
 
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
           {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
           <div className="d-flex gap-3" style={{ maxWidth: '350px' }}>
@@ -45,7 +45,13 @@ const OrderListPage = () => {
               type="month"
               placeholder="Từ ngày"
               onChange={(e) => handleFromDateChange(e.target.value)}
-              style={{ borderRadius: '8px' }}
+              style={{
+                maxWidth: '350px',
+                padding: '10px 16px',
+                borderRadius: '20px',
+                border: '1px solid #e0e0e0',
+                fontSize: '14px',
+              }}
             />
           </div>
 
@@ -69,8 +75,8 @@ const OrderListPage = () => {
         </div>
 
 
-        <Table striped bordered hover responsive className="shadow-sm rounded">
-          <thead>
+        <Table borderless hover responsive className="rounded-4">
+          <thead style={{ backgroundColor: '#f5f5f5' }}>
             <tr>
               <th className="text-center">STT</th>
               <th>Thời gian</th>

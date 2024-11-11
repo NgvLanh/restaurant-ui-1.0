@@ -53,10 +53,6 @@ const Sidebar = () => {
                         url: "/admin/dining-table",
                     },
                     {
-                        title: "Trạng thái bàn ăn (Cân nhắc)",
-                        url: "/admin/dining-table/status",
-                    },
-                    {
                         title: "Vị trí bàn ăn",
                         url: "/admin/dining-table/location",
                     },
@@ -102,11 +98,7 @@ const Sidebar = () => {
                     {
                         title: "Danh sách đơn hàng",
                         url: "/admin/orders",
-                    },
-                    {
-                        title: "Trạng thái đơn hàng  (Cân nhắc)",
-                        url: "/admin/orders/status",
-                    },
+                    }
                 ],
             },
             {
@@ -117,11 +109,7 @@ const Sidebar = () => {
                     {
                         title: "Phiếu giảm giá",
                         url: "/admin/discounts",
-                    },
-                    {
-                        title: "Hình thức giảm giá (Cân nhắc)",
-                        url: "/admin/discounts/methods",
-                    },
+                    }
                 ],
             },
             {
@@ -132,6 +120,37 @@ const Sidebar = () => {
                     {
                         title: "Chung",
                         url: "/admin/settings",
+                    }
+                ],
+            },
+            {
+                title: "Thống kê",
+                url: "/admin/statistics",
+                icon: <i className="fas fa-chart-line"></i>,
+                items: [
+                    // {
+                    //     title: "Thống kê...",
+                    //     url: "/admin/settings",
+                    // },
+                    {
+                        title: "Tổng số bàn đã đặt",
+                        url: "/admin/statistical-table",
+                    },
+                    {
+                        title: "Tống số khách hàng mới theo tháng",
+                        url: "/admin/statistical-customer",
+                    },
+                    {
+                        title: "Tổng số hóa đơn",
+                        url: "/admin/statistical-invoice",
+                    },
+                    {
+                        title: "Tổng số chi nhánh",
+                        url: "/admin/statistical-branch",
+                    },
+                    {
+                        title: "Tổng số giảm giá hiện có",
+                        url: "/admin/statistical-discount",
                     }
                 ],
             },
@@ -147,11 +166,12 @@ const Sidebar = () => {
                 url: "/admin/statistics",
                 icon: <i className="fas fa-chart-line"></i>,
             },
-            {
-                name: "Bản đồ",
-                url: "/admin/map",
-                icon: <i className="fas fa-map-marked-alt"></i>,
-            },
+            // {
+            //     name: "Bản đồ",
+            //     url: "/admin/map",
+            //     icon: <i className="fas fa-map-marked-alt"></i>,
+            // },
+
         ],
     }
 
@@ -165,6 +185,8 @@ const Sidebar = () => {
             display: "flex",
             flexDirection: "column",
             minHeight: "100vh",
+            maxHeight: "100vh", 
+            overflowY: 'auto', 
             zIndex: 99
         }}>
             <SidebarHeader teams={branches} />
@@ -176,7 +198,7 @@ const Sidebar = () => {
                 <NavUser user={data.user} />
             </div>
         </aside>
-    )
+    );
 }
 
 export default Sidebar

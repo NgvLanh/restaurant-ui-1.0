@@ -45,6 +45,21 @@ const updateBranch = async (branchId, request) => {
     }
 };
 
+const updateBranch01 = async (branchId, request) => {
+    try {
+        const response = await ApiRequest({
+            method: 'PATCH',
+            path: `branches/auth/${branchId}`,
+            data: request,
+            headers: 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi cập nhật chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi cập nhật chi nhánh' };
+    }
+};
+
 // Xóa một chi nhánh theo ID
 const deleteBranch = async (BranchId) => {
     try {
@@ -74,5 +89,20 @@ const getAllBranchesPageable = async (searchKey = '', currentPage, pageSize) => 
     }
 };
 
+const createNonAdmin = async (request) =>{
+    try {
+        const response = await ApiRequest({
+            method: 'POST',
+            path: `users/roles`,
+            headers : 'Bearer ',
+            data : request
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi tạo quản lý chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo quản lý chi nhánh' };
+    }
+}
 
-export { getAllBranches, createBranch, updateBranch, deleteBranch, getAllBranchesPageable };
+
+export { getAllBranches, createBranch, updateBranch, deleteBranch, getAllBranchesPageable,createNonAdmin, updateBranch01 };
