@@ -87,7 +87,7 @@ const TableListPage = () => {
         <>
             <PageHeader title="Danh sách bàn" />
 
-            <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
+            <div className="bg-white shadow-lg p-4 rounded-4">
                 <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
                     <Form.Control
                         type="text"
