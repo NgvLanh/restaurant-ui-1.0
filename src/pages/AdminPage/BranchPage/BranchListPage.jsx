@@ -79,22 +79,36 @@ const BranchListPage = () => {
 
     return (
         <>
-            <PageHeader title="Trạng thái chi nhánh" />
-
-            <div className="bg-white shadow rounded-lg p-4">
+            <PageHeader title="Danh sách chi nhánh" />
+    
+            <div className="bg-white shadow p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
                 <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
                     <Form.Control
                         type="text"
                         placeholder="Tìm kiếm theo tên"
                         onChange={(e) => debouncedSearch(e.target.value)}
-                        style={{ maxWidth: '350px', borderRadius: '8px' }}
+                        style={{
+                            maxWidth: '350px',
+                            padding: '10px 16px',
+                            borderRadius: '20px',
+                            border: '1px solid #e0e0e0',
+                            fontSize: '14px',
+                        }}
                     />
                     <div className="action">
                         <Button
-                            className="d-flex align-items-center btn-primary rounded-3 px-4"
+                            className="d-flex align-items-center rounded-pill px-4"
                             onClick={() => {
                                 setInitialValues(null);
                                 setShowModal(true);
+                            }}
+                            style={{
+                                fontSize: '14px',
+                                padding: '10px 20px',
+                                backgroundColor: '#AB7742',
+                                borderColor: '#3A8DFF',
+                                color: 'white',
+                                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
                             }}
                         >
                             <BiPlus className="me-2" />
@@ -102,9 +116,9 @@ const BranchListPage = () => {
                         </Button>
                     </div>
                 </div>
-
-                <Table striped bordered hover responsive className="shadow-sm rounded">
-                    <thead>
+    
+                <Table borderless hover responsive className="rounded-4">
+                    <thead style={{ backgroundColor: '#f5f5f5' }}>
                         <tr>
                             <th className="text-center">STT</th>
                             <th>Tên chi nhánh</th>
@@ -116,30 +130,56 @@ const BranchListPage = () => {
                     </thead>
                     <tbody>
                         {branches?.length > 0 ? (
-                            branches?.map((row, index) => (
-                                <tr key={row.id} className="align-middle">
+                            branches.map((row, index) => (
+                                <tr key={row.id} className="align-middle" style={{ backgroundColor: '#ffffff' }}>
                                     <td className="text-center">{index + 1}</td>
                                     <td>{row.name}</td>
-                                    <td>{row.districtName}</td>
-                                    <td>{row.provinceName}</td>
-                                    <td>{row.branchStatus?.name}</td>
+                                    <td className="text-center">{row.districtName}</td>
+                                    <td className="text-center">{row.provinceName}</td>
+                                    <td className="text-center">{row.branchStatus?.name}</td>
                                     <td className="text-center">
-                                        <span className="d-flex justify-content-center align-items-center gap-3" style={{ cursor: 'pointer' }}>
-                                            <span onClick={() => {
-                                                setInitialValues(row);
-                                                setShowModal(true);
-                                            }}>
+                                        <span className="d-flex justify-content-center align-items-center gap-3">
+                                            <span
+                                                onClick={() => {
+                                                    setInitialValues(row);
+                                                    setShowModal(true);
+                                                }}
+                                                style={{
+                                                    padding: '8px',
+                                                    backgroundColor: '#F1F3F4',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.3s ease',
+                                                }}
+                                            >
                                                 <BiEdit size={16} />
                                             </span>
-                                            <span onClick={() => { handleDelete(row.id) }}>
+                                            <span
+                                                onClick={() => { handleDelete(row.id) }}
+                                                style={{
+                                                    padding: '8px',
+                                                    backgroundColor: '#F1F3F4',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.3s ease',
+                                                }}
+                                            >
                                                 <MdDelete size={16} />
                                             </span>
-                                            {
-                                                userInfo?.roles[0] &&
-                                                <span onClick={() => { handleDelete(row.id) }}>
+                                            {userInfo?.roles[0] && (
+                                                <span
+                                                    onClick={() => { handleDelete(row.id) }}
+                                                    style={{
+                                                        padding: '8px',
+                                                        backgroundColor: '#F1F3F4',
+                                                        borderRadius: '12px',
+                                                        cursor: 'pointer',
+                                                        transition: 'background-color 0.3s ease',
+                                                    }}
+                                                >
                                                     <BiUser size={16} />
                                                 </span>
-                                            }
+                                            )}
                                         </span>
                                     </td>
                                 </tr>
@@ -152,14 +192,14 @@ const BranchListPage = () => {
                     </tbody>
                 </Table>
             </div>
-
+    
             <BranchModal
                 showModal={showModal}
                 closeModal={() => setShowModal(false)}
                 handleData={handleModalSubmit}
                 initialValues={initialValues}
             />
-
+    
             <RenderPagination
                 currentPage={currentPage}
                 pageSize={pageSize}
@@ -167,7 +207,9 @@ const BranchListPage = () => {
                 totalPages={totalPages}
             />
         </>
-    )
+    );
+    
+    
 }
 
 export default BranchListPage
