@@ -135,17 +135,43 @@ const Sidebar = () => {
                     }
                 ],
             },
+            {
+                title: "Thống kê",
+                url: "/admin/statistics",
+                icon: <i className="fas fa-chart-line"></i>,
+                items: [
+                    // {
+                    //     title: "Thống kê...",
+                    //     url: "/admin/settings",
+                    // },
+                    {
+                        title: "Tổng số bàn đã đặt",
+                        url: "/admin/statistical-table",
+                    },
+                    {
+                        title: "Tống số khách hàng mới theo tháng",
+                        url: "/admin/statistical-customer",
+                    },
+                    {
+                        title: "Tổng số hóa đơn",
+                        url: "/admin/statistical-invoice",
+                    },
+                    {
+                        title: "Tổng số chi nhánh",
+                        url: "/admin/statistical-branch",
+                    },
+                    {
+                        title: "Tổng số giảm giá hiện có",
+                        url: "/admin/statistical-discount",
+                    }
+                ],
+            },
         ],
         projects: [
             {
                 name: "Dashboard",
                 url: "/admin/dashboard",
                 icon: <i className="fas fa-terminal"></i>,
-            },
-            {
-                name: "Thống kê",
-                url: "/admin/statistics",
-                icon: <i className="fas fa-chart-line"></i>,
             },
             {
                 name: "Bản đồ",
@@ -165,6 +191,8 @@ const Sidebar = () => {
             display: "flex",
             flexDirection: "column",
             minHeight: "100vh",
+            maxHeight: "100vh", 
+            overflowY: 'auto', 
             zIndex: 99
         }}>
             <SidebarHeader teams={branches} />
@@ -176,7 +204,7 @@ const Sidebar = () => {
                 <NavUser user={data.user} />
             </div>
         </aside>
-    )
+    );
 }
 
 export default Sidebar
