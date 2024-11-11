@@ -1,24 +1,24 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
 // Lấy danh sách tất cả bàn
-const getAllTables = async () => {
+const getAllZones = async () => {
     try {
         const response = await ApiRequest({
-            path: 'tables',
+            path: 'zones',
         });
         return response?.data?.content;
     } catch (error) {
-        console.error(`Lỗi lấy danh sách bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách bàn' };
+        console.error(`Lỗi lấy danh vị trí: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh vị trí' };
     }
 };
 
 // Tạo mới một bàn
-const createTable = async (request) => {
+const createZone = async (request) => {
     try {
         const response = await ApiRequest({
             method: 'POST',
-            path: 'tables',
+            path: 'zones',
             data: request,
             headers: 'Bearer '
         });
@@ -30,11 +30,11 @@ const createTable = async (request) => {
 };
 
 // Cập nhật một bàn theo ID
-const updateTable = async (tableId, request) => {
+const updateZone = async (zoneId, request) => {
     try {
         const response = await ApiRequest({
             method: 'PATCH',
-            path: `tables/${tableId}`,
+            path: `zones/${zoneId}`,
             data: request,
             headers: 'Bearer '
         });
@@ -46,11 +46,11 @@ const updateTable = async (tableId, request) => {
 };
 
 // Xóa một bàn theo ID
-const deleteTable = async (tableId) => {
+const deleteZone = async (zoneId) => {
     try {
         const response = await ApiRequest({
             method: 'DELETE',
-            path: `tables/${tableId}`,
+            path: `zones/${zoneId}`,
             headers: 'Bearer '
         });
         return response;
@@ -61,32 +61,18 @@ const deleteTable = async (tableId) => {
 };
 
 // Lấy danh sách tất cả bàn
-const getAllTablesPageable = async (currentPage, pageSize) => {
+const getAllZonesPageable = async (searchKey = '', currentPage, pageSize) => {
     try {
         const response = await ApiRequest({
-            path: `tables?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
+            path: `zones?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&name=${searchKey}&page=${currentPage}&size=${pageSize}`,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {
-        console.error(`Lỗi lấy danh sách bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách bàn' };
-    }
-};
-
-// Lấy bàn để chọn đặt bàn
-const getTablesByBranchIdAndSeats = async (branchId, time, seats) => {
-    try {
-        const response = await ApiRequest({
-            path: `tables/reservations?branch=${branchId}&time=${time}&seats=${seats}`,
-        });
-        return response?.data;
-    } catch (error) {
-        console.error(`Lỗi lấy danh sách bàn đặt bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách bàn đặt bàn' };
+        console.error(`Lỗi lấy danh vị trí: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh vị trí' };
     }
 };
 
 
-
-
-export { getAllTables, createTable, updateTable, deleteTable, getAllTablesPageable, getTablesByBranchIdAndSeats };
+export { getAllZones, createZone, updateZone, deleteZone, getAllZonesPageable };
