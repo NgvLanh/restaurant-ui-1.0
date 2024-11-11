@@ -7,7 +7,7 @@ const getUserService = async () => {
             path: 'users/info',
             headers: 'Bearer '
         });
-        return response;
+        return response?.data;
     } catch (error) {
         console.error(`Lỗi lấy thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
         return error?.response?.data?.message || 'Lỗi chưa cấu hình';

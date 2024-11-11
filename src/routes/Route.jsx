@@ -26,6 +26,7 @@ import DiscountListPage from "../pages/AdminPage/DiscountPage/DiscountListPage";
 import SettingPage from "../pages/AdminPage/SettingPage/SettingPage";
 import StatisticPage from "../pages/AdminPage/StatisticPage/StatisticPage";
 import MapPage from "../pages/AdminPage/MapPage/MapPage";
+import ProtectRoute from "./ProtectRoute";
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -53,7 +54,7 @@ export const router = createBrowserRouter((
                 <Route path="dining-table" element={<DiningTablePage />} />
 
             </Route>
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<ProtectRoute element={<AdminLayout />} />}>
                 <Route>
                     <Route index element={<DashboardPage />} />
                     <Route path="dashboard" element={<DashboardPage />} />
