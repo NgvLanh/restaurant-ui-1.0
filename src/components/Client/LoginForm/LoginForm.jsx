@@ -55,7 +55,7 @@ const LoginForm = () => {
     const syncCartWithServer = async (data) => {
         console.log(await asyncCartService(cartTemp, data?.info?.id));
         localStorage.removeItem('cart_temps');
-        // roleRoute(data?.info);
+        roleRoute(data?.info);
     }
 
     return (
