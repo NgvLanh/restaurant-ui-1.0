@@ -5,7 +5,7 @@ import { loginService } from '../../../services/AuthService/AuthService';
 import AlertUtils from '../../../utils/AlertUtils';
 import { useCookies } from 'react-cookie';
 import { asyncCartService } from '../../../services/CartService/CartService'
-import { getAllBranches } from '../../../services/BranchService/BranchService';
+import { getAllBranches, getBranchByUserId } from '../../../services/BranchService/BranchService';
 
 const LoginForm = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -23,8 +23,8 @@ const LoginForm = () => {
         setBranches(await getAllBranches());
     }
 
-    const onSubmit = async (reuqest) => {
-        const response = await loginService(reuqest);
+    const onSubmit = async (request) => {
+        const response = await loginService(request);
         if (response?.status) {
             AlertUtils.success('Đăng nhập thành công');
             saveLocalAndCookie(response?.data);
@@ -39,18 +39,29 @@ const LoginForm = () => {
         setCookie('user_token', data?.accessToken);
     }
 
-    const roleRoute = (data) => {
+   
+
+    const roleRoute = async (data) => {
         const role = data?.roles[0];
+        const userId = data?.id;
         if (role === 'ADMIN') {
             const defaultBranch = branches[0];
             localStorage.setItem('branch_info', JSON.stringify(defaultBranch));
             navigate('/admin');
         } else if (role === 'NON_ADMIN') {
-            navigate('/admin');
+            try {
+                const branchInfo = await getBranchByUserId(userId);  // Await here
+                
+                localStorage.setItem('branch_info', JSON.stringify(branchInfo.data));
+                navigate('/admin');
+            } catch (error) {
+                console.error("Error fetching branch info:", error);
+            }
         } else {
             navigate('/home');
         }
-    }
+    };
+    
 
     const syncCartWithServer = async (data) => {
         console.log(await asyncCartService(cartTemp, data?.info?.id));
