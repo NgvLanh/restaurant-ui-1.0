@@ -29,8 +29,8 @@ useEffect(() => {
     }, [initialValues, setValue]);
 
     const onSubmit = (data) => {
-        handleData(data); // Gửi dữ liệu khi submit
-        closeModal(); // Đóng modal
+        handleData(data); 
+        closeModal(); 
     };
 
     

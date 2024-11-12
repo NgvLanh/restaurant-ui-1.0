@@ -8,7 +8,8 @@ import { getAllBranches } from "../../../services/BranchService/BranchService"
 const Sidebar = () => {
 
     const [branches, setBranches] = useState([]);
-
+    const getUser = JSON.parse(localStorage.getItem('user_info'));
+    const getRoles = getUser?.roles[0];
 
     useEffect(() => {
         fetchBranches();
@@ -26,22 +27,24 @@ const Sidebar = () => {
             avatar: "assets/img/banhmi.jpg",
         },
         navMain: [
-            {
-                title: "Chi nhánh",
-                url: "/admin/branch",
-                icon: <i className='fas fa-code-branch'></i>,
-                isActive: false,
-                items: [
-                    {
-                        title: "Danh sách chi nhánh",
-                        url: "/admin/branch",
-                    },
-                    {
-                        title: "Trạng thái chi nhánh",
-                        url: "/admin/branch/status",
-                    },
-                ],
-            },
+            ...(getRoles === "ADMIN" ? [
+                {
+                    title: "Chi nhánh",
+                    url: "/admin/branch",
+                    icon: <i className="fas fa-code-branch"></i>,
+                    isActive: false,
+                    items: [
+                        {
+                            title: "Danh sách chi nhánh",
+                            url: "/admin/branch",
+                        },
+                        {
+                            title: "Trạng thái chi nhánh",
+                            url: "/admin/branch/status",
+                        },
+                    ],
+                }
+            ] : []),
             {
                 title: "Bàn ăn",
                 url: "/admin/dining-table",

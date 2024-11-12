@@ -259,7 +259,6 @@ const BranchListPage = () => {
 
 };   
     
-}
 
 
 export default BranchListPage;
