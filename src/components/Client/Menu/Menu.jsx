@@ -23,12 +23,35 @@ const Menus = () => {
         } else {
             setDishes(await getAllDishes());
         }
-
     };
 
     const handleAddToCart = (dish, quantity) => {
-        
+        const cartTemps = JSON.parse(localStorage.getItem('cart_temps')) || [];
+        if (!userInfo) {
+            let itemExists = false;
+            cartTemps.forEach(e => {
+                if (e.dish.id === dish.id) {
+                    e.quantity += quantity;
+                    itemExists = true;
+                }
+            });
+            if (!itemExists) {
+                const data = {
+                    dish: {
+                        ...dish,
+                    },
+                    quantity: quantity,
+                    status: false
+                };
+                cartTemps.push(data);
+            }
+            localStorage.setItem('cart_temps', JSON.stringify(cartTemps));
+        } else {
+            console.log('Sử lý khi đã đăng nhập');
+        }
     };
+
+
 
     const handleOpenModal = (dish) => {
         setSelectedDish(dish);
@@ -62,8 +85,8 @@ const Menus = () => {
                     {dishes?.map((dish) => (
                         <div key={dish?.id} className="col-lg-4 col-md-6 portfolio-item wow fadeInUp" data-wow-delay="0.1s">
                             <div className="rounded overflow-hidden">
-                                <div className="position-relative overflow-hidden">
-                                    <img className="img-fluid w-100" src={dish?.image} alt="" />
+                                <div className="position-relative overflow-hidden" style={{ minHeight: '250px' }}>
+                                    <img className="img-fluid w-100" src={dish?.image} alt="" style={{ minHeight: '300px' }} />
                                     <div className="portfolio-overlay">
                                         <a className="btn btn-square btn-outline-light mx-1" href={dish?.image} data-lightbox="portfolio"><i className="fa fa-eye"></i></a>
                                         <a className="btn btn-square btn-outline-light mx-1"

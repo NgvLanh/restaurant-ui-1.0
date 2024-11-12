@@ -32,11 +32,12 @@ import StatisticalBranch from "../pages/AdminPage/StatisticPage/StatisticalBranc
 import StatisticalDiscount from "../pages/AdminPage/StatisticPage/StatisticalDiscount";
 import MapPage from "../pages/AdminPage/MapPage/MapPage";
 import ProtectRoute from "./ProtectRoute";
+import ForgotPasswordPage from "../pages/ClientPage/ForgotPasswordPage/ForgotPasswordPage";
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
         <Route>
-            <Route path="/" element={<ClientLayout />}>
+            <Route path="/" element={<ClientLayout />} >
                 <Route index element={<HomePage />} />
                 <Route path="home" element={<HomePage />} />
                 {/*  */}
@@ -50,14 +51,15 @@ export const router = createBrowserRouter((
                 {/*  */}
                 <Route path="reservations" element={<ReservationPage />} />
                 {/*  */}
-                <Route path="register" element={<RegisterPage />} />
+                <Route path="register" element={<ProtectRoute element={<RegisterPage />} admin={false} />} />
                 {/*  */}
-                <Route path="login" element={<LoginPage />} />
+                <Route path="login" element={<ProtectRoute element={<LoginPage />} admin={false} />} />
                 {/*  */}
                 <Route path="shopping-cart" element={<ShoppingCartPage />} />
                 {/*  */}
                 <Route path="dining-table" element={<DiningTablePage />} />
-
+                {/*  */}
+                <Route path="forgot-password" element={<ForgotPasswordPage />} />
             </Route>
             <Route path="/admin" element={<ProtectRoute element={<AdminLayout />} />}>
                 <Route>

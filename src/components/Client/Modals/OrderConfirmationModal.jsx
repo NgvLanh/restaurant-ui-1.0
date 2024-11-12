@@ -27,8 +27,8 @@ const OrderConfirmationModal = ({ show, onHide, onConfirm, cartItems, total, add
                         </tr>
                     </thead>
                     <tbody>
-                        {cartItems?.map((item) => (
-                            <tr key={item.id}>
+                        {cartItems?.map((item, index) => (
+                            <tr key={index}>
                                 <td>{item.name}</td>
                                 <td>{item.quantity}</td>
                                 <td>{formatCurrency(item.price)}</td>

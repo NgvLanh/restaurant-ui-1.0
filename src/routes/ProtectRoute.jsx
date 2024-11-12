@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getUserService } from "../services/AuthService/AuthService";
 import AlertUtils from "../utils/AlertUtils";
 
-const ProtectRoute = ({ element }) => {
+const ProtectRoute = ({ element, admin = true }) => {
     const userInfo = JSON.parse(localStorage.getItem('user_info'));
     const navigate = useNavigate();
 
@@ -12,10 +12,10 @@ const ProtectRoute = ({ element }) => {
     }, []);
 
     const routerRole = async () => {
-        if (!userInfo) {
+        if (!userInfo && admin) {
             navigate('/login');
             AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
-        } else {
+        } else if (userInfo && admin) {
             try {
                 const introspect = await getUserService();
                 if (introspect.roles[0] !== 'ADMIN' && introspect.roles[0] !== 'NON_ADMIN') {
@@ -26,6 +26,8 @@ const ProtectRoute = ({ element }) => {
                 navigate('/login');
                 AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
             }
+        } else if (userInfo && !admin) {
+            navigate('/home');
         }
     };
 

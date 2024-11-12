@@ -6,65 +6,42 @@ import { formatCurrency } from "../../../utils/FormatUtils";
 import OrderConfirmationModal from "../../../components/Client/Modals/OrderConfirmationModal";
 import AddressModal from "../../../components/Client/Modals/AddressModal";
 import { getCartItemsByUserId } from "../../../services/CartItemService/CartItemService";
+import { getAddressByUserId } from "../../../services/AddressService/AddressService";
 
 const ShoppingCartPage = () => {
     const userInfo = JSON.parse(localStorage.getItem('user_info'));
     const [cartItems, setCartItems] = useState([]);
-    const [addresses, setAddresses] = useState(JSON.parse(localStorage.getItem('user_addresses')) || []);
     const [selectAll, setSelectAll] = useState(false);
-    const [address, setAddress] = useState("");
+    const [addresses, setAddresses] = useState([]);
     const [discountCode, setDiscountCode] = useState("");
     const [selectedAddress, setSelectedAddress] = useState('');
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
 
     useEffect(() => {
-        fetchCart();
+        fetchUserCart();
+        fetchUserAddress();
     }, []);
 
 
-    const fetchCart = async () => {
+    const fetchUserCart = async () => {
         if (userInfo) {
             const items = await getCartItemsByUserId(userInfo?.id);
-            setCartItems(items || []); 
+            setCartItems(items || []);
         } else {
-            setCartItems(JSON.parse(localStorage.getItem('cart_temp')) || []);
+            setCartItems(JSON.parse(localStorage.getItem('cart_temps')) || []);
         }
     };
 
-    const handleUpdateQuantity = (id, newQuantity) => {
-        const updatedItems = cartItems.map((item) =>
-            item.id === id ? { ...item, quantity: Math.max(1, Math.min(25, newQuantity)) } : item
-        );
-        setCartItems(updatedItems);
-    };
+    const fetchUserAddress = async () => {
+        if (userInfo) {
+            // setAddresses(await getAddressByUserId(userInfo?.id))
+        }
+    }
 
-    const handleRemove = (id) => {
-        const updatedItems = cartItems.filter((item) => item.id !== id);
-        setCartItems(updatedItems);
-    };
-
-    const handleSelectAll = () => {
-        const newSelectAll = !selectAll;
-        setSelectAll(newSelectAll);
-        const updatedItems = cartItems.map((item) => ({ ...item, status: newSelectAll }));
-        setCartItems(updatedItems);
-    };
-
-    const handleToggleSelect = (id, isSelected) => {
-        const updatedItems = cartItems.map((item) =>
-            item.id === id ? { ...item, status: isSelected } : item
-        );
-        setCartItems(updatedItems);
-
-        // Kiểm tra nếu tất cả item đã được chọn hoặc bỏ chọn
-        const allSelected = updatedItems.every((item) => item.status);
-        setSelectAll(allSelected);
-    };
-
-    // const total = cartItems?.reduce((sum, item) => {
-    //     return item.isSelected ? sum + item.price * item.quantity : sum;
-    // }, 0);
+    const total = cartItems?.reduce((sum, item) => {
+        return item.status ? sum + item.price * item.quantity : sum;
+    }, 0);
 
     const handleApplyDiscount = () => {
         alert(`Áp dụng mã giảm giá: ${discountCode}`);
@@ -87,10 +64,7 @@ const ShoppingCartPage = () => {
     };
 
     const handleSaveAddress = (newAddress) => {
-        const updatedAddresses = [...addresses, newAddress];
-        setAddresses(updatedAddresses);
-        setSelectedAddress(newAddress);
-        localStorage.setItem('user_addresses', JSON.stringify(updatedAddresses));
+        console.log(newAddress);
     };
 
     return (
@@ -102,28 +76,12 @@ const ShoppingCartPage = () => {
                 </div>
                 <div className="row">
                     <div className="col-md-8">
-                        <div className="mb-3 d-flex align-items-center">
-                            {cartItems?.length > 0 && (
-                                <>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectAll}
-                                        onChange={handleSelectAll}
-                                        className="form-check-input"
-                                    />
-                                    <label className="ms-2">Chọn tất cả</label>
-                                </>
-                            )}
-                        </div>
                         {cartItems?.length > 0 ? (
                             <>
-                                {cartItems?.map((item) => (
+                                {cartItems?.map((item, index) => (
                                     <CartItem
-                                        key={item.id}
+                                        key={index + 1}
                                         item={item}
-                                        onUpdateQuantity={(id, quantity) => handleUpdateQuantity(id, quantity)}
-                                        onRemove={handleRemove}
-                                        onToggleSelect={handleToggleSelect}
                                     />
                                 ))}
                             </>
@@ -134,7 +92,7 @@ const ShoppingCartPage = () => {
                     <div className="col-md-4">
                         <div className="card p-3">
                             <h4 className="mb-3">Tóm Tắt Đơn Hàng</h4>
-                            <p className="fw-bold">Tổng Cộng: {formatCurrency(0)}</p>
+                            <p className="fw-bold">Tổng Cộng: {formatCurrency(total)}</p>
 
                             <div className="mb-3">
                                 <label className="form-label">Chọn Địa Chỉ Giao Hàng</label>
@@ -143,10 +101,10 @@ const ShoppingCartPage = () => {
                                     value={selectedAddress}
                                     onChange={(e) => setSelectedAddress(e.target.value)}
                                 >
-                                    <option value="">Chọn địa chỉ</option>
-                                    {addresses.map((addr, index) => (
+                                    <option value="1">Địa chỉ DEMO</option>
+                                    {/* {addresses.map((addr, index) => (
                                         <option key={index} value={addr}>{addr}</option>
-                                    ))}
+                                    ))} */}
                                 </select>
                                 <button
                                     className="btn btn-secondary mt-2 w-100"
@@ -196,8 +154,8 @@ const ShoppingCartPage = () => {
 
             <AddressModal
                 show={showAddressModal}
-                onHide={() => setShowAddressModal(false)}
-                onSave={handleSaveAddress}
+                handleClose={() => setShowAddressModal(false)}
+                handleSave={handleSaveAddress}
             />
         </>
     );
