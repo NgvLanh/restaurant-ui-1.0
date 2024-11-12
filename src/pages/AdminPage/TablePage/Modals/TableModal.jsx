@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
+import { getAllZones } from '../../../../services/zoneservice/ZoneService';
 
 const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm();
 
+    const [zones, setZones] = useState([]);
+
     useEffect(() => {
+        fetchZone();
         if (initialValues) {
             setValue('number', initialValues.number);
             setValue('seats', initialValues.seats);
@@ -15,8 +19,13 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
         }
     }, [initialValues]);
 
+    const fetchZone = async () => {
+        setZones(await getAllZones());
+    }
+
     // Xử lý sự kiện gửi form
     const onSubmit = (data) => {
+        data.zone = zones.find((zone) => zone.id === parseInt(data.zone));
         data = {
             ...data,
             branch: JSON.parse(localStorage.getItem('branch_info'))
@@ -84,6 +93,27 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">
                                     {errors.status?.message}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row className="mb-3">
+                        <Col xs={12}>
+                            <Form.Group controlId="zone">
+                                <Form.Label>Khu vực</Form.Label>
+                                <Form.Select
+                                    {...register('zone', { required: 'Vui lòng chọn khu vực bàn' })}
+                                    isInvalid={errors.status}
+                                >
+                                    <option value="">Chọn khu vực</option>
+                                    {zones?.map((zone) => (
+                                        <option key={zone.id} value={zone.id}>
+                                            {zone.name} / {zone.address}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.zone?.message}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>

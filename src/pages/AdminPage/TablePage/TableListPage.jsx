@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Button, Form, Table } from "react-bootstrap";
+import { Badge, Button, Form, Table } from "react-bootstrap";
 import { BiEdit, BiPlus } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
@@ -63,6 +63,7 @@ const TableListPage = () => {
                 AlertUtils.error(response?.message);
             }
         }
+        setInitialValues(null);
         fetchtables();
     };
 
@@ -86,7 +87,7 @@ const TableListPage = () => {
         <>
             <PageHeader title="Danh sách bàn" />
 
-            <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
+            <div className="bg-white shadow-lg p-4 rounded-4">
                 <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
                     <Form.Control
                         type="text"
@@ -138,10 +139,31 @@ const TableListPage = () => {
                             tables.map((row, index) => (
                                 <tr key={row.id} className="align-middle">
                                     <td className="text-center">{index + 1}</td>
-                                    <td className="text-center">{row.number}</td>
-                                    <td className="text-center">{row.seats}</td>
-                                    <td className="text-center">{TableStatus.get(row.tableStatus)}</td>
-                                    <td className="text-center">{row.zone?.name || 'Chưa xác định'}</td>
+                                    <td>
+                                        <span style={{
+                                            backgroundColor: 'pink',
+                                            display: 'block',
+                                            textAlign: 'center',
+                                            borderRadius: '50%',
+                                        }}>
+                                            {row.number}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span style={{
+                                            backgroundColor: 'skyblue',
+                                            display: 'block',
+                                            textAlign: 'center',
+                                            borderRadius: '50%',
+                                        }}>
+                                            {row.seats}
+                                        </span>
+                                    </td>
+                                    <td>{TableStatus.get(row.tableStatus)}</td>
+                                    <td>
+                                        {row.zone?.name ? row.zone?.name + ' / ' + row.zone?.address : 'Chưa xác định'}
+                                    </td>
+
                                     <td className="text-center">
                                         <span className="d-flex justify-content-center align-items-center gap-3" style={{ cursor: 'pointer' }}>
                                             <span

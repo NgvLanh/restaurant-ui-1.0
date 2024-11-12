@@ -31,6 +31,7 @@ import StatisticalInvoice from "../pages/AdminPage/StatisticPage/StatisticalInvo
 import StatisticalBranch from "../pages/AdminPage/StatisticPage/StatisticalBranch";
 import StatisticalDiscount from "../pages/AdminPage/StatisticPage/StatisticalDiscount";
 import MapPage from "../pages/AdminPage/MapPage/MapPage";
+import ProtectRoute from "./ProtectRoute";
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -58,7 +59,7 @@ export const router = createBrowserRouter((
                 <Route path="dining-table" element={<DiningTablePage />} />
 
             </Route>
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<ProtectRoute element={<AdminLayout />} />}>
                 <Route>
                     <Route index element={<DashboardPage />} />
                     <Route path="dashboard" element={<DashboardPage />} />

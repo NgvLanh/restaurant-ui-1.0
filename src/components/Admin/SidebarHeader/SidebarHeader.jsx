@@ -30,7 +30,7 @@ export const SidebarHeader = ({ teams }) => {
                     </div>
                     <div className="ms-2 text-start flex-grow-1 py-1">
                         <div className="_name">{activeTeam?.name}</div>
-                        <small className="_branch">{activeTeam?.plan}</small>
+                        <small className="_branch">{activeTeam?.provinceName}</small>
                     </div>
                     <span className="text-dark d-flex flex-column">
                         <i className="fas fa-angle-down"></i>

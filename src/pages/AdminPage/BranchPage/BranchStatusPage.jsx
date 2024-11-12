@@ -87,8 +87,8 @@ const BranchStatusPage = () => {
   return (
     <>
       <PageHeader title="Trạng thái chi nhánh" />
-  
-      <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
+
+      <div className="bg-white shadow-lg p-4 rounded-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
           <Form.Control
             type="text"
@@ -123,7 +123,7 @@ const BranchStatusPage = () => {
             </Button>
           </div>
         </div>
-  
+
         <Table borderless hover responsive className="rounded-4">
           <thead style={{ backgroundColor: '#f5f5f5' }}>
             <tr>
@@ -195,14 +195,14 @@ const BranchStatusPage = () => {
           </tbody>
         </Table>
       </div>
-  
+
       <BranchStatusModal
         showModal={showModal}
         closeModal={() => setShowModal(false)}
         handleData={handleModalSubmit}
         initialValues={initialValues}
       />
-  
+
       <RenderPagination
         currentPage={currentPage}
         pageSize={pageSize}
@@ -211,8 +211,8 @@ const BranchStatusPage = () => {
       />
     </>
   );
-  
-  
+
+
 }
 
 export default BranchStatusPage;

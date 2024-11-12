@@ -3,134 +3,186 @@ import AlertUtils from "../../../utils/AlertUtils";
 import { debounce } from "../../../utils/Debounce";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import { Button, Form, Table } from "react-bootstrap";
-import { BiEdit, BiPlus, BiShow } from "react-icons/bi";
+import { BiEdit, BiPlus } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
-import BranchStatusModal from "../BranchPage/Modals/BranchStatusModal";
-import { createBranchStatus, deleteBranchStatus, getAllBranchStatus, updateBranchStatus } from "../../../services/BranchStatusService/BranchStatusService";
-
+import DiscountModal from "./Modals/DiscountModal";
+import {
+  createDiscount,
+  deleteDiscount,
+  getAllDiscountsPage,
+  updateDiscount,
+} from "../../../services/DiscountService/DiscountService";
 
 const DiscountListPage = () => {
-
-  const [branchStatuses, setBranchStatuses] = useState([]);
+  const [discounts, setDiscount] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [initialValues, setInitialValues] = useState({});
-  const [searchKey, setSearchKey] = useState('');
+  const [initialValues, setInitialValues] = useState(null);
+  const [searchKey, setSearchKey] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
 
+  const fetchDiscount = async () => {
+    try {
+      const response = await getAllDiscountsPage(currentPage, pageSize);
+      console.log("API response:", response); // Kiểm tra cấu trúc phản hồi
+      if (response?.data?.content) {
+        setDiscount(response.data.content);
+        setTotalPages(response.data.totalPages);
+      }
+    } catch (e) {
+      console.warn("Lỗi gọi API", e);
+    }
+  };
 
   useEffect(() => {
-    // fetchBranchStatuses();
-  }, [currentPage, searchKey]);
+    fetchDiscount();
+  }, [currentPage]);
 
-  const handleFromDateChange = async () => {
+  // const handleSearch = (key) => {
+  //   setSearchKey(key);
+  //   setCurrentPage(0);
+  // };
 
-  }
-  const handleToDateChange = async () => {
+  const handleModalSubmit = async (data) => {
+    const successMessage = initialValues
+      ? "Cập nhật thành công"
+      : "Thêm mới thành công";
 
-  }
-  const handleStatusChange = async () => {
+    try {
+      const response = initialValues
+        ? await updateDiscount(initialValues.id, data)
+        : await createDiscount(data);
 
-  }
+      if (response?.status) {
+        AlertUtils.success(successMessage);
+        setShowModal(false);
+        fetchDiscount();
+      } else {
+        AlertUtils.error(response?.message);
+      }
+    } catch (e) {
+      AlertUtils.error("Có lỗi xảy ra khi gửi yêu cầu.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const result = await AlertUtils.confirm(
+      "Bạn có chắc chắn muốn xoá mã giảm giá này"
+    );
+    if (result) {
+      const response = await deleteDiscount(id);
+      if (response?.status) {
+        AlertUtils.success("Xoá thành công!");
+        fetchDiscount();
+      } else {
+        AlertUtils.error("Xoá thất bại!");
+      }
+    }
+  };
+
+  // const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
+
   return (
     <>
-      <PageHeader title="Phiếu Giảm Giá" />
-
-      <div className="bg-white shadow-lg p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
+      <PageHeader title="Danh sách mã giảm giá" />
+      <div className="bg-white shadow rounded-lg p-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-          {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
-          <div className="d-flex gap-3" style={{ maxWidth: '350px' }}>
-            <Form.Control
-              type="date"
-              placeholder="Từ ngày"
-              onChange={(e) => handleFromDateChange(e.target.value)}
-              style={{ borderRadius: '8px' }}
-            />
-            <Form.Control
-              type="date"
-              placeholder="Đến ngày"
-              onChange={(e) => handleToDateChange(e.target.value)}
-              style={{ borderRadius: '8px' }}
-            />
-          </div>
-
-          {/* Select để lọc theo trạng thái hóa đơn */}
-          <div className="action">
-            <Form.Select
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className="rounded-3 px-4"
-              style={{
-                maxWidth: '250px',
-                padding: '15px',
-                fontSize: '13px',
-                border: '1px solid #ccc',
-                borderRadius: '0.375rem',
+          <Form.Control
+            type="text"
+            placeholder="Tìm kiếm theo tên"
+            // onChange={(e) => debouncedSearch(e.target.value)}
+            style={{ maxWidth: "350px", borderRadius: "8px" }}
+          />
+          <div className="action d-flex gap-2">
+            <Button
+              className="d-flex align-items-center btn-primary rounded-3 px-4"
+              onClick={() => {
+                setInitialValues(null);
+                setShowModal(true);
+     
               }}
             >
-              <option value="">Tất cả trạng thái</option>
-              <option value="paid">Đã thanh toán</option>
-              <option value="pending">Chờ thanh toán</option>
-              <option value="cancelled">Đã hủy</option>
-            </Form.Select>
+              <BiPlus className="me-2" />
+              Thêm
+            </Button>
           </div>
         </div>
+        <Table striped bordered hover responsive className="shadow-sm rounded">
+          <thead>
 
-
-        <Table borderless hover responsive className="rounded-4">
-          <thead style={{ backgroundColor: '#f5f5f5' }}>
             <tr>
-              <th className="text-center">STT</th>
-              <th>Tên trạng thái</th>
-              <th className="text-center">Màu</th>
-              <th className="text-center">Tuỳ chọn</th>
+              <th>STT</th>
+              <th>Mã</th>
+              <th>Số lượng</th>
+              <th>Ngày áp dụng</th>
+              <th>Ngày kết thúc</th>
+              <th>Phương thức</th>
+              <th>Hạn mức giảm giá</th>
+              <th>Giá trị giảm giá</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
-            {branchStatuses?.length > 0 ? (
-              branchStatuses.map((row, index) => (
+            {discounts.length > 0 ? (
+              discounts.map((row, index) => (
                 <tr key={row.id} className="align-middle">
                   <td className="text-center">{index + 1}</td>
-                  <td>{row.name}</td>
-                  <td className="text-center" style={{ backgroundColor: row.colorCode }}></td>
+                  <td>{row.code}</td>
+                  <td>{row.quantity}</td>
+                  <td>{row.startDate}</td>
+                  <td>{row.endDate}</td>
+                  <td>
+                    {row.discountMethod === "PERCENTAGE"
+                      ? "Giảm giá phần trăm"
+                      : row.discountMethod === "FIXED_AMOUNT"
+                      ? "Giảm giá cụ thể"
+                      : "Chưa xác định"}
+                  </td>
+                  <td>{row.quota}</td>
+                  <td>{row.value}</td>
                   <td className="text-center">
                     <span
                       className="d-flex justify-content-center align-items-center gap-3"
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                     >
-                      {/* Thay thế edit bằng view */}
                       <span
                         onClick={() => {
                           setInitialValues(row);
                           setShowModal(true);
                         }}
                       >
-                        <BiShow size={16} />
+                        <BiEdit size={16} />
                       </span>
-                      {/* <span onClick={() => handleDelete(row.id)}>
+                      <span
+                        onClick={() => {
+                          handleDelete(row.id);
+                        }}
+                      >
                         <MdDelete size={16} />
-                      </span> */}
+                      </span>
                     </span>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="text-center">Không có dữ liệu</td>
+                <td colSpan={9} className="text-center">
+                  Không có dữ liệu
+                </td>
               </tr>
             )}
           </tbody>
         </Table>
-
       </div>
 
-      {/* <BranchStatusModal
+      <DiscountModal
         showModal={showModal}
         closeModal={() => setShowModal(false)}
         handleData={handleModalSubmit}
         initialValues={initialValues}
-      /> */}
+      />
 
       <RenderPagination
         currentPage={currentPage}
@@ -139,7 +191,7 @@ const DiscountListPage = () => {
         totalPages={totalPages}
       />
     </>
-  )
-}
+  );
+};
 
-export default DiscountListPage
+export default DiscountListPage;

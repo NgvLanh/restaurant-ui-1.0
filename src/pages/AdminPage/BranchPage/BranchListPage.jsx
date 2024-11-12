@@ -120,8 +120,8 @@ const BranchListPage = () => {
     return (
         <>
             <PageHeader title="Danh sách chi nhánh" />
-    
-            <div className="bg-white shadow p-4 rounded-4" style={{ maxWidth: '1200px', margin: 'auto' }}>
+
+            <div className="bg-white shadow p-4 rounded-4">
                 <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
                     <Form.Control
                         type="text"
@@ -156,7 +156,7 @@ const BranchListPage = () => {
                         </Button>
                     </div>
                 </div>
-    
+
                 <Table borderless hover responsive className="rounded-4">
                     <thead style={{ backgroundColor: '#f5f5f5' }}>
                         <tr>
@@ -256,9 +256,9 @@ const BranchListPage = () => {
             />
         </>
     );
+};
 
-};   
-    
+
 
 
 export default BranchListPage;

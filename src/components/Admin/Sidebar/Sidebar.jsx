@@ -56,10 +56,6 @@ const Sidebar = () => {
                         url: "/admin/dining-table",
                     },
                     {
-                        title: "Trạng thái bàn ăn (Cân nhắc)",
-                        url: "/admin/dining-table/status",
-                    },
-                    {
                         title: "Vị trí bàn ăn",
                         url: "/admin/dining-table/location",
                     },
@@ -105,11 +101,7 @@ const Sidebar = () => {
                     {
                         title: "Danh sách đơn hàng",
                         url: "/admin/orders",
-                    },
-                    {
-                        title: "Trạng thái đơn hàng  (Cân nhắc)",
-                        url: "/admin/orders/status",
-                    },
+                    }
                 ],
             },
             {
@@ -120,11 +112,7 @@ const Sidebar = () => {
                     {
                         title: "Phiếu giảm giá",
                         url: "/admin/discounts",
-                    },
-                    {
-                        title: "Hình thức giảm giá (Cân nhắc)",
-                        url: "/admin/discounts/methods",
-                    },
+                    }
                 ],
             },
             {
@@ -177,10 +165,16 @@ const Sidebar = () => {
                 icon: <i className="fas fa-terminal"></i>,
             },
             {
-                name: "Bản đồ",
-                url: "/admin/map",
-                icon: <i className="fas fa-map-marked-alt"></i>,
+                name: "Thống kê",
+                url: "/admin/statistics",
+                icon: <i className="fas fa-chart-line"></i>,
             },
+            // {
+            //     name: "Bản đồ",
+            //     url: "/admin/map",
+            //     icon: <i className="fas fa-map-marked-alt"></i>,
+            // },
+
         ],
     }
 
