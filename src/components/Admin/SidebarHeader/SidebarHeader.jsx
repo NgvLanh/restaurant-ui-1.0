@@ -5,7 +5,8 @@ import "./SidebarHeader.css"
 export const SidebarHeader = ({ teams }) => {
     const [activeTeam, setActiveTeam] = useState(teams[0] || null);
     const [branches, setBranches] = useState([]);
-
+    const getUser = JSON.parse(localStorage.getItem('user_info'));
+    const getUserRoles = getUser?.roles[0];
 
     useEffect(() => {
         if (teams.length > 0) {
@@ -38,21 +39,38 @@ export const SidebarHeader = ({ teams }) => {
 
                 <Dropdown.Menu align="start" className="border-1 rounded-3 w-100 overflow-hidden">
                     <Dropdown.Header>Chi nhánh</Dropdown.Header>
-                    {teams?.map((team, index) => (
-                        <Dropdown.Item
-                            key={team.name}
-                            onClick={() => handleActiveTeam(team)}
-                            className="d-flex align-items-center justify-content-between gap-2"
-                        >
-                            <div className="d-flex align-items-center gap-2">
-                                <div className="d-flex align-items-center justify-content-center" style={{ width: "24px", height: "24px" }}>
-                                    <i className="fas fa-code-branch"></i>
+                    {
+                        getUserRoles === 'ADMIN' ? (
+                            teams?.map((team, index) => (
+                                <Dropdown.Item
+                                    key={team.name}
+                                    onClick={() => handleActiveTeam(team)}
+                                    className="d-flex align-items-center justify-content-between gap-2"
+                                >
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="d-flex align-items-center justify-content-center" style={{ width: "24px", height: "24px" }}>
+                                            <i className="fas fa-code-branch"></i>
+                                        </div>
+                                        <span className="_name_item">{team.name}</span>
+                                    </div>
+                                    <span>⌘{index + 1}</span>
+                                </Dropdown.Item>
+                            ))
+                        ) : (
+                            <Dropdown.Item
+                                onClick={() => handleActiveTeam(activeTeam)}
+                                className="d-flex align-items-center justify-content-between gap-2"
+                            >
+                                <div className="d-flex align-items-center gap-2">
+                                    <div className="d-flex align-items-center justify-content-center" style={{ width: "24px", height: "24px" }}>
+                                        <i className="fas fa-code-branch"></i>
+                                    </div>
+                                    <span className="_name_item">{activeTeam?.name}</span>
                                 </div>
-                                <span className="_name_item">{team.name}</span>
-                            </div>
-                            <span>⌘{index + 1}</span>
-                        </Dropdown.Item>
-                    ))}
+                                <span>⌘1</span>
+                            </Dropdown.Item>
+                        )
+                    }
                 </Dropdown.Menu>
             </Dropdown>
         </Nav>

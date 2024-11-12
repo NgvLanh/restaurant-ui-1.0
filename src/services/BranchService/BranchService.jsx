@@ -104,5 +104,18 @@ const createNonAdmin = async (request) =>{
     }
 }
 
+const getBranchByUserId = async (UserId) => {
+    try {
+        const response = await ApiRequest({
+            path: `branches/${UserId}`,
+            headers: 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi xóa chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi xóa chi nhánh' };
+    }
+};
 
-export { getAllBranches, createBranch, updateBranch, deleteBranch, getAllBranchesPageable,createNonAdmin, updateBranch01 };
+
+export { getAllBranches, createBranch, updateBranch, deleteBranch, getAllBranchesPageable,createNonAdmin, updateBranch01, getBranchByUserId };
