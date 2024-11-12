@@ -5,7 +5,8 @@ const asyncCartService = async (request, userId) => {
         const response = await ApiRequest({
             method: 'POST',
             path: `carts/async/${userId}`,
-            data: request
+            data: request,
+            headers: 'Bearer '
         });
         return response;
     } catch (error) {

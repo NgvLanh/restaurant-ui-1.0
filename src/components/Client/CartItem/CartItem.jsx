@@ -1,23 +1,22 @@
 import { formatCurrency } from "../../../utils/FormatUtils";
-import { useState, useEffect } from "react";
 
 const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
-    const [isSelected, setIsSelected] = useState(item.status);
-
-    useEffect(() => {
-        setIsSelected(item.status);
-    }, [item.status]);
+    const userInfo = JSON.parse(localStorage.getItem('user_info'));
 
     const handleQuantityChange = (e) => {
-        const value = e.target.value.replace(/\D/g, '');
-        const quantity = Math.max(1, Math.min(25, parseInt(value, 10) || 1));
-        onUpdateQuantity(item.id, quantity);
+        if (userInfo) {
+            console.log(userInfo);
+        } else {
+            const value = e.target.value.replace(/\D/g, '');
+            const quantity = Math.max(1, Math.min(25, parseInt(value, 10) || 1));
+            // onUpdateQuantity(item.id, quantity);
+            console.log(item.id, quantity);
+
+        }
     };
 
     const handleToggleSelect = () => {
-        const newSelected = !isSelected;
-        setIsSelected(newSelected);
-        onToggleSelect(item.id, newSelected);
+
     };
 
     return (
@@ -26,17 +25,16 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
                 <input
                     type="checkbox"
                     className="form-check-input"
-                    checked={isSelected}
-                    onChange={handleToggleSelect}
+                    checked={item.status}
                 />
             </div>
             <div className="col-2">
-                <img src={item.image} alt={item.name} className="img-fluid rounded" />
+                <img src={item.dish?.image} alt={item.dish?.name} className="img-fluid rounded" />
             </div>
             <div className="col-4">
-                <h5>{item.name} / <small>{item.category?.name}</small></h5>
-                <p className="text-muted">{item.description}</p>
-                <p className="fw-bold">{formatCurrency(item.price)}</p>
+                <h5>{item.dish?.name} / <small>{item.dish?.category?.name}</small></h5>
+                <p className="text-muted">{item.dish?.description}</p>
+                <p className="fw-bold">{formatCurrency(item.dish?.price)}</p>
             </div>
             <div className="col-2">
                 <div className="d-flex align-items-center justify-content-center">

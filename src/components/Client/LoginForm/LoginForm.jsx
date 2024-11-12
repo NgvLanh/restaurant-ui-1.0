@@ -12,7 +12,7 @@ const LoginForm = () => {
 
     const [branches, setBranches] = useState([])
     const [cookie, setCookie] = useCookies(['user_token']);
-    const cartTemp = JSON.parse(localStorage.getItem('cart_temp'))
+    const cartTemp = JSON.parse(localStorage.getItem('cart_temps'))
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,8 +28,7 @@ const LoginForm = () => {
         if (response?.status) {
             AlertUtils.success('Đăng nhập thành công');
             saveLocalAndCookie(response?.data);
-            roleRoute(response?.data?.info);
-            // syncCartWithServer(response?.data);
+            syncCartWithServer(response?.data);
         } else {
             AlertUtils.error(response?.message);
         }
@@ -65,10 +64,9 @@ const LoginForm = () => {
     
 
     const syncCartWithServer = async (data) => {
-        const userInfo = JSON.parse(localStorage.getItem('user_info'));
-        console.log(await asyncCartService(cartTemp, userInfo?.id));
-        
-        localStorage.removeItem('cart_temp');
+        console.log(await asyncCartService(cartTemp, data?.info?.id));
+        localStorage.removeItem('cart_temps');
+        // roleRoute(data?.info);
     }
 
     return (
