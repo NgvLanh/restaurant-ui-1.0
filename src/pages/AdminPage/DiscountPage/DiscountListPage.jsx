@@ -10,9 +10,11 @@ import DiscountModal from "./Modals/DiscountModal";
 import {
   createDiscount,
   deleteDiscount,
+  getAllDiscountsByBranchId,
   getAllDiscountsPage,
   updateDiscount,
 } from "../../../services/DiscountService/DiscountService";
+import { formatCurrency, formatDate } from "../../../utils/FormatUtils";
 
 const DiscountListPage = () => {
   const [discounts, setDiscount] = useState([]);
@@ -25,12 +27,9 @@ const DiscountListPage = () => {
 
   const fetchDiscount = async () => {
     try {
-      const response = await getAllDiscountsPage(currentPage, pageSize);
-      console.log("API response:", response); // Kiểm tra cấu trúc phản hồi
-      if (response?.data?.content) {
-        setDiscount(response.data.content);
-        setTotalPages(response.data.totalPages);
-      }
+      const response = await getAllDiscountsByBranchId(currentPage, pageSize);
+      setDiscount(response?.data?.content);
+      setTotalPages(response?.data?.totalPages);
     } catch (e) {
       console.warn("Lỗi gọi API", e);
     }
@@ -68,9 +67,7 @@ const DiscountListPage = () => {
   };
 
   const handleDelete = async (id) => {
-    const result = await AlertUtils.confirm(
-      "Bạn có chắc chắn muốn xoá mã giảm giá này"
-    );
+    const result = await AlertUtils.confirm("Bạn có chắc chắn muốn xoá mã giảm giá này");
     if (result) {
       const response = await deleteDiscount(id);
       if (response?.status) {
@@ -101,7 +98,6 @@ const DiscountListPage = () => {
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
-     
               }}
             >
               <BiPlus className="me-2" />
@@ -125,23 +121,23 @@ const DiscountListPage = () => {
             </tr>
           </thead>
           <tbody>
-            {discounts.length > 0 ? (
-              discounts.map((row, index) => (
+            {discounts?.length > 0 ? (
+              discounts?.map((row, index) => (
                 <tr key={row.id} className="align-middle">
                   <td className="text-center">{index + 1}</td>
                   <td>{row.code}</td>
                   <td>{row.quantity}</td>
-                  <td>{row.startDate}</td>
-                  <td>{row.endDate}</td>
+                  <td>{formatDate(row.startDate)}</td>
+                  <td>{formatDate(row.endDate)}</td>
                   <td>
                     {row.discountMethod === "PERCENTAGE"
                       ? "Giảm giá phần trăm"
                       : row.discountMethod === "FIXED_AMOUNT"
-                      ? "Giảm giá cụ thể"
-                      : "Chưa xác định"}
+                        ? "Giảm giá cụ thể"
+                        : "Chưa xác định"}
                   </td>
-                  <td>{row.quota}</td>
-                  <td>{row.value}</td>
+                  <td>{formatCurrency(row.quota)}</td>
+                  <td>{row.discountMethod === 'PERCENTAGE' ? `${row.value} %` : `${formatCurrency(row.value)}`}</td>
                   <td className="text-center">
                     <span
                       className="d-flex justify-content-center align-items-center gap-3"

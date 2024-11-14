@@ -44,3 +44,7 @@ const reverseGeocode = async (latitude, longitude) => {
 
 // Gọi hàm khi trang tải lên
 // window.onload = getLocation;
+
+// window.addEventListener('beforeunload', function (event) {
+//     this.localStorage.removeItem('user_info');
+// });

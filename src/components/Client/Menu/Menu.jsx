@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getAllCategories } from '../../../services/CategoryService/CategoryService';
 import { getAllDishes, getAllDishesByCategoryId } from '../../../services/DishService/DishService';
 import AddToCartModal from '../AddToCartModal/AddToCartModal';
+import { formatCurrency } from '../../../utils/FormatUtils';
+import { getCartItemsByUserId, updateCartItemQuantity } from '../../../services/CartItemService/CartItemService';
 
 const Menus = () => {
     const userInfo = JSON.parse(localStorage.getItem('user_info'));
@@ -25,7 +27,7 @@ const Menus = () => {
         }
     };
 
-    const handleAddToCart = (dish, quantity) => {
+    const handleAddToCart = async (dish, quantity) => {
         const cartTemps = JSON.parse(localStorage.getItem('cart_temps')) || [];
         if (!userInfo) {
             let itemExists = false;
@@ -37,6 +39,7 @@ const Menus = () => {
             });
             if (!itemExists) {
                 const data = {
+                    id: `${dish.id}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
                     dish: {
                         ...dish,
                     },
@@ -47,11 +50,11 @@ const Menus = () => {
             }
             localStorage.setItem('cart_temps', JSON.stringify(cartTemps));
         } else {
-            console.log('Sử lý khi đã đăng nhập');
+            // const response =  await getCartItemsByUserId(userInfo?.id);
+            // console.log(response);
+            // await updateCartItemQuantity(dish?.id, quantity);
         }
     };
-
-
 
     const handleOpenModal = (dish) => {
         setSelectedDish(dish);
@@ -86,7 +89,8 @@ const Menus = () => {
                         <div key={dish?.id} className="col-lg-4 col-md-6 portfolio-item wow fadeInUp" data-wow-delay="0.1s">
                             <div className="rounded overflow-hidden">
                                 <div className="position-relative overflow-hidden" style={{ minHeight: '250px' }}>
-                                    <img className="img-fluid w-100" src={dish?.image} alt="" style={{ minHeight: '300px' }} />
+                                    <img className="img-fluid w-100" src={dish?.image} alt={dish?.image}
+                                        style={{ minHeight: '300px', maxHeight: '300px', objectFit: 'cover' }} />
                                     <div className="portfolio-overlay">
                                         <a className="btn btn-square btn-outline-light mx-1" href={dish?.image} data-lightbox="portfolio"><i className="fa fa-eye"></i></a>
                                         <a className="btn btn-square btn-outline-light mx-1"
@@ -95,7 +99,11 @@ const Menus = () => {
                                 </div>
                                 <div className="border border-5 border-light border-top-0 p-4">
                                     <p className="text-primary fw-medium mb-2">{dish?.category?.name}</p>
-                                    <h5 className="lh-base mb-0">{dish?.name}</h5>
+                                    <p className='d-flex justify-content-start align-items-center gap-2'>
+                                        <h5 className="lh-base mb-0">{dish?.name}</h5>
+                                        <span>{formatCurrency(dish?.price)}</span>
+                                    </p>
+                                    <p>{dish?.description}</p>
                                 </div>
                             </div>
                         </div>

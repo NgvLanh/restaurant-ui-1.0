@@ -37,8 +37,9 @@ const loginService = async (request) => {
         });
         return response;
     } catch (error) {
-        console.error(`Lỗi đăng nhập: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng nhập' };
+        // console.error(`Lỗi đăng nhập: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        console.log(error);
+        // return { status: false, message: error || 'Lỗi đăng nhập' };
     }
 };
 

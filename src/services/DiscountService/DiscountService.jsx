@@ -8,8 +8,7 @@ const getAllDiscounts = async () => {
     return response?.data?.content;
   } catch (error) {
     console.error(
-      `Lỗi lấy danh sách giảm giá: ${
-        error?.response?.data?.message || "Lỗi chưa cấu hình"
+      `Lỗi lấy danh sách giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
       }`
     );
     return {
@@ -29,8 +28,7 @@ const createDiscount = async (request) => {
     return response;
   } catch (error) {
     console.error(
-      `Lỗi tạo mã giảm giá: ${
-        error?.response?.data?.message || "Lỗi chưa cấu hình"
+      `Lỗi tạo mã giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
       }`
     );
     return {
@@ -50,8 +48,7 @@ const updateDiscount = async (discountId, request) => {
     return response;
   } catch (error) {
     console.error(
-      `Lỗi cập nhật mã giảm giá: ${
-        error?.response?.data?.message || "Lỗi chưa cấu hình"
+      `Lỗi cập nhật mã giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
       }`
     );
     return {
@@ -60,37 +57,46 @@ const updateDiscount = async (discountId, request) => {
     };
   }
 };
-const deleteDiscount = async (DiscountId) => {
+const deleteDiscount = async (discountId) => {
   try {
     const response = await ApiRequest({
       method: "DELETE",
-      path: `discounts/${DiscountId}`,
+      path: `discounts/${discountId}`,
       headers: "Bearer ",
     });
     return response;
   } catch (error) {
-    console.error(
-      `Lỗi xóa mã giảm giá: ${
-        error?.response?.data?.message || "Lỗi chưa cấu hình"
-      }`
-    );
-    return {
-      status: false,
-      message: error?.response?.data?.message || "Lỗi xóa chi nhánh",
-    };
+    console.log(error);
   }
 };
 const getAllDiscountsPage = async (currentPage, pageSize, code = "") => {
   try {
     const response = await ApiRequest({
       path: `discounts?page=${currentPage}&size=${pageSize}&code=${code}`, // Thêm code vào URL
-      headers:`Bearer `
+      headers: `Bearer `
     });
     return response;
   } catch (error) {
     console.error(
-      `Lỗi lấy danh sách giảm giá: ${
-        error?.response?.data?.message || "Lỗi chưa cấu hình"
+      `Lỗi lấy danh sách giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
+      }`
+    );
+    return {
+      status: false,
+      message: error?.response?.data?.message || "Lỗi lấy danh sách giảm giá",
+    };
+  }
+};
+const getAllDiscountsByBranchId = async (currentPage, pageSize,) => {
+  try {
+    const response = await ApiRequest({
+      path: `discounts?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
+      headers: `Bearer `
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      `Lỗi lấy danh sách giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
       }`
     );
     return {
@@ -100,10 +106,4 @@ const getAllDiscountsPage = async (currentPage, pageSize, code = "") => {
   }
 };
 
-export {
-  getAllDiscounts,
-  createDiscount,
-  updateDiscount,
-  deleteDiscount,
-  getAllDiscountsPage,
-};
+export { getAllDiscounts, createDiscount, updateDiscount, deleteDiscount, getAllDiscountsPage, getAllDiscountsByBranchId };
