@@ -1,5 +1,6 @@
 import { Bar } from "react-chartjs-2";
 import { Col, Card, Table } from "react-bootstrap";
+import { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,61 +9,67 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { getCountUser } from "../../../services/Statistics/Statistics";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const StatisticalCusSumMonth = () => {
-  ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
-  const months = [
-    "Tháng 1",
-    "Tháng 2",
-    "Tháng 3",
-    "Tháng 4",
-    "Tháng 5",
-    "Tháng 6",
-    "Tháng 7",
-    "Tháng 8",
-    "Tháng 9",
-    "Tháng 10",
-    "Tháng 11",
-    "Tháng 12",
-  ];
+  const [userData, setDiscountData] = useState([]);
+  const [months, setMonths] = useState([]);
 
-  const customerData = [45, 67, 78, 82, 56, 74, 91, 83, 66, 54, 72, 88]; // Dữ liệu mẫu
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const data = await getCountUser();
+        const monthsFromAPI = data?.map((item) => item.month);
+        const userCounts = data?.map((item) => item.totalUsers);
+
+        setMonths(monthsFromAPI);
+        setDiscountData(userCounts);
+
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu người dùng:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
+
 
   const barDataMonth = {
-    labels: months,
+    labels: months.map((month) => `Tháng: ${month}`),
     datasets: [
       {
         label: "Khách hàng mới",
-        data: customerData,
+        data: userData,
         backgroundColor: [
-            "rgba(255, 99, 132, 0.6)",
-            "rgba(54, 162, 235, 0.6)",
-            "rgba(255, 206, 86, 0.6)",
-            "rgba(75, 192, 192, 0.6)",
-            "rgba(153, 102, 255, 0.6)",
-            "rgba(255, 159, 64, 0.6)",
-            "rgba(201, 203, 207, 0.6)",
-            "rgba(255, 99, 132, 0.6)",
-            "rgba(54, 162, 235, 0.6)",
-            "rgba(255, 206, 86, 0.6)",
-            "rgba(75, 192, 192, 0.6)",
-            "rgba(153, 102, 255, 0.6)",
-          ],
-          borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
-            "rgba(201, 203, 207, 1)",
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-          ],
+          "rgba(255, 99, 132, 0.8)",
+          "rgba(54, 162, 235, 0.8)",
+          "rgba(255, 206, 86, 0.8)",
+          "rgba(75, 192, 192, 0.8)",
+          "rgba(153, 102, 255, 0.8)",
+          "rgba(255, 159, 64, 0.8)",
+          "rgba(201, 203, 207, 0.8)",
+          "rgba(255, 99, 132, 0.8)",
+          "rgba(54, 162, 235, 0.8)",
+          "rgba(255, 206, 86, 0.8)",
+          "rgba(75, 192, 192, 0.8)",
+          "rgba(153, 102, 255, 0.8)"
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+          "rgba(201, 203, 207, 1)",
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)"
+        ],
+        
         borderWidth: 1,
       },
     ],
@@ -88,6 +95,18 @@ const StatisticalCusSumMonth = () => {
                   plugins: {
                     legend: {
                       display: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        display: false,
+                      },
                     },
                   },
                 }}
@@ -117,8 +136,8 @@ const StatisticalCusSumMonth = () => {
             <h6 className="mb-4" style={{ fontSize: "20px", fontWeight: "bold", color: "#342E37" }}>
               Bảng thống kê số khách hàng mới
             </h6>
-            <Table striped bordered hover responsive>
-              <thead style={{ backgroundColor: "#E3F2FD" }}>
+            <Table striped bordered={false} hover responsive>
+              <thead style={{ backgroundColor: "#FFFFFF" }}>
                 <tr>
                   <th>Tháng</th>
                   <th>Số khách hàng mới</th>
@@ -128,7 +147,7 @@ const StatisticalCusSumMonth = () => {
                 {months.map((month, index) => (
                   <tr key={index}>
                     <td>{month}</td>
-                    <td>{customerData[index]}</td>
+                    <td>{userData[index]}</td>
                   </tr>
                 ))}
               </tbody>

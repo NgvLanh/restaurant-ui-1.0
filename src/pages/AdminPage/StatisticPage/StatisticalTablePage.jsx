@@ -12,43 +12,53 @@ import {
   LineElement,
 } from "chart.js";
 import { useEffect, useState } from "react";
+import { getCountTableReversion } from "../../../services/Statistics/Statistics";
+
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement
+);
 
 const StatisticalTablePage = () => {
-  ChartJS.register(
-    ArcElement,
-    Tooltip,
-    Legend,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    PointElement,
-    LineElement
-  );
+  const [TableData, setTableData] = useState([]);
+  const [months, setMonths] = useState([]);
 
-  const barLabels = [
-    "Thứ 2",
-    "Thứ 3",
-    "Thứ 4",
-    "Thứ 5",
-    "Thứ 6",
-    "Thứ 7",
-    "Chủ nhật",
-  ];
+  useEffect(() => {
+    const fetchTableData = async () => {
+      try {
+        const data = await getCountTableReversion();
+        const monthsFromAPI = data?.map((item) => item.date);
+        const tableCounts = data?.map((item) => item.total_reservations);
 
-  const barDataWeek = {
-    labels: barLabels,
+        setMonths(monthsFromAPI);
+        setTableData(tableCounts);
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu bảng:", error);
+      }
+    };
+    fetchTableData();
+  }, []);
+
+  const barDataTable = {
+    labels: months.map((date) => `Tháng: ${date}`),
     datasets: [
       {
         label: "Số bàn đã đặt",
-        data: [20, 15, 25, 30, 10, 5, 40], // Dữ liệu có thể được thay đổi theo thực tế
+        data: TableData,
         backgroundColor: [
-          "rgba(255, 99, 132, 0.6)",   
-          "rgba(54, 162, 235, 0.6)",    
-          "rgba(255, 205, 86, 0.6)",    
-          "rgba(75, 192, 192, 0.6)",    
-          "rgba(153, 102, 255, 0.6)",   
-          "rgba(255, 127, 80, 0.6)",    
-          "rgba(211, 211, 211, 0.6)"   
+          "rgba(255, 99, 132, 0.8)",
+          "rgba(54, 162, 235, 0.8)",
+          "rgba(255, 206, 86, 0.8)",
+          "rgba(75, 192, 192, 0.8)",
+          "rgba(153, 102, 255, 0.8)",
+          "rgba(255, 159, 64, 0.8)",
+          "rgba(201, 203, 207, 0.8)",
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
@@ -66,18 +76,16 @@ const StatisticalTablePage = () => {
 
   return (
     <div className="container mt-4">
-      {/* Tiêu đề */}
       <h6 className="mb-4" style={{ fontSize: "25px", fontWeight: "bold", color: "#342E37" }}>
         Thống kê số bàn đã đặt trong tuần
       </h6>
 
-      {/* Biểu đồ Bar */}
       <Col lg={12} md={12} className="mb-4">
         <Card className="z-index-2" style={{ backgroundColor: "#F9F9F9", border: "0px", minHeight: "300px" }}>
           <Card.Header className="p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style={{ border: "0px" }}>
             <div className="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <Bar
-                data={barDataWeek}
+                data={barDataTable}
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
@@ -106,7 +114,6 @@ const StatisticalTablePage = () => {
         </Card>
       </Col>
 
-      {/* Bảng thống kê */}
       <Col lg={12} md={12}>
         <Card style={{ backgroundColor: "#F9F9F9", border: "1px solid #E0E0E0" }}>
           <Card.Body>
@@ -121,10 +128,10 @@ const StatisticalTablePage = () => {
                 </tr>
               </thead>
               <tbody>
-                {barLabels.map((label, index) => (
+                {months.map((label, index) => (
                   <tr key={index}>
                     <td>{label}</td>
-                    <td>{barDataWeek.datasets[0].data[index]}</td>
+                    <td>{TableData[index]}</td>
                   </tr>
                 ))}
               </tbody>
