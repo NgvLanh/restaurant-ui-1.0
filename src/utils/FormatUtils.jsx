@@ -1,8 +1,13 @@
 import moment from 'moment';
 
-const formatDate = (dateString) => {
+const formatDateTime = (dateString) => {
     if (!dateString) return '';
     return moment(dateString).format('DD/MM/YYYY - HH:mm:ss');
+};
+
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return moment(dateString).format('DD/MM/YYYY');
 };
 
 const formatCurrency = (amount) => {
@@ -15,4 +20,4 @@ const formatNumber = (number) => {
     return new Intl.NumberFormat('vi-VN').format(number);
 };
 
-export { formatDate, formatCurrency, formatNumber };
+export { formatDateTime, formatDate, formatCurrency, formatNumber };

@@ -59,16 +59,6 @@ const BranchStatusPage = () => {
     fetchBranchStatuses();
   };
 
-  const openEditModal = (data) => {
-    setInitialValues(data)
-    setShowModal(true);
-  };
-
-  const openCreateModal = () => {
-    setInitialValues(null)
-    setShowModal(true);
-  };
-
   const handleDelete = async (id) => {
     const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
     if (result) {

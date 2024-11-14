@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { Link, useNavigate } from 'react-router-dom';
+import { getUserService } from '../../../services/AuthService/AuthService';
+import AlertUtils from '../../../utils/AlertUtils';
 
 const Navbar = () => {
     const [cookie, setCookie, removeCookie] = useCookies(['user_token']);
-    const userInfo = JSON.parse(localStorage.getItem('user_info'));
+    const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
+    const fetchUserInfo = async () => {
+        try {
+            const response = await getUserService();
+            setUserInfo(response);
+        } catch (error) {
+            AlertUtils.info('Vui lòng đăn nhập lại', 'Phiên bản của bạn đã hết hạn');
+            navigate('/login');
+        }
+    }
     const handleLogout = () => {
         localStorage.clear();
         removeCookie('user_token');
@@ -38,6 +52,7 @@ const Navbar = () => {
                                 <>
                                     <Link to="/shopping-cart" className="dropdown-item">Giỏ Hàng</Link>
                                     <Link to="/dining-table" className="dropdown-item">Bàn của bạn</Link>
+                                    <Link to="/account" className="dropdown-item">Tài khoản</Link>
                                     <a href="/home" className="dropdown-item" onClick={handleLogout}>Đăng xuất</a>
                                 </>
                             ) : (
@@ -45,7 +60,6 @@ const Navbar = () => {
                                     <Link to="/login" className="dropdown-item">Đăng Nhập</Link>
                                     <Link to="/register" className="dropdown-item">Đăng Ký</Link>
                                     <Link to="/shopping-cart" className="dropdown-item">Giỏ Hàng</Link>
-                                    <Link to="/dining-table" className="dropdown-item">Bàn của bạn</Link>
                                 </>
                             )}
 

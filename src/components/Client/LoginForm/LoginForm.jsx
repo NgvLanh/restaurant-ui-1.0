@@ -25,12 +25,14 @@ const LoginForm = () => {
 
     const onSubmit = async (request) => {
         const response = await loginService(request);
+        console.log(response);
         if (response?.status) {
             AlertUtils.success('Đăng nhập thành công');
             saveLocalAndCookie(response?.data);
             syncCartWithServer(response?.data);
+
         } else {
-            AlertUtils.error(response?.message);
+            AlertUtils.error('Email hoặc mật khẩu chưa chính xác');
         }
     };
 
@@ -39,7 +41,6 @@ const LoginForm = () => {
         setCookie('user_token', data?.accessToken);
     }
 
-   
 
     const roleRoute = async (data) => {
         const role = data?.roles[0];
@@ -50,21 +51,25 @@ const LoginForm = () => {
             navigate('/admin');
         } else if (role === 'NON_ADMIN') {
             try {
-                const branchInfo = await getBranchByUserId(userId);  // Await here
-                
+                const branchInfo = await getBranchByUserId(userId);
                 localStorage.setItem('branch_info', JSON.stringify(branchInfo.data));
                 navigate('/admin');
             } catch (error) {
-                console.error("Error fetching branch info:", error);
+                console.error(error);
             }
         } else {
             navigate('/home');
         }
+        navigate(0);
     };
-    
+
 
     const syncCartWithServer = async (data) => {
-        console.log(await asyncCartService(cartTemp, data?.info?.id));
+        if (cartTemp) {
+            const request = cartTemp.map(({ id, ...rest }) => rest);
+            console.log(request, data?.info?.id);
+            await asyncCartService(request, data?.info?.id);
+        }
         localStorage.removeItem('cart_temps');
         roleRoute(data?.info);
     }

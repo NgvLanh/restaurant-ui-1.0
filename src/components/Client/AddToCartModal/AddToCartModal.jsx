@@ -21,7 +21,7 @@ const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
                 <Modal.Title>Thông Tin Món Ăn</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <img className="img-fluid w-100 rounded-3" src={dish?.image} alt={dish?.name} />
+                <img className="img-fluid w-100 rounded-3" src={dish?.image} alt={dish?.name} style={{ objectFit: 'cover', minHeight: '250px', maxHeight: '250px' }} />
                 <div className='mt-3 text-center'>
                     <div className='d-flex gap-1 justify-content-center align-items-center'>
                         <h4>{dish?.name}</h4> /
@@ -32,8 +32,8 @@ const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
                 <p className='text-center'>{dish?.description}</p>
                 <div>
                     <Form onSubmit={handleSubmit(onSubmit)}>
-                        <Form.Group controlId="quantity" className='d-flex'>
-                            <div className='d-flex justify-content-center mb-1'>
+                        <Form.Group controlId="quantity" className=''>
+                            <div className='w-100 d-flex justify-content-center'>
                                 <Form.Control
                                     type="number"
                                     className='text-center'
@@ -53,10 +53,10 @@ const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
                                     isInvalid={!!errors.quantity}
                                 />
                             </div>
-                            <Form.Control.Feedback type="invalid">
-                                {errors.quantity?.message}
-                            </Form.Control.Feedback>
                         </Form.Group>
+                        <Form.Control.Feedback type="invalid">
+                            {errors.quantity?.message}
+                        </Form.Control.Feedback>
                         <Modal.Footer>
                             <Button variant="primary" type="submit">
                                 Thêm vào Giỏ Hàng

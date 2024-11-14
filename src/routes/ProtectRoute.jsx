@@ -8,27 +8,41 @@ const ProtectRoute = ({ element, admin = true }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        document.getElementById('spinner').classList.add('show');
         routerRole();
+        document.getElementById('spinner').classList.remove('show');
     }, []);
 
     const routerRole = async () => {
-        if (!userInfo && admin) {
-            navigate('/login');
-            AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
-        } else if (userInfo && admin) {
-            try {
-                const introspect = await getUserService();
-                if (introspect.roles[0] !== 'ADMIN' && introspect.roles[0] !== 'NON_ADMIN') {
-                    navigate('/login');
-                    AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
-                }
-            } catch (error) {
+        console.log(admin, !userInfo);
+
+        if (admin) {
+            if (!userInfo) {
                 navigate('/login');
-                AlertUtils.info('Quyền truy cập bị từ chối!', 'Không đủ quyền hạn');
+                AlertUtils.info('Localstroge #: KO', 'Quyền truy cập bị từ chối!');
+            } else {
+                const introspect = await getUserService();
+                if (introspect === undefined) {
+                    navigate('/login');
+                    AlertUtils.info('Vui lòng đăng nhập để tiếp tục!', 'Bạn chưa đăng nhập');
+                } else if (introspect.roles[0] !== 'ADMIN' && introspect.roles[0] !== 'NON_ADMIN') {
+                    navigate('/login');
+                    AlertUtils.info('Localstroge #: CÓ, TOKEN ko phải ADMIN', 'Quyền truy cập bị từ chối!');
+                }
             }
-        } else if (userInfo && !admin) {
-            navigate('/home');
+        } else {
+            if (!userInfo) {
+                navigate('/login');
+                AlertUtils.info('Vui lòng đăng nhập để tiếp tục!', 'Bạn chưa đăng nhập');
+                // } else {
+                //     console.log('MỆT');
+
+                //     // navigate('/login');
+                //     // AlertUtils.info('Vui lòng đăng nhập để tiếp tục!', 'Bạn chưa đăng nhập');
+            }
         }
+
+
     };
 
     return element;

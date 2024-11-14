@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import AlertUtils from '../../../utils/AlertUtils';
 import { useState } from 'react';
 import { sendRecoveryCode } from '../../../services/MailService/MailService';
@@ -10,6 +10,7 @@ const RecoveryPasswordForm = () => {
     const [showCodeInput, setShowCodeInput] = useState(false);
     const [showPasswordResetForm, setShowPasswordResetForm] = useState(false);
     const [email, setEmail] = useState('');
+    const navigate = useNavigate();
 
     const onSubmitEmail = async (data) => {
         sendEmail(data);
@@ -23,7 +24,7 @@ const RecoveryPasswordForm = () => {
         const response = await passwordRecoveryVerifyCode(request);
         if (response.status) {
             AlertUtils.success('Xác nhận mã thành công! Bạn có thể tiếp tục.');
-            setShowPasswordResetForm(true); 
+            setShowPasswordResetForm(true);
         } else if (response) {
             AlertUtils.error(response?.message);
         } else {
@@ -39,8 +40,7 @@ const RecoveryPasswordForm = () => {
         const response = await resetPassword(request);
         if (response.status) {
             AlertUtils.success('Đặt lại mật khẩu thành công! Bạn có thể đăng nhập bằng mật khẩu mới.');
-            setShowCodeInput(false);
-            setShowPasswordResetForm(false);
+            navigate('/login');
         } else {
             AlertUtils.error(response?.message || 'Đặt lại mật khẩu thất bại, vui lòng thử lại.');
         }
