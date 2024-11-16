@@ -7,14 +7,14 @@ import { FaRegNewspaper, FaUtensils } from "react-icons/fa6";
 import { IoPeopleOutline } from "react-icons/io5";
 import { CiMoneyCheck1 } from "react-icons/ci";
 import "./DashboardPage.css"; // Tạo một file CSS để quản lý các style tùy chỉnh
-import { getTotalRevenue, getTotalDishes, getTotalUsers, getTotalOrders } from "../../../services/DashboardService/DashboardService";
+import { getTotalRevenue, getTotalDishes, getTotalUsers, getTotalOrders, getTotalOrdersCanCelled } from "../../../services/DashboardService/DashboardService";
 
 const DashboardPage = () => {
     const [totalRevenue, setTotalRevenue] = useState(null);
     const [totalDishes, setTotalDishes] = useState(null);
     const [totalUsers, setTotalUsers] = useState(null);
     const [totalOrders, setTotalOrders] = useState(null);
-
+    const [totalOrdersCancelled, setTotalOrdersCancelled] = useState(null);
     useEffect(() => {
         const fetchTotalRevenue = async () => {
             const revenueResponse = await getTotalRevenue();
@@ -43,10 +43,17 @@ const DashboardPage = () => {
                 setTotalOrders(ordersResponse);
             }
         };
+        const fetchTotalOdrersCancelled = async () => {
+            const ordersCancelledResponse = await getTotalOrdersCanCelled();
+            if (ordersCancelledResponse) {
+                setTotalOrdersCancelled(ordersCancelledResponse);
+            }
+        };
         fetchTotalRevenue();
         fetchTotalDishes();
         fetchTotalUsers();
         fetchTotalOdrers();
+        fetchTotalOdrersCancelled();
     }, []);
 
 
@@ -66,7 +73,7 @@ const DashboardPage = () => {
                                 ? totalOrders?.toLocaleString() // Hiển thị số món ăn
                                 : 'Đang tải...'}
                         </h3>
-                        <p>Tổng số đơn hàng</p>
+                        <p>Đơn hàng đã hoàn thành</p>
                     </div>
                 </div>
                 <div className="overview-card">
@@ -92,7 +99,7 @@ const DashboardPage = () => {
                                 ? totalRevenue?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
                                 : 'Đang tải...'}
                         </h3>
-                        <p>Tổng doanh thu</p>
+                        <p>Tổng doanh thu đơn hàng đã giao/đã thanh toán</p>
                     </div>
                 </div>
                 <div className="overview-card">
@@ -106,6 +113,19 @@ const DashboardPage = () => {
                                 : 'Đang tải...'}
                         </h3>
                         <p>Tổng số món ăn</p>
+                    </div>
+                </div>
+                <div className="overview-card">
+                    <div className="icon">
+                        <FaUtensils /> {/* Icon cho món ăn */}
+                    </div>
+                    <div className="info">
+                        <h3>
+                            {totalOrdersCancelled != null
+                                ? totalOrdersCancelled?.toLocaleString() // Hiển thị số món ăn
+                                : 'Đang tải...'}
+                        </h3>
+                        <p>Đơn hàng đã hủy</p>
                     </div>
                 </div>
             </div>
