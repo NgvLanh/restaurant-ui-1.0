@@ -229,6 +229,7 @@ const UserInfoPage = () => {
                 handleClose={() => setShowModal(false)}
                 handleSave={handleSaveAddress}
             />
+
             <Footer />
         </>
     );

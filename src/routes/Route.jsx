@@ -36,6 +36,7 @@ import ForgotPasswordPage from "../pages/ClientPage/ForgotPasswordPage/ForgotPas
 import UserInfoPage from "../pages/ClientPage/UserInfoPage/UserInfoPage";
 import CheckoutPage from "../pages/ClientPage/CheckoutPage/CheckoutPage";
 
+
 export const router = createBrowserRouter((
     createRoutesFromElements(
         <Route>
@@ -61,6 +62,7 @@ export const router = createBrowserRouter((
                 {/*  */}
                 <Route path="checkout" element={<ProtectRoute element={<CheckoutPage />} admin={false} />} />
                 {/*  */}
+
                 <Route path="dining-table" element={<ProtectRoute element={<DiningTablePage />} admin={false} />} />
                 {/*  */}
                 <Route path="forgot-password" element={<ForgotPasswordPage />} />

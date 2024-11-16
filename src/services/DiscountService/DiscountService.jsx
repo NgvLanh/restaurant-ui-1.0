@@ -106,7 +106,6 @@ const getAllDiscountsByBranchId = async (currentPage, pageSize,) => {
   }
 };
 
-
 export const checkDiscount = async (code) => {
   try {
     const response = await ApiRequest({

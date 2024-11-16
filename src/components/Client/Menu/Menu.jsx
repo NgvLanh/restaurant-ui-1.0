@@ -41,6 +41,7 @@ const Menus = () => {
     }
 
 
+
     const handleAddToCart = async (dish, quantity) => {
         if (!userInfo) {
             let itemExists = false;
@@ -66,6 +67,7 @@ const Menus = () => {
             await addToCart(userInfo?.id, dish.id, quantity);
         }
     };
+
 
     return (
         <div className="container-xxl py-5">

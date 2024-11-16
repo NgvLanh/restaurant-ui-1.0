@@ -1,6 +1,6 @@
+
 import { FaDeleteLeft } from "react-icons/fa6";
 import { formatCurrency } from "../../../utils/FormatUtils";
-
 const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
 
 
@@ -10,6 +10,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
             await onUpdateQuantity(id, parsedValue);
         }
     }
+
     const handleToggleSelect = (id, status) => {
         onToggleSelect(id, status);
     };
@@ -51,6 +52,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
                     />
                     <button className="btn btn-sm"
                         onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}>+</button>
+
                 </div>
             </td>
             <td className="text-center align-content-center">
