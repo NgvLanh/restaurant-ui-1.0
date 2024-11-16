@@ -9,8 +9,7 @@ const getUserService = async () => {
         });
         return response?.data;
     } catch (error) {
-        console.error(`Lỗi lấy thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return error?.response?.data?.message || 'Lỗi chưa cấu hình';
+        return null;
     }
 };
 

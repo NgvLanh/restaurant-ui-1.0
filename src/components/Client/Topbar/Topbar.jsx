@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllBranches } from "../../../services/BranchService/BranchService";
 import { Form } from "react-bootstrap";
 import { getUserService } from "../../../services/AuthService/AuthService";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AlertUtils from "../../../utils/AlertUtils";
 
 const Topbar = () => {

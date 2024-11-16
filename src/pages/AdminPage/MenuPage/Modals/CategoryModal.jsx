@@ -14,7 +14,7 @@ const CategoryModal = ({ showModal, closeModal, initialValues, handleData }) => 
         onDrop: (acceptedFiles) => {
             const file = acceptedFiles[0];
             setFile(file);
-            setPreview(URL.createObjectURL(file));  // Tạo URL xem trước ảnh
+            setPreview(URL.createObjectURL(file)); 
             register('image').onChange({ target: { name: 'image', value: file } });
         }
     });
@@ -28,6 +28,7 @@ const CategoryModal = ({ showModal, closeModal, initialValues, handleData }) => 
             reset();
             setPreview(null);
         }
+        setFile(null);
     }, [initialValues]);
 
     // Xử lý sự kiện gửi form
@@ -48,6 +49,7 @@ const CategoryModal = ({ showModal, closeModal, initialValues, handleData }) => 
             reset();
             setPreview(null);
         }
+        setFile(null);
     };
 
     return (
