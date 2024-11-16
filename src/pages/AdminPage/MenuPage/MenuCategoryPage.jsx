@@ -46,7 +46,7 @@ const MenuCategoryPage = () => {
     const formData = new FormData();
     formData.append("file", data.image);
     await uploadFile(formData);
-    data.image = data.image.name;
+    data.image = data.image?.name;
     const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
     if (initialValues) {
       const response = await updateCategory(initialValues?.id, data);
