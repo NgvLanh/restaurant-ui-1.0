@@ -65,14 +65,15 @@ const CheckoutPage = () => {
                 table: null,
                 orderStatus: method,
                 total: discountInfo?.discountMethod === 'PERCENTAGE'
-                    ? formatCurrency(calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0))
-                    : formatCurrency(calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0))
+                    ? calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0)
+                    : calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0)
             }
             if (method === 'PENDING_CONFIRMATION') {
                 const response = await orderOffLineService(request);
                 if (response.status) {
                     AlertUtils?.success('Đặt hàng thành công!');
                     deleteCartItem(userInfo?.id);
+                    navigate(0);
                 }
             } else if (method === 'CONFIRMED') {
                 const response = await orderOnLineService(request);
@@ -81,8 +82,8 @@ const CheckoutPage = () => {
                     orderId: orderId,
                     userId: userInfo?.id,
                     amount: discountInfo?.discountMethod === 'PERCENTAGE'
-                        ? formatCurrency(calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0))
-                        : formatCurrency(calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0))
+                        ? calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0)
+                        : calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0)
                 };
                 const res = await vnPayService(data);
                 if (res.status) {
