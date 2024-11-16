@@ -47,10 +47,13 @@ const MenuListPage = () => {
   }
 
   const handleModalSubmit = async (data) => {
+    console.log(data);
     const formData = new FormData();
     formData.append("file", data.image);
-    await uploadFile(formData);
-    data.image = data.image.name;
+    if (data?.image != null) {
+      await uploadFile(formData);
+    }
+    data.image = data.image?.name || '';
     const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
     if (initialValues) {
       const response = await updateDish(initialValues?.id, data);
@@ -112,7 +115,7 @@ const MenuListPage = () => {
           />
           <div className="action d-flex gap-2">
             <Button
-             className="d-flex align-items-center rounded-pill px-4"
+              className="d-flex align-items-center rounded-pill px-4"
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
