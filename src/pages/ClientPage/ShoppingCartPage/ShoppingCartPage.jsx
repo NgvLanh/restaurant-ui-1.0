@@ -4,6 +4,7 @@ import PageHeader from "../../../components/Client/PageHeader/PageHeader";
 import Footer from "../../../components/client/footer/Footer";
 import { formatCurrency } from "../../../utils/FormatUtils";
 import OrderConfirmationModal from "../../../components/Client/Modals/OrderConfirmationModal";
+
 import { deleteCartItem, getCartItemsByUserId, updateCartItemQuantity, updateSelectAll, updateToggleSelect } from "../../../services/CartItemService/CartItemService";
 import { getAddressByUserId } from "../../../services/AddressService/AddressService";
 import { FaInbox } from "react-icons/fa";
@@ -16,12 +17,14 @@ import { checkDiscount } from "../../../services/DiscountService/DiscountService
 const ShoppingCartPage = () => {
     const [userInfo, setUserInfo] = useState(null);
     const [localCart, setLocalCart] = useState(JSON.parse(localStorage.getItem('cart_temps')) || []);
+
     const [addresses, setAddresses] = useState([]);
     const [discountCode, setDiscountCode] = useState("");
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [showDiscountModal, setShowDiscountModal] = useState(false);
     const navigate = useNavigate();
+
 
     useEffect(() => {
         fetchUserInfo();
@@ -71,10 +74,10 @@ const ShoppingCartPage = () => {
             });
             setLocalCart(updateCart);
             localStorage.setItem('cart_temps', JSON.stringify(updateCart));
+
         }
         checkAllSelect();
     };
-
     const handleUpdateQuantity = async (id, quantity) => {
         if (userInfo) {
             await updateCartItemQuantity(id, quantity);
@@ -128,6 +131,7 @@ const ShoppingCartPage = () => {
         }
     }
 
+
     const total = localCart?.reduce((sum, item) => {
         return item.status ? sum + item.dish?.price * item.quantity : sum;
     }, 0);
@@ -144,6 +148,7 @@ const ShoppingCartPage = () => {
     };
 
     const handlePlaceOrder = () => {
+
         if (userInfo) {
             const userAdress = addresses?.find((e) => e.id === parseInt(selectedAddress));
             setSelectedAddress(userAdress);
@@ -230,7 +235,6 @@ const ShoppingCartPage = () => {
                                 )}
                             </tbody>
                         </table>
-
                     </div>
                     <div className="col-md-12">
                         <div className="row">
@@ -262,7 +266,6 @@ const ShoppingCartPage = () => {
                 </div>
             </div>
             <Footer />
-
 
             <ChooseDiscountModal
                 showModal={showDiscountModal}

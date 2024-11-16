@@ -60,6 +60,7 @@ const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
                                     +
                                 </Button>
                             </div>
+
                         </div>
                     </Form.Group>
                     <Modal.Footer className='mt-2'>
@@ -69,7 +70,6 @@ const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
                     </Modal.Footer>
                 </Form>
             </Modal.Body>
-
         </Modal>
     );
 };
