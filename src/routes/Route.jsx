@@ -34,6 +34,8 @@ import MapPage from "../pages/AdminPage/MapPage/MapPage";
 import ProtectRoute from "./ProtectRoute";
 import ForgotPasswordPage from "../pages/ClientPage/ForgotPasswordPage/ForgotPasswordPage";
 import UserInfoPage from "../pages/ClientPage/UserInfoPage/UserInfoPage";
+import EmployeeListPage from "../pages/AdminPage/AccountPage/EmployeeListPage"
+
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -85,7 +87,10 @@ export const router = createBrowserRouter((
                     <Route path="schedule" element={<ReservationSchedulePage />} />
                     <Route path="canceled" element={<CancelReservationPage />} />
                 </Route>
-
+                <Route path="">
+                    <Route index element={<EmployeeListPage />} />
+                    <Route path="employee" element={<EmployeeListPage />} />
+                </Route>
                 <Route path="menu">
                     <Route index element={<MenuListPage />} />
                     <Route path="categories" element={<MenuCategoryPage />} />
