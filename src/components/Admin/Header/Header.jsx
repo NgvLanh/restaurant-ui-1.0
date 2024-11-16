@@ -22,6 +22,7 @@ const breadcrumbMap = {
     '/admin/dashboard': 'Dashboard',
     '/admin/statistics': 'Thống kê',
     '/admin/map': 'Bản đồ',
+    '/admin/employee' : 'Nhân viên',
 };
 
 export const Header = ({ toggleSidebar }) => {

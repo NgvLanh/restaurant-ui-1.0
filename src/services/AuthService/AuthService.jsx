@@ -42,4 +42,23 @@ const loginService = async (request) => {
     }
 };
 
-export { getUserService, registerService, loginService };
+const createEmployee = async (request) => {
+    try {
+        const response = await ApiRequest({
+            method: 'POST',
+            path: 'users/employee',
+            data: request,
+            headers : 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
+    }
+};
+
+
+
+
+
+export { getUserService, registerService, loginService, createEmployee, };
