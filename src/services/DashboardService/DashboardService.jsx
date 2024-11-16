@@ -103,3 +103,20 @@ const getMonthlyRevenue = async (request) => {
 }
 
 export { getMonthlyRevenue };
+
+const getTotalOrdersCanCelled = async (request) => {
+    try {
+        const response = await ApiRequest({
+            path: 'orders/total-order-cancelled', 
+            headers: 'Bearer ',
+            data: request
+        });
+        console.log("API Response:", response); // Kiểm tra giá trị trả về
+        return response || null; // Trả về giá trị số nếu có, hoặc null nếu không
+    } catch (error) {
+        console.error(`Lỗi lấy tổng đơn hàng đã hủy: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách chi nhánh' };
+    }
+};
+
+export { getTotalOrdersCanCelled };
