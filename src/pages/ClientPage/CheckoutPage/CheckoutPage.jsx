@@ -80,7 +80,9 @@ const CheckoutPage = () => {
                 const data = {
                     orderId: orderId,
                     userId: userInfo?.id,
-                    amount: calculateTotal()
+                    amount: discountInfo?.discountMethod === 'PERCENTAGE'
+                        ? formatCurrency(calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0))
+                        : formatCurrency(calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0))
                 };
                 const res = await vnPayService(data);
                 if (res.status) {
