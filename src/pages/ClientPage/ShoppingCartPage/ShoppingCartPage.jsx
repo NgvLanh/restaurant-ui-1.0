@@ -4,21 +4,24 @@ import PageHeader from "../../../components/Client/PageHeader/PageHeader";
 import Footer from "../../../components/client/footer/Footer";
 import { formatCurrency } from "../../../utils/FormatUtils";
 import OrderConfirmationModal from "../../../components/Client/Modals/OrderConfirmationModal";
-import AddressModal from "../../../components/Client/Modals/AddressModal";
 import { deleteCartItem, getCartItemsByUserId, updateCartItemQuantity, updateSelectAll, updateToggleSelect } from "../../../services/CartItemService/CartItemService";
-import { createAddress, getAddressByUserId } from "../../../services/AddressService/AddressService";
+import { getAddressByUserId } from "../../../services/AddressService/AddressService";
 import { FaInbox } from "react-icons/fa";
 import AlertUtils from "../../../utils/AlertUtils";
 import { getUserService } from "../../../services/AuthService/AuthService";
+import { json, useNavigate } from "react-router-dom";
+import ChooseDiscountModal from "../../../components/Client/ChooseDiscountModal/ChooseDiscountModal";
+import { checkDiscount } from "../../../services/DiscountService/DiscountService";
 
 const ShoppingCartPage = () => {
     const [userInfo, setUserInfo] = useState(null);
-    const [localCart, setLocalCart] = useState([]);
+    const [localCart, setLocalCart] = useState(JSON.parse(localStorage.getItem('cart_temps')) || []);
     const [addresses, setAddresses] = useState([]);
     const [discountCode, setDiscountCode] = useState("");
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
-
+    const [showDiscountModal, setShowDiscountModal] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchUserInfo();
@@ -40,11 +43,18 @@ const ShoppingCartPage = () => {
             const items = await getCartItemsByUserId(userInfo?.id);
             setLocalCart(items || []);
             const userAddress = await getAddressByUserId(userInfo?.id);
-            setSelectedAddress(userAddress?.find(e => e.defaultAddress === true)?.id);
-            setAddresses(userAddress || []);
+            setSelectedAddress(userAddress?.find(e => e.defaultAddress === true));
+            if (items?.length > 0) {
+                const allChecked = items.every(item => item.status);
+                document.getElementById('cart-check').checked = allChecked;
+            }
         } else {
             const storedCart = JSON.parse(localStorage.getItem('cart_temps')) || [];
             setLocalCart(storedCart);
+            if (storedCart?.length > 0) {
+                const allChecked = storedCart.every(item => item.status);
+                document.getElementById('cart-check').checked = allChecked;
+            }
         }
     };
 
@@ -79,7 +89,6 @@ const ShoppingCartPage = () => {
             setLocalCart(updateCart);
             localStorage.setItem('cart_temps', JSON.stringify(updateCart));
         }
-
     };
 
     const handleRemove = async (id) => {
@@ -119,28 +128,61 @@ const ShoppingCartPage = () => {
         }
     }
 
-
     const total = localCart?.reduce((sum, item) => {
         return item.status ? sum + item.dish?.price * item.quantity : sum;
     }, 0);
 
-    const handleApplyDiscount = () => {
-        alert(`Áp dụng mã giảm giá: ${discountCode}`);
-        // Logic tính giảm giá có thể được thêm ở đây
+    const showDiscount = () => {
+        const itemCheck = localCart.find(e => e.status === true);
+        if (localCart?.length == 0) {
+            AlertUtils.info('Giỏ hàng đang trống');
+        } else if (!itemCheck) {
+            AlertUtils.info('Vui lòng chọn 1 món ăn trước khi thêm mã giảm giá');
+        } else {
+            setShowDiscountModal(true)
+        }
     };
 
     const handlePlaceOrder = () => {
-        const userAdress = addresses?.find((e) => e.id === parseInt(selectedAddress));
-        setSelectedAddress(userAdress);
-        const itemCheck = localCart.find(e => e.status === true);
         if (userInfo) {
-            if (!itemCheck) {
-                AlertUtils.info('Vui lòng chọn 1 món ăn trước khi thanh toán')
+            const userAdress = addresses?.find((e) => e.id === parseInt(selectedAddress));
+            setSelectedAddress(userAdress);
+            const itemCheck = localCart.find(e => e.status === true);
+            if (localCart?.length == 0) {
+                AlertUtils.info('Giỏ hàng đang trống');
+            } else if (!itemCheck) {
+                AlertUtils.info('Vui lòng chọn 1 món ăn trước khi thanh toán');
             } else {
-                setShowOrderModal(true);
+                navigate('/checkout');
             }
+        } else {
+            AlertUtils.info('Vui lòng đăng nhập để tiếp tục', 'Bạn chưa đăng nhập ');
+            navigate('/login');
         }
     };
+
+    const handleDiscount = async (code) => {
+        const response = await checkDiscount(code);
+        if (response?.status) {
+            localStorage.setItem('discount_info', JSON.stringify(response?.data))
+            if (new Date(response?.data?.endDate) < new Date()) {
+                AlertUtils.info('Mã giảm giá này đã hết hạn');
+            } else if (response?.data?.quantity == 0) {
+                AlertUtils.info('Số lượng giảm giá này đã hết');
+            } else if (response?.data?.quota > total) {
+                AlertUtils.info(`Đơn hàng của bạn cần từ ${formatCurrency(response?.data?.quota)} mới dùng được giảm giá này`);
+            } else {
+                AlertUtils.success(`Áp mã giảm giá thành công 
+                    ${response?.data?.discountMethod === 'FIXED_AMOUNT'
+                        ? `-${formatCurrency(response?.data?.value)}` : `${response?.data?.value}%`} `);
+            }
+            setShowDiscountModal(false);
+            console.log(code, showDiscountModal);
+        } else {
+            AlertUtils.info('Mã giảm giá không đúng');
+        }
+
+    }
 
     const confirmOrder = (data) => {
         alert('Đặt hàng thành công!');
@@ -156,7 +198,7 @@ const ShoppingCartPage = () => {
                     <h1 className="display-5 mb-5">Giỏ Hàng</h1>
                 </div>
                 <div className="row">
-                    <div className="col-md-8">
+                    <div className="col-md-12">
                         <table className="table table-hover">
                             <thead>
                                 <tr>
@@ -171,21 +213,17 @@ const ShoppingCartPage = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {localCart?.length > 0 ? (
-                                    <>
-                                        {localCart?.map((item, index) => (
-                                            <CartItem
-                                                key={index + 1}
-                                                item={item}
-                                                onToggleSelect={handleToggleSelect}
-                                                onUpdateQuantity={handleUpdateQuantity}
-                                                onRemove={handleRemove}
-                                            />
-                                        ))}
-                                    </>
-                                ) : (
+                                {localCart?.length > 0 ? localCart?.map((item, index) => (
+                                    <CartItem
+                                        key={index + 1}
+                                        item={item}
+                                        onToggleSelect={handleToggleSelect}
+                                        onUpdateQuantity={handleUpdateQuantity}
+                                        onRemove={handleRemove}
+                                    />
+                                )) : (
                                     <tr className="text-center">
-                                        <td colSpan={5} className="pt-4 text-muted fs-4">
+                                        <td colSpan={5} className="p-5 text-muted fs-4">
                                             <FaInbox size={32} className="me-2" /> Giỏ hàng trống
                                         </td>
                                     </tr>
@@ -194,60 +232,42 @@ const ShoppingCartPage = () => {
                         </table>
 
                     </div>
-                    <div className="col-md-4">
-                        <div className="card p-3">
-                            <h4 className="mb-3">Đơn Hàng</h4>
-                            <p className="fw-bold">Tổng Cộng: {formatCurrency(total)}</p>
-
-                            <div className="mb-3">
-                                <label className="form-label">Địa Chỉ Giao Hàng <a href="/account"><i>Thêm</i></a></label>
-                                <select
-                                    className="form-select"
-                                    value={selectedAddress}
-                                    onChange={(e) => setSelectedAddress(e.target.value)}
-                                >
-                                    {addresses?.length > 0 && addresses?.map((addr, index) => (
-                                        <option key={index} value={addr.id}>{addr.address}</option>
-                                    ))}
-                                </select>
+                    <div className="col-md-12">
+                        <div className="row">
+                            {userInfo &&
+                                <div className="row mb-2 align-items-center">
+                                    <div className="col-md-10 d-flex d-flex justify-content-end">
+                                        Giảm giá
+                                    </div>
+                                    <div className="col-md-2 d-flex justify-content-end">
+                                        <button className="btn btn-ghost border border-2 w-100"
+                                            onClick={() => showDiscount()}>Nhập mã</button>
+                                    </div>
+                                </div>}
+                            <div className="row mb-2 align-items-center">
+                                <div className="col-md-10 d-flex d-flex justify-content-end">
+                                    Tổng thanh toán ({localCart?.length} sản phẩm): &nbsp; <span className="text-primary"> {formatCurrency(total)}</span>
+                                </div>
+                                <div className="col-md-2 d-flex justify-content-end align-items-center">
+                                    <button
+                                        className="btn btn-primary mt-2 w-100"
+                                        onClick={handlePlaceOrder}
+                                    >
+                                        Thanh Toán
+                                    </button>
+                                </div>
                             </div>
-
-                            <div className="mb-3">
-                                <label className="form-label">Mã Giảm Giá</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Nhập mã giảm giá"
-                                    value={discountCode}
-                                    onChange={(e) => setDiscountCode(e.target.value)}
-                                />
-                                <button
-                                    className="btn btn-secondary mt-2 w-100"
-                                    onClick={handleApplyDiscount}
-                                >
-                                    Áp Dụng
-                                </button>
-                            </div>
-
-                            <button
-                                className="btn btn-primary mt-2 w-100"
-                                onClick={handlePlaceOrder}
-                            >
-                                Thanh Toán
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
             <Footer />
 
-            <OrderConfirmationModal
-                show={showOrderModal}
-                onHide={() => setShowOrderModal(false)}
-                onConfirm={confirmOrder}
-                cartItems={localCart}
-                total={total}
-                address={selectedAddress}
+
+            <ChooseDiscountModal
+                showModal={showDiscountModal}
+                setShowModal={() => setShowDiscountModal(false)}
+                handle={handleDiscount}
             />
 
 

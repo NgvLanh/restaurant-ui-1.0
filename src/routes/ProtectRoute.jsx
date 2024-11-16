@@ -14,8 +14,6 @@ const ProtectRoute = ({ element, admin = true }) => {
     }, []);
 
     const routerRole = async () => {
-        console.log(admin, !userInfo);
-
         if (admin) {
             if (!userInfo) {
                 navigate('/login');

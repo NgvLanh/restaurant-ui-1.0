@@ -1,9 +1,10 @@
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { formatCurrency } from '../../../utils/FormatUtils';
+import { useState } from 'react';
 
 const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: { quantity: 1 } });
+    const { register, handleSubmit, setValue, getValues, formState: { errors }, reset } = useForm({ defaultValues: { quantity: 1 } });
 
     const onSubmit = (data) => {
         onAddToCart(dish, data.quantity);
@@ -14,6 +15,15 @@ const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
         onClose();
         reset();
     };
+
+    const handleChangeQuantity = (value) => {
+        const parsedValue = parseInt(value, 10);
+        if (isNaN(parsedValue) || parsedValue < 1) {
+            setValue('quantity', 1);
+        } else {
+            setValue('quantity', parsedValue);
+        }
+    }
 
     return (
         <Modal show={show} onHide={handleClose}>
@@ -30,43 +40,34 @@ const AddToCartModal = ({ show, onClose, dish, onAddToCart }) => {
                     <small>{dish?.category?.name}</small>
                 </div>
                 <p className='text-center'>{dish?.description}</p>
-                <div>
-                    <Form onSubmit={handleSubmit(onSubmit)}>
-                        <Form.Group controlId="quantity" className=''>
-                            <div className='w-100 d-flex justify-content-center'>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Form.Group controlId="quantity">
+                        <div className='d-flex justify-content-center' style={{ border: 'none' }}>
+                            <div className="border d-flex gap-1">
+                                <Button variant='ghost'
+                                    onClick={() => handleChangeQuantity(getValues('quantity') - 1)}>
+                                    -
+                                </Button>
                                 <Form.Control
-                                    type="number"
-                                    className='text-center'
-                                    style={{ maxWidth: '100px' }}
-                                    {...register("quantity", {
-                                        required: "Số lượng không được để trống",
-                                        min: {
-                                            value: 1,
-                                            message: "Số lượng phải lớn hơn hoặc bằng 1"
-                                        },
-                                        max: {
-                                            value: 10,
-                                            message: "Số lượng không được vượt quá 10"
-                                        },
-                                        valueAsNumber: true
-                                    })}
-                                    isInvalid={!!errors.quantity}
+                                    type="text"
+                                    {...register("quantity")}
+                                    className='text-center border-0'
+                                    style={{ maxWidth: '60px' }}
+                                    onChange={(e) => handleChangeQuantity(e.target.value)}
                                 />
+                                <Button variant='ghost'
+                                    onClick={() => handleChangeQuantity(getValues('quantity') + 1)}>
+                                    +
+                                </Button>
                             </div>
-                        </Form.Group>
-                        <Form.Control.Feedback type="invalid">
-                            {errors.quantity?.message}
-                        </Form.Control.Feedback>
-                        <Modal.Footer>
-                            <Button variant="primary" type="submit">
-                                Thêm vào Giỏ Hàng
-                            </Button>
-                            <Button variant="secondary" onClick={handleClose}>
-                                Đóng
-                            </Button>
-                        </Modal.Footer>
-                    </Form>
-                </div>
+                        </div>
+                    </Form.Group>
+                    <Modal.Footer className='mt-2'>
+                        <Button variant="primary" type="submit">
+                            Thêm
+                        </Button>
+                    </Modal.Footer>
+                </Form>
             </Modal.Body>
 
         </Modal>

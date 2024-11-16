@@ -1,18 +1,15 @@
-import { useMemo } from "react";
-import { debounce } from "../../../utils/Debounce";
+import { FaDeleteLeft } from "react-icons/fa6";
 import { formatCurrency } from "../../../utils/FormatUtils";
 
 const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
-    const userInfo = JSON.parse(localStorage.getItem('user_info'));
 
-    const handleQuantityChange = (e) => {
-        const value = e.target.value.replace(/\D/g, '');
-        const quantity = Math.max(1, Math.min(25, parseInt(value, 10) || 1));
-        onUpdateQuantity(item.id, quantity);
-    };
 
-    const quantityChange = useMemo(() => debounce(handleQuantityChange, 500), [])
-
+    const handleUpdateQuantity = async (id, quantity) => {
+        const parsedValue = parseInt(quantity, 10);
+        if (!isNaN(parsedValue) && parsedValue > 0) {
+            await onUpdateQuantity(id, parsedValue);
+        }
+    }
     const handleToggleSelect = (id, status) => {
         onToggleSelect(id, status);
     };
@@ -29,7 +26,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
             </td>
             <td className="text-center align-content-center ">
                 <img src={item.dish?.image} alt={item.dish?.name}
-                    className="img-fluid rounded-3" style={{ width: '100%', maxHeight: '100px' }} />
+                    className="img-fluid rounded-3" style={{ maxWidth: '250px', width: '100%', maxHeight: '100px' }} />
             </td>
             <td className=" align-content-center">
                 <h5>{item.dish?.name} / <small>{item.dish?.category?.name}</small></h5>
@@ -38,11 +35,12 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
             </td>
             <td className="text-center align-content-center">
                 <div className="d-flex align-items-center justify-content-center">
-                    <button className="btn btn-sm" onClick={() => onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}>-</button>
+                    <button className="btn btn-sm"
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}>-</button>
                     <input
                         type="text"
                         value={item.quantity}
-                        onChange={quantityChange}
+                        onChange={(e) => handleUpdateQuantity(item.id, e.target.value)}
                         style={{
                             maxWidth: '30px',
                             border: 'none',
@@ -51,12 +49,13 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
                             backgroundColor: 'transparent'
                         }}
                     />
-                    <button className="btn btn-sm" onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}>+</button>
+                    <button className="btn btn-sm"
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}>+</button>
                 </div>
             </td>
             <td className="text-center align-content-center">
                 <button className="btn btn-sm" onClick={() => onRemove(item.id)}>
-                    <i className="fas fa-ban text-danger"></i>
+                    <FaDeleteLeft size={20} className="text-danger" />
                 </button>
             </td>
         </tr>

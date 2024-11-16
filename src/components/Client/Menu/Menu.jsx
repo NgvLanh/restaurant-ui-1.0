@@ -3,32 +3,45 @@ import { getAllCategories } from '../../../services/CategoryService/CategoryServ
 import { getAllDishes, getAllDishesByCategoryId } from '../../../services/DishService/DishService';
 import AddToCartModal from '../AddToCartModal/AddToCartModal';
 import { formatCurrency } from '../../../utils/FormatUtils';
-import { getCartItemsByUserId, updateCartItemQuantity } from '../../../services/CartItemService/CartItemService';
+import { getUserService } from '../../../services/AuthService/AuthService';
+import { asyncCartService, getCartByUserId } from '../../../services/CartService/CartService';
+import { addToCart, getCartItemsByUserId } from '../../../services/CartItemService/CartItemService';
 
 const Menus = () => {
-    const userInfo = JSON.parse(localStorage.getItem('user_info'));
-
+    const cartTemps = JSON.parse(localStorage.getItem('cart_temps')) || [];
+    const [userInfo, setUserInfo] = useState(null);
     const [categories, setCategories] = useState([]);
     const [dishes, setDishes] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(0);
     const [showModal, setShowModal] = useState(true);
     const [selectedDish, setSelectedDish] = useState(null);
 
     useEffect(() => {
-        fetchData();
+        fetchUserInfo();
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        fetchDishByCategoryId(selectedCategory);
     }, [selectedCategory]);
 
-    const fetchData = async () => {
-        setCategories(await getAllCategories());
-        if (selectedCategory) {
-            setDishes(await getAllDishesByCategoryId(selectedCategory));
-        } else {
-            setDishes(await getAllDishes());
-        }
-    };
+    const fetchUserInfo = async () => {
+        const response = await getUserService();
+        setUserInfo(response);
+    }
+
+    const fetchCategories = async () => {
+        const response = await getAllCategories();
+        setCategories(response);
+    }
+
+    const fetchDishByCategoryId = async (categoryId) => {
+        const response = await getAllDishesByCategoryId(categoryId);
+        setDishes(response);
+    }
+
 
     const handleAddToCart = async (dish, quantity) => {
-        const cartTemps = JSON.parse(localStorage.getItem('cart_temps')) || [];
         if (!userInfo) {
             let itemExists = false;
             cartTemps.forEach(e => {
@@ -50,19 +63,8 @@ const Menus = () => {
             }
             localStorage.setItem('cart_temps', JSON.stringify(cartTemps));
         } else {
-            // const response =  await getCartItemsByUserId(userInfo?.id);
-            // console.log(response);
-            // await updateCartItemQuantity(dish?.id, quantity);
+            await addToCart(userInfo?.id, dish.id, quantity);
         }
-    };
-
-    const handleOpenModal = (dish) => {
-        setSelectedDish(dish);
-        setShowModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
     };
 
     return (
@@ -74,7 +76,10 @@ const Menus = () => {
                 <div className="row mt-n2 wow fadeInUp" data-wow-delay="0.3s">
                     <div className="col-12 text-center">
                         <ul className="list-inline mb-5" id="portfolio-flters">
-
+                            <li className={`mx-2 ${selectedCategory === 0 ? 'active' : ''}`}
+                                onClick={() => setSelectedCategory(0)}
+                            >
+                                Tất cả</li>
                             {categories?.map((category) => (
                                 <li key={category?.id}
                                     className={`mx-2 ${selectedCategory === category.id ? 'active' : ''}`}
@@ -86,15 +91,25 @@ const Menus = () => {
                 </div>
                 <div className="row g-4 portfolio-container">
                     {dishes?.map((dish) => (
-                        <div key={dish?.id} className="col-lg-4 col-md-6 portfolio-item wow fadeInUp" data-wow-delay="0.1s">
+                        <div key={dish?.id} className="col-lg-4 col-md-6 portfolio-item wow fadeInUp"
+                            data-wow-delay="0.1s"
+                            style={{ maxHeight: '500px' }}>
                             <div className="rounded overflow-hidden">
-                                <div className="position-relative overflow-hidden" style={{ minHeight: '250px' }}>
+                                <div className="position-relative overflow-hidden" >
                                     <img className="img-fluid w-100" src={dish?.image} alt={dish?.image}
-                                        style={{ minHeight: '300px', maxHeight: '300px', objectFit: 'cover' }} />
+                                        style={{ minHeight: '210px', maxHeight: '210px', objectFit: 'cover' }} />
                                     <div className="portfolio-overlay">
-                                        <a className="btn btn-square btn-outline-light mx-1" href={dish?.image} data-lightbox="portfolio"><i className="fa fa-eye"></i></a>
+                                        {/* <a className="btn btn-square btn-outline-light mx-1"
+                                            href={dish?.image} data-lightbox="portfolio">
+                                            <i className="fa fa-eye"></i>
+                                        </a> */}
                                         <a className="btn btn-square btn-outline-light mx-1"
-                                            onClick={() => handleOpenModal(dish)}><i className="fa fa-shopping-cart"></i></a>
+                                            onClick={() => {
+                                                setSelectedDish(dish);
+                                                setShowModal(true);
+                                            }}>
+                                            <i className="fa fa-shopping-cart"></i>
+                                        </a>
                                     </div>
                                 </div>
                                 <div className="border border-5 border-light border-top-0 p-4">
@@ -115,7 +130,7 @@ const Menus = () => {
             {selectedDish && (
                 <AddToCartModal
                     show={showModal}
-                    onClose={handleCloseModal}
+                    onClose={() => setShowModal(false)}
                     dish={selectedDish}
                     onAddToCart={handleAddToCart}
                 />
