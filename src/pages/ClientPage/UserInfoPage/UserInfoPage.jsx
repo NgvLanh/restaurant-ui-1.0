@@ -56,6 +56,7 @@ const UserInfoPage = () => {
         await uploadFile(formData);
         const response = await updateUser(user?.id, request);
         localStorage.setItem('user_info', JSON.stringify(response?.data))
+        navigate(0);
         if (response?.status) {
             AlertUtils.success('Cập nhật tài khoản thành công');
         } else {
@@ -98,7 +99,7 @@ const UserInfoPage = () => {
             AlertUtils.success('Thêm địa chỉ thành công');
             setShowModal(false);
         } else {
-            AlertUtils.error('Bạn đã đăng ký địa chỉ này rồi');
+            navigate(0);
         }
         fetchAddress();
     };
@@ -117,53 +118,13 @@ const UserInfoPage = () => {
     return (
         <>
             <PageHeader title="Tài khoản" />
-            <Container className="my-4">
+            <Container>
+                <Card className="p-3 border-0 shadow-sm mb-3">
+                    <h6>Hồ sơ của tôi</h6>
+                    <small>Quản lý hồ sơ để bảo mật tài khoản</small>
+                </Card>
                 <Form onSubmit={handleSubmit(onSubmit)}>
                     <Row>
-                        <Col md={6}>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Ảnh đại diện</Form.Label>
-                                <div {...getRootProps()} style={{
-                                    border: "1px solid var(--primary)",
-                                    borderRadius: "5px",
-                                    padding: "20px",
-                                    textAlign: "center",
-                                    cursor: "pointer"
-                                }}>
-                                    <input {...getInputProps()} />
-                                    {imagePreview ? (
-                                        <Image src={imagePreview}
-                                            width="100%" height={200} className="mt-2 rounded-3" />
-                                    ) : (
-                                        <p>Kéo thả ảnh vào đây hoặc nhấn để chọn ảnh</p>
-                                    )}
-                                </div>
-                            </Form.Group>
-                            <h5>Địa chỉ giao hàng<BiPlus onClick={() => setShowModal(true)} className="ms-2" /></h5>
-
-                            <Row>
-                                {addresses?.length > 0 && addresses?.map((address, index) => (
-                                    <Col key={index} md={12} className="mb-3">
-                                        <Card>
-                                            <Card.Body className="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <Form.Check
-                                                        type="radio"
-                                                        label="Mặc định"
-                                                        checked={address?.defaultAddress}
-                                                        onChange={(e) => handleSelectDefaultAddress(address?.id, e.target.checked)}
-                                                    />
-                                                    <Card.Text className="mb-0 ms-2">{address?.address}</Card.Text>
-                                                </div>
-                                                <Button variant="outline-danger" size="sm"
-                                                    onClick={() => handleDelete(address?.id)}>Xóa</Button>
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
-                                ))}
-                            </Row>
-                        </Col>
-
                         <Col md={6}>
                             {/* Form các thông tin người dùng */}
                             <Form.Group className="mb-3">
@@ -208,16 +169,66 @@ const UserInfoPage = () => {
 
                             <Button variant="primary" type="submit">Lưu Thông Tin</Button>
                         </Col>
+                        <Col md={6}>
+                            <Form.Group className="mb-3 d-grid">
+                                <Form.Label>Ảnh đại diện</Form.Label>
+                                <div {...getRootProps()} style={{
+                                    border: "1px solid var(--primary)",
+                                    padding: "20px",
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    maxWidth: '250px',
+                                    borderRadius: '50%',
+                                }}>
+                                    <input {...getInputProps()} />
+                                    {imagePreview ? (
+                                        <Image src={imagePreview}
+                                            style={{
+                                                margin: 'auto',
+                                                maxWidth: '200px',
+                                                maxHeight: '200px',
+                                                minWidth: '200px',
+                                                minHeight: '200px',
+                                                borderRadius: '50%'
+                                            }} />
+                                    ) : (
+                                        <p>Kéo thả ảnh vào đây hoặc nhấn để chọn ảnh</p>
+                                    )}
+                                </div>
+                            </Form.Group>
+                            <h5>Địa chỉ giao hàng<BiPlus onClick={() => setShowModal(true)} className="ms-2" /></h5>
+
+                            <Row>
+                                {addresses?.length > 0 && addresses?.map((address, index) => (
+                                    <Col key={index} md={12} className="mb-3">
+                                        <Card>
+                                            <Card.Body className="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <Form.Check
+                                                        type="radio"
+                                                        label="Mặc định"
+                                                        checked={address?.defaultAddress}
+                                                        onChange={(e) => handleSelectDefaultAddress(address?.id, e.target.checked)}
+                                                    />
+                                                    <Card.Text className="mb-0 ms-2">{address?.address}</Card.Text>
+                                                </div>
+                                                <Button variant="outline-danger" size="sm"
+                                                    onClick={() => handleDelete(address?.id)}>Xóa</Button>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                ))}
+                            </Row>
+                        </Col>
                     </Row>
                 </Form>
-
-
-                <AddressModal
-                    show={showModal}
-                    handleClose={() => setShowModal(false)}
-                    handleSave={handleSaveAddress}
-                />
             </Container >
+
+            <AddressModal
+                show={showModal}
+                handleClose={() => setShowModal(false)}
+                handleSave={handleSaveAddress}
+            />
 
             <Footer />
         </>

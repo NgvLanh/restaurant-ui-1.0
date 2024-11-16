@@ -106,4 +106,16 @@ const getAllDiscountsByBranchId = async (currentPage, pageSize,) => {
   }
 };
 
+export const checkDiscount = async (code) => {
+  try {
+    const response = await ApiRequest({
+      path: `discounts/${code}`,
+      headers: `Bearer `
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+}
+
 export { getAllDiscounts, createDiscount, updateDiscount, deleteDiscount, getAllDiscountsPage, getAllDiscountsByBranchId };

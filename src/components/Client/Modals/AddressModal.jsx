@@ -4,13 +4,16 @@ import AlertUtils from "../../../utils/AlertUtils";
 
 const AddressModal = ({ show, handleClose, handleSave }) => {
     const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
-    const [provinces, setProvinces] = useState([]);
+    const [address, setAddresses] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
     const [provinceId, setProvinceId] = useState(branchInfo?.provinceId);
     const [districtId, setDistrictId] = useState('');
     const [wardId, setWardId] = useState('');
     const [shippingFee, setShippingFee] = useState(null);
+    const [fullName, setFullName] = useState(null);
+    const [phoneNumber, setPhoneNumber] = useState(null);
+
 
     const token = import.meta.env.VITE_TOKEN_SHIPPING || '';
     const shopId = import.meta.env.VITE_ID_SHOP || '';
@@ -129,18 +132,24 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
     };
 
     const handleSaveClick = () => {
-        if (!provinceId || !districtId || !wardId) {
-            AlertUtils.warning("Vui lòng chọn đầy đủ địa chỉ");
+
+        if (!provinceId || !districtId || !wardId || !fullName || !phoneNumber || !address) {
+            AlertUtils.warning("Vui lòng chọn đầy đủ thông tin địa chỉ");
             return;
         }
 
         handleSave({
-            ...shippingFee, address: document.getElementById('shipping-address').textContent.split(': ')[1]
+            ...shippingFee,
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            address: document.getElementById('shipping-address').textContent.split(': ')[1] + " / " + address
         });
 
         setDistrictId('');
         setWardId('');
         setShippingFee(null);
+        setFullName('');
+        setPhoneNumber('');
     };
 
     return (
@@ -150,7 +159,19 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group controlId="formDistrict">
+                    <Form.Group controlId="formFullName" className="mb-3">
+                        <Form.Label>Họ tên</Form.Label>
+                        <Form.Control type="text" placeholder="Tên người nhận"
+                            defaultValue={fullName}
+                            onChange={(e) => setFullName(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group controlId="formPhoneNumber" className="mb-3">
+                        <Form.Label>Số điện thoại</Form.Label>
+                        <Form.Control type="number" placeholder="Số điện thoại người nhận"
+                            defaultValue={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group controlId="formDistrict" className="mb-3">
                         <Form.Label>Quận/Huyện</Form.Label>
                         <Form.Select value={districtId} onChange={(e) => setDistrictId(e.target.value)}>
                             <option value="">Chọn quận/huyện</option>
@@ -161,7 +182,7 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
                             ))}
                         </Form.Select>
                     </Form.Group>
-                    <Form.Group controlId="formWard">
+                    <Form.Group controlId="formWard" className="mb-3">
                         <Form.Label>Xã/Phường</Form.Label>
                         <Form.Select value={wardId} onChange={(e) => setWardId(e.target.value)}>
                             <option value="">Chọn xã/phường</option>
@@ -171,6 +192,12 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
                                 </option>
                             ))}
                         </Form.Select>
+                    </Form.Group>
+                    <Form.Group controlId="formAddress" className="mb-3">
+                        <Form.Label>Địa chỉ cụ thể nhận hàng</Form.Label>
+                        <textarea className="form-control" defaultValue={address}
+                            onChange={(e) => setAddresses(e.target.value)}
+                        />
                     </Form.Group>
                     {shippingFee && (
                         <div className="mt-3">
