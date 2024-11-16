@@ -3,30 +3,30 @@ import { Modal, Button, Form } from "react-bootstrap";
 import AlertUtils from "../../../utils/AlertUtils";
 
 const AddressModal = ({ show, handleClose, handleSave }) => {
-    const [provinces, setProvinces] = useState([]);
+    const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
+    const [address, setAddresses] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
-    const [provinceId, setProvinceId] = useState('');
+    const [provinceId, setProvinceId] = useState(branchInfo?.provinceId);
     const [districtId, setDistrictId] = useState('');
     const [wardId, setWardId] = useState('');
     const [shippingFee, setShippingFee] = useState(null);
+    const [fullName, setFullName] = useState(null);
+    const [phoneNumber, setPhoneNumber] = useState(null);
+
 
     const token = import.meta.env.VITE_TOKEN_SHIPPING || '';
     const shopId = import.meta.env.VITE_ID_SHOP || '';
 
     useEffect(() => {
-        fetchProvinces();
-    }, []);
-
-    useEffect(() => {
-        if (provinceId) {
-            fetchDistricts(provinceId);
+        if (branchInfo?.provinceId) {
+            fetchDistricts(branchInfo?.provinceId);
         } else {
             setDistricts([]);
             setWardId('');
             setShippingFee(null);
         }
-    }, [provinceId]);
+    }, [branchInfo?.provinceId]);
 
     useEffect(() => {
         if (districtId) {
@@ -44,17 +44,6 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
         }
     }, [provinceId, districtId, wardId]);
 
-    const fetchProvinces = async () => {
-        try {
-            const response = await fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province', {
-                headers: { 'Content-Type': 'application/json', 'Token': token }
-            });
-            const data = await response.json();
-            setProvinces(data.data);
-        } catch (error) {
-            console.error('Lỗi khi lấy danh sách tỉnh:', error);
-        }
-    };
 
     const fetchDistricts = async (provinceId) => {
         try {
@@ -86,46 +75,35 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
             return;
         }
 
-        // const params = new URLSearchParams({
-        //     from_district_id: 1574,
-        //     from_ward_code: '550307',
-        //     service_id: 53320,
-        //     service_type_id: 2,
-        //     to_district_id: districtId,
-        //     to_ward_code: wardId,
-        //     height: 10,
-        //     length: 10,
-        //     weight: 10,
-        //     width: 10,
-        //     insurance_value: 10000,
-        //     cod_failed_amount: 2000,
-        //     coupon: null
-        // });
+        const requestData = {
+            from_district_id: 1454,
+            from_ward_code: "21211",
+            service_id: 53320,
+            service_type_id: null,
+            to_district_id: 1452,
+            to_ward_code: "21012",
+            height: 50,
+            length: 20,
+            weight: 200,
+            width: 20,
+            insurance_value: 10000,
+            cod_failed_amount: 2000,
+            coupon: null,
+            items: [
+                {
+                    name: "product",
+                    quantity: 1,
+                    height: 200,
+                    weight: 1000,
+                    length: 200,
+                    width: 200
+                }
+            ]
+        };
 
         fetch('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?', {
-            method: 'GET',
-            data: {
-                service_type_id: 2,
-                from_district_id: 3317,
-                to_district_id: districtId,
-                to_ward_code: '20314',
-                height: 20,
-                length: 30,
-                weight: 3000,
-                width: 40,
-                insurance_value: 0,
-                coupon: null,
-                items: [
-                    {
-                        name: "TEST1",
-                        quantity: 1,
-                        height: 200,
-                        weight: 1000,
-                        length: 200,
-                        width: 200,
-                    },
-                ],
-            },
+            method: 'POST',
+            body: JSON.stringify(requestData),
             headers: {
                 'Content-Type': 'application/json',
                 'Token': token,
@@ -137,12 +115,12 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
                 if (data.data && data.data.total) {
                     setShippingFee({
                         fee: data.data.total,
-                        provinceName: provinces.find(p => p.ProvinceID === Number(provinceId))?.ProvinceName || '',
+                        provinceName: branchInfo?.provinceName || '',
                         districtName: districts.find(d => d.DistrictID === Number(districtId))?.DistrictName || '',
                         wardName: wards.find(w => w.WardCode === wardId)?.WardName || '',
                         provinceId,
                         districtId,
-                        wardId
+                        wardId,
                     });
                 } else {
                     setShippingFee(null);
@@ -154,16 +132,24 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
     };
 
     const handleSaveClick = () => {
-        if (!provinceId || !districtId || !wardId) {
-            AlertUtils.warning("Vui lòng chọn đầy đủ địa chỉ");
+
+        if (!provinceId || !districtId || !wardId || !fullName || !phoneNumber || !address) {
+            AlertUtils.warning("Vui lòng chọn đầy đủ thông tin địa chỉ");
             return;
         }
-        const data = {
-            provinceId: provinceId,
-            districtId: districtId,
-        }
-        handleSave(shippingFee);
-        handleClose();
+
+        handleSave({
+            ...shippingFee,
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            address: document.getElementById('shipping-address').textContent.split(': ')[1] + " / " + address
+        });
+
+        setDistrictId('');
+        setWardId('');
+        setShippingFee(null);
+        setFullName('');
+        setPhoneNumber('');
     };
 
     return (
@@ -173,18 +159,19 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group controlId="formProvince">
-                        <Form.Label>Tỉnh/Thành phố</Form.Label>
-                        <Form.Select value={provinceId} onChange={(e) => setProvinceId(e.target.value)}>
-                            <option value="">Chọn tỉnh/thành phố</option>
-                            {provinces.map(province => (
-                                <option key={province.ProvinceID} value={province.ProvinceID}>
-                                    {province.ProvinceName}
-                                </option>
-                            ))}
-                        </Form.Select>
+                    <Form.Group controlId="formFullName" className="mb-3">
+                        <Form.Label>Họ tên</Form.Label>
+                        <Form.Control type="text" placeholder="Tên người nhận"
+                            defaultValue={fullName}
+                            onChange={(e) => setFullName(e.target.value)} />
                     </Form.Group>
-                    <Form.Group controlId="formDistrict">
+                    <Form.Group controlId="formPhoneNumber" className="mb-3">
+                        <Form.Label>Số điện thoại</Form.Label>
+                        <Form.Control type="number" placeholder="Số điện thoại người nhận"
+                            defaultValue={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group controlId="formDistrict" className="mb-3">
                         <Form.Label>Quận/Huyện</Form.Label>
                         <Form.Select value={districtId} onChange={(e) => setDistrictId(e.target.value)}>
                             <option value="">Chọn quận/huyện</option>
@@ -195,7 +182,7 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
                             ))}
                         </Form.Select>
                     </Form.Group>
-                    <Form.Group controlId="formWard">
+                    <Form.Group controlId="formWard" className="mb-3">
                         <Form.Label>Xã/Phường</Form.Label>
                         <Form.Select value={wardId} onChange={(e) => setWardId(e.target.value)}>
                             <option value="">Chọn xã/phường</option>
@@ -206,10 +193,16 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
                             ))}
                         </Form.Select>
                     </Form.Group>
+                    <Form.Group controlId="formAddress" className="mb-3">
+                        <Form.Label>Địa chỉ cụ thể nhận hàng</Form.Label>
+                        <textarea className="form-control" defaultValue={address}
+                            onChange={(e) => setAddresses(e.target.value)}
+                        />
+                    </Form.Group>
                     {shippingFee && (
                         <div className="mt-3">
                             <strong>Phí vận chuyển: {shippingFee.fee.toLocaleString('vi-VN')} VND</strong>
-                            <div>Địa chỉ: {shippingFee.wardName}, {shippingFee.districtName}, {shippingFee.provinceName}</div>
+                            <div id="shipping-address">Địa chỉ: {shippingFee.wardName}, {shippingFee.districtName}, {shippingFee.provinceName}</div>
                         </div>
                     )}
                 </Form>

@@ -33,6 +33,9 @@ import StatisticalDiscount from "../pages/AdminPage/StatisticPage/StatisticalDis
 import MapPage from "../pages/AdminPage/MapPage/MapPage";
 import ProtectRoute from "./ProtectRoute";
 import ForgotPasswordPage from "../pages/ClientPage/ForgotPasswordPage/ForgotPasswordPage";
+import UserInfoPage from "../pages/ClientPage/UserInfoPage/UserInfoPage";
+import EmployeeListPage from "../pages/AdminPage/AccountPage/EmployeeListPage"
+import CheckoutPage from "../pages/ClientPage/CheckoutPage/CheckoutPage";
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -51,15 +54,20 @@ export const router = createBrowserRouter((
                 {/*  */}
                 <Route path="reservations" element={<ReservationPage />} />
                 {/*  */}
-                <Route path="register" element={<ProtectRoute element={<RegisterPage />} admin={false} />} />
+                <Route path="register" element={<RegisterPage />} />
                 {/*  */}
-                <Route path="login" element={<ProtectRoute element={<LoginPage />} admin={false} />} />
+                <Route path="login" element={<LoginPage />} />
                 {/*  */}
                 <Route path="shopping-cart" element={<ShoppingCartPage />} />
                 {/*  */}
-                <Route path="dining-table" element={<DiningTablePage />} />
+                <Route path="checkout" element={<ProtectRoute element={<CheckoutPage />} admin={false} />} />
+                {/*  */}
+
+                <Route path="dining-table" element={<ProtectRoute element={<DiningTablePage />} admin={false} />} />
                 {/*  */}
                 <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                {/*  */}
+                <Route path="account" element={<ProtectRoute element={<UserInfoPage />} admin={false} />} />
             </Route>
             <Route path="/admin" element={<ProtectRoute element={<AdminLayout />} />}>
                 <Route>
@@ -82,7 +90,10 @@ export const router = createBrowserRouter((
                     <Route path="schedule" element={<ReservationSchedulePage />} />
                     <Route path="canceled" element={<CancelReservationPage />} />
                 </Route>
-
+                <Route path="">
+                    <Route index element={<EmployeeListPage />} />
+                    <Route path="employee" element={<EmployeeListPage />} />
+                </Route>
                 <Route path="menu">
                     <Route index element={<MenuListPage />} />
                     <Route path="categories" element={<MenuCategoryPage />} />

@@ -8,29 +8,33 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { getInvoinceCount } from "../../../services/Statistics/Statistics";
+import React, { useEffect, useState } from "react";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const StatisticalInvoice = () => {
-  ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+  const [invoiceData, setInvoiceData] = useState([]);
+  const [months, setMonths] = useState([]);
 
-  const months = [
-    "Tháng 1",
-    "Tháng 2",
-    "Tháng 3",
-    "Tháng 4",
-    "Tháng 5",
-    "Tháng 6",
-    "Tháng 7",
-    "Tháng 8",
-    "Tháng 9",
-    "Tháng 10",
-    "Tháng 11",
-    "Tháng 12",
-  ];
+  
+  useEffect(() => {
+    const fetchInvoiceData = async () => {
+      try {
+        const data = await getInvoinceCount();
+        const monthsFromAPI = data?.map((item) => item.month);
+        const invoiceCounts = data?.map((item) => item.totalInvoices);
+        setMonths(monthsFromAPI);
+        setInvoiceData(invoiceCounts);
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu giảm giá:", error);
+      }
+    };
+    fetchInvoiceData();
+  }, []);
 
-  const invoiceData = [30, 42, 55, 60, 48, 58, 72, 63, 50, 44, 67, 76]; // Dữ liệu mẫu cho số hóa đơn
 
-  const barDataMonth = {
-    labels: months,
+  const barDataInvoice = {
+    labels: months.map((month) => `Tháng: ${month}`),
     datasets: [
       {
         label: "Số hóa đơn",
@@ -81,13 +85,25 @@ const StatisticalInvoice = () => {
           <Card.Header className="p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style={{ border: "0px" }}>
             <div className="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <Bar
-                data={barDataMonth}
+                data={barDataInvoice}
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
                   plugins: {
                     legend: {
                       display: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        display: false,
+                      },
                     },
                   },
                 }}
@@ -112,13 +128,13 @@ const StatisticalInvoice = () => {
 
       {/* Bảng thống kê */}
       <Col lg={12} md={12}>
-        <Card style={{ backgroundColor: "#F9F9F9", border: "1px solid #E0E0E0" }}>
+        <Card style={{ backgroundColor: "#FFFFFF"}}>
           <Card.Body>
             <h6 className="mb-4" style={{ fontSize: "20px", fontWeight: "bold", color: "#342E37" }}>
               Bảng thống kê số hóa đơn
-            </h6>
-            <Table striped bordered hover responsive>
-              <thead style={{ backgroundColor: "#E3F2FD" }}>
+            </h6 >
+            <Table striped bordered={false} hover responsive>
+              <thead style={{ backgroundColor: "#FFFFFF" }}>
                 <tr>
                   <th>Tháng</th>
                   <th>Số hóa đơn</th>

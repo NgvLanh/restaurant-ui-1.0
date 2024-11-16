@@ -9,8 +9,7 @@ const getUserService = async () => {
         });
         return response?.data;
     } catch (error) {
-        console.error(`Lỗi lấy thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return error?.response?.data?.message || 'Lỗi chưa cấu hình';
+        return null;
     }
 };
 
@@ -37,9 +36,29 @@ const loginService = async (request) => {
         });
         return response;
     } catch (error) {
-        console.error(`Lỗi đăng nhập: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng nhập' };
+        // console.error(`Lỗi đăng nhập: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        console.log(error);
+        // return { status: false, message: error || 'Lỗi đăng nhập' };
     }
 };
 
-export { getUserService, registerService, loginService };
+const createEmployee = async (request) => {
+    try {
+        const response = await ApiRequest({
+            method: 'POST',
+            path: 'users/employee',
+            data: request,
+            headers : 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
+    }
+};
+
+
+
+
+
+export { getUserService, registerService, loginService, createEmployee, };

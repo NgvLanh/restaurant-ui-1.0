@@ -5,7 +5,7 @@ import { NavUser } from "../NavUser/NavUser"
 import { SidebarHeader } from "../SidebarHeader/SidebarHeader"
 import { getAllBranches } from "../../../services/BranchService/BranchService"
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed }) => {
 
     const [branches, setBranches] = useState([]);
     const getUser = JSON.parse(localStorage.getItem('user_info'));
@@ -116,6 +116,18 @@ const Sidebar = () => {
                 ],
             },
             {
+                title: "Người dùng",
+                url: "/admin/users",
+                icon: <i className="fas fa-user"></i>,
+                isActive: false,
+                items: [
+                    {
+                        title: "Danh sách nhân viên",
+                        url: "/admin/employee",
+                    },
+                ],
+            },
+            {
                 title: "Cài đặt",
                 url: "/admin/settings",
                 icon: <i className="fas fa-cogs"></i>,
@@ -180,17 +192,17 @@ const Sidebar = () => {
 
     return (
         <aside id="admin_sidebar" style={{
-            minWidth: '290px',
-            width: '250px',
+            width: isCollapsed ? '0' : '250px',
             borderRight: '1px solid lightgray',
             position: 'sticky',
             top: '0',
             display: "flex",
             flexDirection: "column",
             minHeight: "100vh",
-            maxHeight: "100vh", 
-            overflowY: 'auto', 
-            zIndex: 99
+            maxHeight: "100vh",
+            overflowY: 'auto',
+            zIndex: 99,
+            transition: 'width .5s ease'
         }}>
             <SidebarHeader teams={branches} />
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>

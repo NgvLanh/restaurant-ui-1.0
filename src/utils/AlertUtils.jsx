@@ -36,7 +36,7 @@ const AlertUtils = {
             title,
             text: message,
             icon: 'info',
-            confirmButtonText: 'OK',
+            confirmButtonText: 'Có',
         });
     },
 

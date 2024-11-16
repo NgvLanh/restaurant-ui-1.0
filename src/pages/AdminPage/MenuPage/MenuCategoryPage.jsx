@@ -45,8 +45,10 @@ const MenuCategoryPage = () => {
   const handleModalSubmit = async (data) => {
     const formData = new FormData();
     formData.append("file", data.image);
-    await uploadFile(formData);
-    data.image = data.image.name;
+    if (data?.image != null) {
+      await uploadFile(formData);
+    }
+    data.image = data.image?.name || '';
     const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
     if (initialValues) {
       const response = await updateCategory(initialValues?.id, data);

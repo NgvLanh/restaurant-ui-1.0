@@ -1,6 +1,6 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
-const asyncCartService = async (request, userId) => {
+export const asyncCartService = async (request, userId) => {
     try {
         const response = await ApiRequest({
             method: 'POST',
@@ -15,5 +15,15 @@ const asyncCartService = async (request, userId) => {
     }
 }
 
-
-export { asyncCartService };
+export const getCartByUserId = async (userId) => {
+    try {
+        const response = await ApiRequest({
+            path: `carts/${userId}`,
+            headers: 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi đồng bộ giỏ hàng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi đồng bộ giỏ hàng' };
+    }
+}

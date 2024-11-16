@@ -22,13 +22,10 @@ const breadcrumbMap = {
     '/admin/dashboard': 'Dashboard',
     '/admin/statistics': 'Thống kê',
     '/admin/map': 'Bản đồ',
+    '/admin/employee' : 'Nhân viên',
 };
 
-const handleShowSidebar = () => {
-    console.log(` cais nitj `);
-}
-
-export const Header = () => {
+export const Header = ({ toggleSidebar }) => {
     const location = useLocation();
     const pathNames = location.pathname.split('/').filter(path => path);
 
@@ -36,7 +33,7 @@ export const Header = () => {
         <header className="d-flex align-items-center h-16 gap-2">
             <Container fluid className="d-flex align-items-center gap-2 px-4">
                 <button type="button" className="btn btn-light me-2"
-                    onClick={handleShowSidebar}>
+                    onClick={toggleSidebar}>
                     <i className="bi bi-list"></i>
                 </button>
 

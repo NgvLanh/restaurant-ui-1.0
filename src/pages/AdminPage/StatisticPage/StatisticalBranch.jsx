@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { Col, Card, Table } from "react-bootstrap";
 import {
@@ -8,13 +9,28 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { getBranchesCount } from "../../../services/Statistics/Statistics"; // API service
 
 const StatisticalBranchStatus = () => {
   ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+  const [statuses, setStatuses] = useState([]);
+  const [branchStatusData, setBranchStatusData] = useState([]);
 
-  // Trạng thái và số lượng chi nhánh cho mỗi trạng thái
-  const statuses = ["Hoạt động", "Tạm ngưng", "Đang bảo trì", "Đóng cửa"];
-  const branchStatusData = [15, 5, 8, 2]; // Dữ liệu mẫu cho số lượng chi nhánh theo trạng thái
+  useEffect(() => {
+    const fetchBranchStatus = async () => {
+      try {
+        const data = await getBranchesCount();
+        const statusesData = data?.map(item => item.BranchStatus);
+        const countsData = data?.map(item => item.TotalBranches);
+        setStatuses(statusesData);
+        setBranchStatusData(countsData);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu chi nhánh:", error);
+      }
+    };
+
+    fetchBranchStatus();
+  }, []);
 
   const barDataStatus = {
     labels: statuses,
@@ -23,16 +39,20 @@ const StatisticalBranchStatus = () => {
         label: "Số lượng chi nhánh",
         data: branchStatusData,
         backgroundColor: [
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
+          "rgba(75, 192, 192, 1)", 
+          "rgba(153, 102, 255, 1)", 
+          "rgba(255, 159, 64, 1)", 
+          "rgba(255, 205, 86, 1)", 
+          "rgba(54, 162, 235, 1)", 
+          "rgba(255, 99, 132, 1)",
         ],
         borderColor: [
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 99, 132, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
+          "rgba(75, 192, 192, 1)", 
+          "rgba(153, 102, 255, 1)", 
+          "rgba(255, 159, 64, 1)", 
+          "rgba(255, 205, 86, 1)", 
+          "rgba(54, 162, 235, 1)", 
+          "rgba(255, 99, 132, 1)", 
         ],
         borderWidth: 1,
       },
@@ -41,7 +61,6 @@ const StatisticalBranchStatus = () => {
 
   return (
     <div className="container mt-4">
-      {/* Tiêu đề */}
       <h6 className="mb-4" style={{ fontSize: "25px", fontWeight: "bold", color: "#342E37" }}>
         Thống kê số lượng chi nhánh theo trạng thái
       </h6>
@@ -56,9 +75,17 @@ const StatisticalBranchStatus = () => {
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      display: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      grid: {
+                        display: false, 
+                      },
+                    },
+                    y: {
+                      grid: {
+                        display: false, 
+                      },
                     },
                   },
                 }}
@@ -83,25 +110,31 @@ const StatisticalBranchStatus = () => {
 
       {/* Bảng thống kê */}
       <Col lg={12} md={12}>
-        <Card style={{ backgroundColor: "#F9F9F9", border: "1px solid #E0E0E0" }}>
+        <Card style={{
+            backgroundColor: "#FFFFFF", 
+          }}>
           <Card.Body>
             <h6 className="mb-4" style={{ fontSize: "20px", fontWeight: "bold", color: "#342E37" }}>
               Bảng thống kê chi nhánh theo trạng thái
             </h6>
-            <Table striped bordered hover responsive>
-              <thead style={{ backgroundColor: "#E3F2FD" }}>
+            <Table striped bordered={false} hover responsive>
+              <thead style={{ backgroundColor: "#FFFFFF" }}>
                 <tr>
                   <th>Trạng thái</th>
                   <th>Số lượng chi nhánh</th>
                 </tr>
               </thead>
               <tbody>
-                {statuses.map((status, index) => (
-                  <tr key={index}>
-                    <td>{status}</td>
-                    <td>{branchStatusData[index]}</td>
-                  </tr>
-                ))}
+                {statuses.length > 0 ? (
+                  statuses.map((status, index) => (
+                    <tr key={index}>
+                      <td>{status}</td>
+                      <td>{branchStatusData[index]}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr><td colSpan="2">Không có dữ liệu</td></tr>
+                )}
               </tbody>
             </Table>
           </Card.Body>

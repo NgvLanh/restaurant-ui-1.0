@@ -7,12 +7,14 @@ const CategoryModal = ({ showModal, closeModal, initialValues, handleData }) => 
     const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm();
 
     const [preview, setPreview] = useState(null);
+    const [file, setFile] = useState(null);
 
     const { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
         onDrop: (acceptedFiles) => {
             const file = acceptedFiles[0];
-            setPreview(URL.createObjectURL(file));  // Tạo URL xem trước ảnh
+            setFile(file);
+            setPreview(URL.createObjectURL(file)); 
             register('image').onChange({ target: { name: 'image', value: file } });
         }
     });
@@ -26,11 +28,15 @@ const CategoryModal = ({ showModal, closeModal, initialValues, handleData }) => 
             reset();
             setPreview(null);
         }
+        setFile(null);
     }, [initialValues]);
 
     // Xử lý sự kiện gửi form
     const onSubmit = (data) => {
-        handleData(data);
+        handleData({
+            ...data,
+            image: file
+        });
     };
 
     // Xử lý reset form
@@ -43,6 +49,7 @@ const CategoryModal = ({ showModal, closeModal, initialValues, handleData }) => 
             reset();
             setPreview(null);
         }
+        setFile(null);
     };
 
     return (

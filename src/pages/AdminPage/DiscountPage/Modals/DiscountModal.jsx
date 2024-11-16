@@ -10,19 +10,33 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
     reset,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      startDate: new Date().toISOString().split("T")[0]
+    }
+  });
 
   useEffect(() => {
     if (initialValues) {
-      setValue("code", initialValues.code);
-      setValue("quantity", initialValues.quantity);
-      setValue("endDate", initialValues.endDate);
-      setValue("startDate", initialValues.startDate);
-      setValue("discountMethod", initialValues.discountMethod);
-      setValue("quota", initialValues.quota);
-      setValue("value", initialValues.value);
+      reset({
+        code: initialValues.code,
+        quantity: initialValues.quantity,
+        startDate: initialValues.startDate,
+        endDate: initialValues.endDate,
+        discountMethod: initialValues.discountMethod,
+        quota: initialValues.quota,
+        value: initialValues.value
+      });
     } else {
-      reset();
+      reset({
+        code: generateRandomCode(),
+        quantity: '',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: '',
+        discountMethod: '', 
+        quota: '',
+        value: ''
+      });
     }
   }, [initialValues]);
 
@@ -33,20 +47,46 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
       branch: JSON.parse(localStorage.getItem("branch_info")),
     };
     handleData(data);
-    
+
   };
+
   const startDate = watch("startDate");
-  const value = watch("value");
-  // Xử lý reset form
+  const quota = watch("quota");
+
   const handleReset = async () => {
-    reset();
+    if (initialValues) {
+      reset({
+        code: initialValues.code,
+        quantity: initialValues.quantity,
+        startDate: initialValues.startDate,
+        endDate: initialValues.endDate,
+        discountMethod: initialValues.discountMethod,
+        quota: initialValues.quota,
+        value: initialValues.value
+      });
+    } else {
+      reset({
+        code: generateRandomCode(),
+        quantity: '',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: '',
+        discountMethod: '',
+        quota: '',
+        value: ''
+      });
+    }
+  };
+
+  const generateRandomCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
   };
 
   return (
     <Modal show={showModal} onHide={() => closeModal(false)} centered>
       <Modal.Header closeButton>
         <Modal.Title>
-          {initialValues ? "Cập nhật mã giảm giá" : "Thêm mã giam"}
+          {initialValues ? "Cập nhật mã giảm giá" : "Thêm mã giảm giá"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -55,15 +95,15 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
             <Col xs={12}>
               <Form.Group controlId="code">
                 <Form.Label>Mã giảm</Form.Label>
-                <Form.Control 
-                type="text"
-                 placeholder="Nhập mã giảm giá"
-                 {...register("code", {
+                <Form.Control
+                  type="text"
+                  placeholder="Nhập mã giảm giá"
+                  {...register("code", {
                     required: "Số lượng không được để trống",
                   })}
                   isInvalid={errors.code}
-                 />
-                  <Form.Control.Feedback type="invalid">
+                />
+                <Form.Control.Feedback type="invalid">
                   {errors.code?.message}
                 </Form.Control.Feedback>
               </Form.Group>
@@ -98,11 +138,11 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                   placeholder="Chọn ngày áp dụng"
                   {...register("startDate", {
                     required: "Vui lòng chọn ngày áp dụng",
-                    validate: {
-                      isFutureDate: (value) =>
-                        new Date(value) >= new Date() ||
-                        "Ngày áp dụng phải là ngày hôm nay hoặc tương lai",
-                    },
+                    // validate: {
+                    //   isFutureDate: (value) =>
+                    //     new Date(value) > new Date() ||
+                    //     `Ngày áp dụng phải là ngày hôm nay hoặc tương lai ${new Date(value)} | ${new Date()}`,
+                    // },
                   })}
                   isInvalid={errors.startDate}
                 />
@@ -151,6 +191,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                   })}
                   isInvalid={errors.discountMethod}
                 >
+                  <option value="">Chọn loại giảm giá</option>
                   <option value="PERCENTAGE">Giảm giá phần trăm</option>
                   <option value="FIXED_AMOUNT">Giảm giá cụ thể</option>
                 </Form.Select>
@@ -173,12 +214,6 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                       value: 1000,
                       message: "Hạn mức phải từ 1000 trở lên",
                     },
-                    validate: {
-                      lessThanLimit: (quota) =>
-                        !value ||
-                        parseInt(quota) < parseInt(value) ||
-                        "Hạn mức phải nhỏ hơn Giá trị",
-                    },
                     valueAsNumber: true,
                   })}
                   isInvalid={errors.quota}
@@ -196,12 +231,19 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                 <Form.Label>Giá trị</Form.Label>
                 <Form.Control
                   type="number"
-                  placeholder="Nhập số lượng"
+                  placeholder="Nhập giá trị"
                   {...register("value", {
                     required: "Giá trị không được để trống",
-                    min: {
-                      value: 1000,
-                      message: "Giá trị phải từ 1000 trở lên",
+                    // min: {
+                    //   value: 1000,
+                    //   message: "Giá trị phải từ 1000 trở lên",
+                    // },
+                    validate: {
+                      lessThanLimit: (value) =>
+                        !quota ||
+                        parseInt(value) < parseInt(quota) ||
+                        "Giá trị phải nhỏ hơn hạn mức",
+
                     },
                     valueAsNumber: true,
                   })}
