@@ -63,3 +63,30 @@ export const deleteCartItem = async (cartItemId) => {
         console.log(error);
     }
 }
+
+
+export const deleteCartItemByUserId = async (userId) => {
+    try {
+        const response = await ApiRequest({
+            method: 'delete',
+            path: `cart-items/${userId}`,
+            headers: 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const addToCart = async (userId, dishId, quantity) => {
+    try {
+        const response = await ApiRequest({
+            method: 'POST',
+            path: `cart-items/${userId}/${dishId}/${quantity}`,
+            headers: 'Bearer '
+        });
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
+}

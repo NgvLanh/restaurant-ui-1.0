@@ -21,7 +21,7 @@ const ApiRequest = async ({ method = 'GET', path = '', data = {}, headers = {} }
         })
         return response.data;
     } catch (error) {
-        console.log(`Lỗi: ${error}`);
+        throw new Error(error);
     }
 }
 

@@ -9,11 +9,13 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const [categories, setCategories] = useState([]);
 
     const [preview, setPreview] = useState(null);
+    const [file, setFile] = useState(null);
 
     const { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
         onDrop: (acceptedFiles) => {
             const file = acceptedFiles[0];
+            setFile(file);
             setPreview(URL.createObjectURL(file));
             register('image').onChange({ target: { name: 'image', value: file } });
         }
@@ -44,7 +46,10 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
 
     const onSubmit = (data) => {
         data.category = categories.find(e => e.id === parseInt(data.category))
-        handleData(data);
+        handleData({
+            ...data,
+            image: file
+        });
     };
 
     const handleReset = () => {

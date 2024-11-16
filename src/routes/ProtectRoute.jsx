@@ -14,7 +14,6 @@ const ProtectRoute = ({ element, admin = true }) => {
     }, []);
 
     const routerRole = async () => {
-        console.log(admin, !userInfo);
 
         if (admin) {
             if (!userInfo) {
@@ -27,6 +26,7 @@ const ProtectRoute = ({ element, admin = true }) => {
                     AlertUtils.info('Vui lòng đăng nhập để tiếp tục!', 'Bạn chưa đăng nhập');
                 } else if (introspect.roles[0] !== 'ADMIN' && introspect.roles[0] !== 'NON_ADMIN') {
                     navigate('/login');
+
                     AlertUtils.info('Localstroge #: CÓ, TOKEN ko phải ADMIN', 'Quyền truy cập bị từ chối!');
                 }
             }

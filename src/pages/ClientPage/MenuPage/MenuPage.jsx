@@ -5,7 +5,7 @@ import Menus from "../../../components/Client/Menu/Menu"
 const MenuPage = () => {
     return (
         <>
-            <PageHeader title="Dự án" />
+            <PageHeader title="Món ăn" />
             <Menus />
             <Footer />
         </>
