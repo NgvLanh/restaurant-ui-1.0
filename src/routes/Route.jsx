@@ -35,6 +35,7 @@ import ProtectRoute from "./ProtectRoute";
 import ForgotPasswordPage from "../pages/ClientPage/ForgotPasswordPage/ForgotPasswordPage";
 import UserInfoPage from "../pages/ClientPage/UserInfoPage/UserInfoPage";
 import CheckoutPage from "../pages/ClientPage/CheckoutPage/CheckoutPage";
+import OrderHistoryPage from "../pages/ClientPage/OrderHistoryPage/OrderHistoryPage";
 
 
 export const router = createBrowserRouter((
@@ -55,6 +56,8 @@ export const router = createBrowserRouter((
                 <Route path="reservations" element={<ReservationPage />} />
                 {/*  */}
                 <Route path="register" element={<RegisterPage />} />
+                {/* */}
+                <Route path="orderhistory" element={<OrderHistoryPage/>} />
                 {/*  */}
                 <Route path="login" element={<LoginPage />} />
                 {/*  */}
