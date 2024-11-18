@@ -8,6 +8,7 @@ import { MdDelete } from "react-icons/md";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import BranchStatusModal from "../BranchPage/Modals/BranchStatusModal";
 import { getAllOrders } from "../../../services/OrderService/OrderService";
+import { formatDate, formatDateTime } from "../../../utils/FormatUtils";
 
 const OrderStatus = new Map([
   ["PENDING_CONFIRMATION", "Chờ xác nhận"],
@@ -34,7 +35,7 @@ const OrderListPage = () => {
       console.log("Fetching orders with status:", selectedStatus, "Current page:", currentPage, "Page size:", pageSize);
       const response = await getAllOrders(selectedStatus, currentPage, pageSize);
       console.log("API Response Data:", response?.data);
-  
+
       if (response?.data && response.data.content) {
         setTotalPages(response.data.totalPages || 1);
         setOrder(response.data.content); // Gán danh sách đơn hàng
@@ -46,13 +47,13 @@ const OrderListPage = () => {
       AlertUtils.error("Không thể tải danh sách đơn hàng.");
     }
   };
-  
+
 
   useEffect(() => {
     console.log("Selected Status in useEffect:", selectedStatus); // Đảm bảo giá trị thay đổi
     fetchOrders();
   }, [currentPage, selectedStatus]);  // fetch lại khi page hoặc status thay đổi
-  
+
 
   const handleStatusChange = (status) => {
     setSelectedStatus(status); // Cập nhật trạng thái
@@ -67,8 +68,8 @@ const OrderListPage = () => {
 
       <div className="bg-white shadow-lg p-4 rounded-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-           {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
-           {/* <div className="d-flex gap-3" style={{ maxWidth: '350px' }}>
+          {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
+          {/* <div className="d-flex gap-3" style={{ maxWidth: '350px' }}>
             <Form.Control
               type="month"
               placeholder="Từ ngày"
@@ -107,28 +108,40 @@ const OrderListPage = () => {
               <th className="text-center">Trạng thái</th>
               <th className="text-center">Khách hàng</th>
               <th className="text-center">Số điện thoại</th>
-              <th className="text-center">Số bàn</th>
               <th className="text-center">Địa chỉ</th>
             </tr>
           </thead>
           <tbody>
             {order?.length > 0 ? (
               order.map((row, index) => (
-                <tr key={row.id} className="align-middle">
-                  <td className="text-center">{index + 1}</td>
-                  <td>{row.time}</td>
-                  <td className="text-center" style={{ backgroundColor: row.colorCode }}>
+                <tr
+                  key={row.id}
+                  className={`align-middle ${index % 2 === 0 ? 'bg-light' : 'bg-white'}`}
+                >
+                  <td className="text-center" style={{ padding: '12px' }}>{index + 1}</td>
+                  <td style={{ padding: '12px' }}>{formatDateTime(row.time)}</td>
+                  <td
+                    className="text-center"
+                    style={{
+                      backgroundColor: row.colorCode,
+                      padding: '12px',
+                      color: row.colorCode ? '#fff' : '#000',
+                    }}
+                  >
                     {OrderStatus.get(row.orderStatus)}
                   </td>
-                  <td className="text-center">{row.user.fullName}</td>
-                  <td>{row.user.phoneNumber}</td>
-                  <td>{row.table.number}</td>
-                  <td>{row.address.address}</td>
+                  <td className="text-center" style={{ padding: '12px' }}>
+                    {row.user.fullName}
+                  </td>
+                  <td style={{ padding: '12px' }}>{row.user.phoneNumber}</td>
+                  <td style={{ padding: '12px' }}>{row.address.address}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="text-center">Không có dữ liệu</td>
+                <td colSpan={7} className="text-center" style={{ padding: '12px' }}>
+                  Không có dữ liệu
+                </td>
               </tr>
             )}
           </tbody>

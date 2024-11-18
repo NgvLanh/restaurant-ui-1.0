@@ -141,20 +141,16 @@ const TableListPage = () => {
                                     <td className="text-center">{index + 1}</td>
                                     <td>
                                         <span style={{
-                                            backgroundColor: 'pink',
                                             display: 'block',
                                             textAlign: 'center',
-                                            borderRadius: '50%',
                                         }}>
                                             {row.number}
                                         </span>
                                     </td>
                                     <td>
                                         <span style={{
-                                            backgroundColor: 'skyblue',
                                             display: 'block',
                                             textAlign: 'center',
-                                            borderRadius: '50%',
                                         }}>
                                             {row.seats}
                                         </span>

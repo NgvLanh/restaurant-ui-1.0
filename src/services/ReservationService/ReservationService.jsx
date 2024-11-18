@@ -14,20 +14,12 @@ const getAllreservations = async () => {
 };
 
 // Tạo mới một đặt bàn
-const createreservation = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'reservations',
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi tạo đặt bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo đặt bàn' };
-    }
-};
+export const createReservation = async (request) =>
+    await ApiRequest({
+        method: 'POST',
+        path: 'reservations',
+        data: request,
+    });
 
 // Cập nhật một đặt bàn theo ID
 const updatereservation = async (reservationId, request) => {
@@ -75,4 +67,4 @@ const getAllreservationsPageable = async (currentPage, pageSize) => {
 };
 
 
-export { getAllreservations, createreservation, updatereservation, deletereservation, getAllreservationsPageable };
+export { getAllreservations, updatereservation, deletereservation, getAllreservationsPageable };

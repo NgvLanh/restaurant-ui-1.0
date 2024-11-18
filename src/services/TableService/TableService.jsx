@@ -74,10 +74,10 @@ const getAllTablesPageable = async (currentPage, pageSize) => {
 };
 
 // Lấy bàn để chọn đặt bàn
-const getTablesByBranchIdAndSeats = async (branchId, time, seats) => {
+const getTablesByBranchIdAndSeats = async (branchId, time) => {
     try {
         const response = await ApiRequest({
-            path: `tables/reservations?branch=${branchId}&time=${time}&seats=${seats}`,
+            path: `tables/reservations?branch=${branchId}&time=${time}`,
         });
         return response?.data;
     } catch (error) {

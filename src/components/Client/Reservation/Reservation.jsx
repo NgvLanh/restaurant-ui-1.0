@@ -50,28 +50,40 @@ const Reservation = () => {
                                         {errors.branch && <span className="text-danger">{errors.branch.message}</span>}
                                     </div>
                                     <div className="col-12 col-sm-6">
-                                        <input type="text" className="form-control border-0" placeholder="Tên Của Bạn" {...register("name", { required: "Vui lòng nhập tên của bạn" })} style={{ height: '55px' }} />
-                                        {errors.name && <span className="text-danger">{errors.name.message}</span>}
+                                        <input type="text" className="form-control border-0" placeholder="Tên Của Bạn" {...register("fullName", { required: "Vui lòng nhập tên của bạn" })} style={{ height: '55px' }} />
+                                        {errors.fullName && <span className="text-danger">{errors.fullName.message}</span>}
                                     </div>
                                     <div className="col-12 col-sm-6">
                                         <input type="email" className="form-control border-0" placeholder="Email Của Bạn" {...register("email", { required: "Vui lòng nhập email của bạn", pattern: { value: /^\S+@\S+$/i, message: "Email không hợp lệ" } })} style={{ height: '55px' }} />
                                         {errors.email && <span className="text-danger">{errors.email.message}</span>}
                                     </div>
                                     <div className="col-12 col-sm-6">
-                                        <input type="text" className="form-control border-0" placeholder="Số Điện Thoại" {...register("phone", { required: "Vui lòng nhập số điện thoại của bạn" })} style={{ height: '55px' }} />
-                                        {errors.phone && <span className="text-danger">{errors.phone.message}</span>}
+                                        <input type="text" className="form-control border-0" placeholder="Số Điện Thoại" {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại của bạn" })} style={{ height: '55px' }} />
+                                        {errors.phoneNumber && <span className="text-danger">{errors.phoneNumber.message}</span>}
                                     </div>
                                     <div className="col-12 col-sm-6">
-                                        <input type="datetime-local" className="form-control border-0" {...register("time", { required: "Vui lòng chọn ngày đặt bàn" })} style={{ height: '55px' }} />
-                                        {errors.time && <span className="text-danger">{errors.time.message}</span>}
+                                        <input
+                                            type="datetime-local"
+                                            className="form-control border-0"
+                                            {...register("bookingDate", {
+                                                required: "Vui lòng chọn ngày đặt bàn",
+                                                validate: (value) => {
+                                                    const selectedDate = new Date(value);
+                                                    const selectedHours = selectedDate.getHours();
+                                                    const selectedMinutes = selectedDate.getMinutes();
+                                                    if (selectedHours < 9 || (selectedHours === 21 && selectedMinutes > 0) || selectedHours > 21) {
+                                                        return "Thời gian phải nằm trong khoảng 09:00 AM - 09:00 PM";
+                                                    }
+                                                    return true; 
+                                                },
+                                            })}
+                                            style={{ height: "55px" }}
+                                        />
+                                        {errors.bookingDate && <span className="text-danger">{errors.bookingDate.message}</span>}
                                     </div>
+
                                     <div className="col-12 col-sm-6">
-                                        <select className="form-select border-0" {...register("seats", { required: "Vui lòng chọn số lượng người" })} style={{ height: '55px' }}>
-                                            <option value="">Chọn Số Lượng Người</option>
-                                            {[...Array(8)].map((_, i) => (
-                                                <option key={i + 1} value={i + 1}>{i + 1} Người</option>
-                                            ))}
-                                        </select>
+                                        <input type="number" className="form-control border-0" placeholder="Số Người"  {...register("seats", { required: "Vui lòng nhập số người" })} style={{ height: '55px' }} />
                                         {errors.seats && <span className="text-danger">{errors.seats.message}</span>}
                                     </div>
                                     <div className="col-12">

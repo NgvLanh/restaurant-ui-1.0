@@ -26,6 +26,7 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
         if (initialValues) {
             setValue('name', initialValues.name);
             setValue('price', initialValues.price);
+            setValue('quantity', initialValues.quantity);
             setValue('description', initialValues.description);
             setValue('category', initialValues.category?.id);
             setPreview(initialValues.image);
@@ -33,6 +34,7 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
             reset({
                 name: '',
                 price: '',
+                quantity: '',
                 description: '',
                 category: '',
             });
@@ -48,6 +50,7 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
         data.category = categories.find(e => e.id === parseInt(data.category))
         handleData({
             ...data,
+            branch: JSON.parse(localStorage.getItem('branch_info')),
             image: file
         });
     };
@@ -56,6 +59,7 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
         if (initialValues) {
             setValue('name', initialValues.name);
             setValue('price', initialValues.price);
+            setValue('quantity', initialValues.quantity);
             setValue('description', initialValues.description);
             setValue('category', initialValues.category?.id);
             setPreview(initialValues.image);
@@ -63,6 +67,7 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
             reset({
                 name: '',
                 price: '',
+                quantity: '',
                 description: '',
                 category: '',
             });
@@ -103,6 +108,20 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     {errors.price?.message}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                        <Col xs={12} className="mt-2">
+                            <Form.Group controlId="quantity">
+                                <Form.Label>Số lượng</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    placeholder="Nhập số lượng"
+                                    {...register('quantity', { required: 'Số lượng không được để trống' })}
+                                    isInvalid={errors.quantity}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.quantity?.message}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
