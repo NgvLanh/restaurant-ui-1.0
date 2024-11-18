@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Nav, Tab, Card, ListGroup, Button, Image } from 'react-bootstrap';
+import { Container, Row, Col, Nav, Tab, Card, ListGroup, Button, Image, Modal } from 'react-bootstrap';
 
 const OrderHistory = () => {
   const [key, setKey] = useState('all');
+  const [selectedOrder, setSelectedOrder] = useState(null); // Đơn hàng được chọn để xem chi tiết
+  const [showModal, setShowModal] = useState(false); // Trạng thái hiển thị modal
 
   const tabs = [
     { key: 'all', label: 'Tất cả' },
@@ -37,38 +39,7 @@ const OrderHistory = () => {
       ],
       totalAmount: 175000,
     },
-    {
-      id: 5678,
-      date: '2023-04-15',
-      status: 'shipped',
-      items: [
-        {
-          id: 3,
-          name: 'Sản phẩm C',
-          quantity: 1,
-          price: 120000,
-          total: 120000,
-          imageUrl: 'https://via.placeholder.com/150',
-        },
-      ],
-      totalAmount: 120000,
-    },
-    {
-      id: 9012,
-      date: '2023-03-20',
-      status: 'delivered',
-      items: [
-        {
-          id: 4,
-          name: 'Sản phẩm D',
-          quantity: 3,
-          price: 80000,
-          total: 240000,
-          imageUrl: 'https://via.placeholder.com/150',
-        },
-      ],
-      totalAmount: 240000,
-    },
+    // Thêm các đơn hàng khác...
   ];
 
   const statusColors = {
@@ -76,6 +47,20 @@ const OrderHistory = () => {
     shipped: '#007bff',
     delivered: '#28a745',
     cancelled: '#dc3545',
+  };
+
+  const handleCancelOrder = (orderId) => {
+    alert(`Hủy đơn hàng #${orderId}`);
+  };
+
+  const handleShowDetails = (order) => {
+    setSelectedOrder(order);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedOrder(null);
   };
 
   return (
@@ -100,7 +85,7 @@ const OrderHistory = () => {
                     style={{
                       color: key === tab.key ? '#fff' : '#333',
                       fontWeight: key === tab.key ? 'bold' : 'normal',
-                      backgroundColor: key === tab.key ? '#ab7442' : 'transparent', // Chỉnh màu nền khi tab được chọn
+                      backgroundColor: key === tab.key ? '#ab7442' : 'transparent',
                       borderRadius: '20px',
                       transition: 'all 0.3s ease',
                     }}
@@ -124,11 +109,7 @@ const OrderHistory = () => {
                         <Card key={order.id} className="mb-4 border-0 rounded-lg shadow-lg" style={{ backgroundColor: '#fff' }}>
                           <Card.Body>
                             <Card.Title className="fw-bold text-dark">Đơn hàng #{order.id}</Card.Title>
-                            <Card.Subtitle className="text-muted">
-                              Ngày đặt: {order.date}
-                            </Card.Subtitle>
-
-                            {/* Trạng thái đơn hàng ở góc trên bên phải */}
+                            <Card.Subtitle className="text-muted">Ngày đặt: {order.date}</Card.Subtitle>
                             <div
                               className="d-flex justify-content-end"
                               style={{
@@ -144,10 +125,10 @@ const OrderHistory = () => {
                               {order.status === 'delivered'
                                 ? 'Hoàn thành'
                                 : order.status === 'pending'
-                                  ? 'Chờ xử lý'
-                                  : order.status === 'shipped'
-                                    ? 'Đang giao'
-                                    : 'Đã hủy'}
+                                ? 'Chờ xử lý'
+                                : order.status === 'shipped'
+                                ? 'Đang giao'
+                                : 'Đã hủy'}
                             </div>
 
                             <ListGroup variant="flush" className="mt-3">
@@ -175,47 +156,19 @@ const OrderHistory = () => {
                             <hr />
                             <div className="d-flex justify-content-between align-items-center">
                               <h5 className="fw-bold" style={{ color: '#ab7442' }}>
-                                <span style={{ float: 'right' }}>Tổng cộng: {order.totalAmount.toLocaleString()} VND</span>
+                                Tổng cộng: {order.totalAmount.toLocaleString()} VND
                               </h5>
-
-                              {/* Nút "Mua lại" và "Xem chi tiết" nằm cạnh nhau */}
-                              <div className="d-flex gap-3">
-                                {order.status === 'delivered' && (
-                                 <Button
-                                 variant="outline-primary"
-                                 style={{
-                                   borderRadius: '20px',
-                                   fontWeight: 'bold',
-                                   backgroundColor: '#ab7442', // Màu nền mặc định
-                                   borderColor: '#ab7442', // Màu viền mặc định
-                                   color: '#fff', // Màu chữ mặc định
-                                   transition: 'background-color 0.3s ease, border-color 0.3s ease', // Hiệu ứng chuyển màu khi hover
-                                 }}
-                                 onMouseEnter={(e) => {
-                                   e.target.style.backgroundColor = '#d0011b'; // Màu nền khi hover
-                                   e.target.style.borderColor = '#d0011b'; // Màu viền khi hover
-                                 }}
-                                 onMouseLeave={(e) => {
-                                   e.target.style.backgroundColor = '#ab7442'; // Màu nền khi bỏ hover
-                                   e.target.style.borderColor = '#ab7442'; // Màu viền khi bỏ hover
-                                 }}
-                                 onClick={() => alert('Mua lại')}
-                               >
-                                 Mua lại
-                               </Button>
-                               
-                                )}
-                                <Button
-                                  variant="dark"
-                                  className="shadow-sm"
-                                  style={{
-                                    borderRadius: '20px',
-                                    fontWeight: 'bold',
-                                  }}
-                                >
-                                  Xem chi tiết
-                                </Button>
-                              </div>
+                              <Button
+                                variant="dark"
+                                className="shadow-sm"
+                                style={{
+                                  borderRadius: '20px',
+                                  fontWeight: 'bold',
+                                }}
+                                onClick={() => handleShowDetails(order)}
+                              >
+                                Xem chi tiết
+                              </Button>
                             </div>
                           </Card.Body>
                         </Card>
@@ -240,6 +193,42 @@ const OrderHistory = () => {
           </Col>
         </Row>
       </Tab.Container>
+
+      {/* Modal Hiển thị chi tiết */}
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Chi tiết đơn hàng #{selectedOrder?.id}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedOrder && (
+            <div>
+              <p><strong>Ngày đặt:</strong> {selectedOrder.date}</p>
+              <p><strong>Tổng tiền:</strong> {selectedOrder.totalAmount.toLocaleString()} VND</p>
+              <ListGroup variant="flush">
+                {selectedOrder.items.map((item) => (
+                  <ListGroup.Item key={item.id}>
+                    <Row>
+                      <Col sm={3}>
+                        <Image src={item.imageUrl} rounded fluid />
+                      </Col>
+                      <Col sm={9}>
+                        <h6>{item.name}</h6>
+                        <p>Số lượng: {item.quantity}</p>
+                        <p>Thành tiền: {item.total.toLocaleString()} VND</p>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Đóng
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
