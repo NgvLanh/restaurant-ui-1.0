@@ -1,4 +1,4 @@
-import { BiClipboard, BiEdit, BiPencil, BiPlus, BiTrash, BiUser } from "react-icons/bi";
+import { BiCheck, BiClipboard, BiEdit, BiPencil, BiPlus, BiTrash, BiUser } from "react-icons/bi";
 import DataTable from "../../../components/Admin/DataTable/DataTable";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
@@ -22,8 +22,9 @@ const BranchListPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
-    const [showUserModal, setShowUserModal] = useState(false); // State for UserModal
-
+    const [showUserModal, setShowUserModal] = useState(false);
+    const [showUserDataModal, setShowUserDataModal] = useState(false);
+    const [selectedUserData, setSelectedUserData] = useState(null);
     useEffect(() => {
         fetchBranches();
     }, [currentPage, searchKey]);
@@ -60,7 +61,7 @@ const BranchListPage = () => {
         }
         fetchBranches();
     };
-
+   
     const handleSetRole = async (data) => {
         try {
             const { confirmPassword, ...reRequest } = data;
@@ -91,11 +92,9 @@ const BranchListPage = () => {
             console.error(error);
         }
 
-        // fetchBranches(); // Cập nhật danh sách chi nhánh sau khi thay đổi
+        fetchBranches(); 
+        setInitialValues(null);
     };
-
-
-
 
     const handleDelete = async (id) => {
         const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
@@ -111,10 +110,10 @@ const BranchListPage = () => {
     };
 
     const handleUserModalOpen = (branch) => {
-        setInitialValues(branch); // Lưu thông tin chi nhánh, bao gồm branchId
-        setShowUserModal(true); // Mở UserModal
+        setInitialValues(branch); // Lưu thông tin chi nhánh
+        setShowUserModal(true);    // Mở UserModal
     };
-
+    
     const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
     return (
@@ -207,16 +206,18 @@ const BranchListPage = () => {
                                                 <MdDelete size={16} />
                                             </span>
 
-                                            {
-                                                (
-                                                    <span onClick={() => {
-                                                        setInitialValues(row); // Lưu thông tin chi nhánh
-                                                        handleUserModalOpen(row);   // Truyền row (bao gồm cả branchId)
-                                                    }}>
-                                                        <BiUser size={16} />
-                                                    </span>
-                                                )
-                                            }
+                                            <span
+                                                onClick={() => row.user ? handleUserModalOpen(row?.user) : handleUserModalOpen(row)}
+                                                style={{
+                                                    padding: '8px',
+                                                    backgroundColor: '#F1F3F4',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.3s ease',
+                                                }}
+                                            >
+                                                {row.user ? <BiCheck size={16} color="green" /> : <BiUser size={16} />}
+                                            </span>
                                         </span>
                                     </td>
                                 </tr>
@@ -232,7 +233,6 @@ const BranchListPage = () => {
 
 
             {/* BranchModal */}
-
             <BranchModal
                 showModal={showModal}
                 closeModal={() => setShowModal(false)}

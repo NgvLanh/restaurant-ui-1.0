@@ -102,3 +102,17 @@ export const updateEmployee = async (employeeId, request) => {
 };
 
 
+export const getNonAdmin = async () => {
+    try {
+        const response = await ApiRequest({
+            method: 'GET',
+            path: 'users',
+            data: request,
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
+    }
+};
+

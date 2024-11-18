@@ -91,32 +91,52 @@ const Menus = () => {
                         </ul>
                     </div>
                 </div>
-                <div className="row g-4 portfolio-container">
+                <div className="row g-4 portfolio-container d-flex flex-wrap">
                     {dishes?.map((dish) => (
-                        <div key={dish?.id} className="col-lg-4 col-md-6 portfolio-item wow fadeInUp"
+                        <div
+                            key={dish?.id}
+                            className="portfolio-item wow fadeInUp"
                             data-wow-delay="0.1s"
-                            style={{ maxHeight: '500px' }}>
-                            <div className="rounded overflow-hidden">
-                                <div className="position-relative overflow-hidden" >
-                                    <img className="img-fluid w-100" src={dish?.image} alt={dish?.image}
-                                        style={{ minHeight: '210px', maxHeight: '210px', objectFit: 'cover' }} />
+                            style={{
+                                flex: '1 1 calc(33.333% - 20px)', // Chiều ngang tự động co giãn
+                                maxWidth: 'calc(33.333% - 20px)',
+                                margin: '10px',
+                                boxSizing: 'border-box',
+                            }}
+                        >
+                            <div
+                                className="rounded overflow-hidden d-flex flex-column"
+                                style={{ height: '100%' }}
+                            >
+                                <div className="position-relative overflow-hidden">
+                                    <img
+                                        className="img-fluid w-100"
+                                        src={dish?.image}
+                                        alt={dish?.image}
+                                        style={{
+                                            minHeight: '200px',
+                                            maxHeight: '200px',
+                                            objectFit: 'cover',
+                                        }}
+                                    />
                                     <div className="portfolio-overlay">
-                                        {/* <a className="btn btn-square btn-outline-light mx-1"
-                                            href={dish?.image} data-lightbox="portfolio">
-                                            <i className="fa fa-eye"></i>
-                                        </a> */}
-                                        <a className="btn btn-square btn-outline-light mx-1"
+                                        <a
+                                            className="btn btn-square btn-outline-light mx-1"
                                             onClick={() => {
                                                 setSelectedDish(dish);
                                                 setShowModal(true);
-                                            }}>
+                                            }}
+                                        >
                                             <i className="fa fa-shopping-cart"></i>
                                         </a>
                                     </div>
                                 </div>
-                                <div className="border border-5 border-light border-top-0 p-4">
+                                <div
+                                    className="border border-5 border-light border-top-0 p-4 flex-grow-1"
+                                    style={{ overflow: 'hidden' }}
+                                >
                                     <p className="text-primary fw-medium mb-2">{dish?.category?.name}</p>
-                                    <p className='d-flex justify-content-start align-items-center gap-2'>
+                                    <p className="d-flex justify-content-start align-items-center gap-2">
                                         <h5 className="lh-base mb-0">{dish?.name}</h5>
                                         <span>{formatCurrency(dish?.price)}</span>
                                     </p>
@@ -126,6 +146,7 @@ const Menus = () => {
                         </div>
                     ))}
                 </div>
+
             </div>
 
             {/* Modal Add to Cart */}
