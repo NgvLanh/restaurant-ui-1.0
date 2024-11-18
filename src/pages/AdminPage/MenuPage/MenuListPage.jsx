@@ -35,8 +35,6 @@ const MenuListPage = () => {
 
   const fetchDishes = async () => {
     const response = await getAllDishesPageable(searchKey, currentPage, pageSize);
-    console.log(response);
-
     setTotalPages(response?.data?.totalPages);
     setDishes(response?.data?.content);
   }
@@ -206,7 +204,7 @@ const MenuListPage = () => {
                 <th>Tên món ăn</th>
                 <th>Giá</th>
                 <th>Mô tả</th>
-                <th>Trạng thái</th>
+                <th>Số lượng</th>
                 <th>Hành động</th>
               </tr>
             </thead>
@@ -222,14 +220,7 @@ const MenuListPage = () => {
                     <td>{row.name}</td>
                     <td>{formatCurrency(row.price)}</td>
                     <td>{row.description}</td>
-                    <td>
-                      <Switch
-                        onChange={() => handleToggleStatus(row.id, row.status)}
-                        checked={row.status}
-                        offColor="#ccc"
-                        onColor="#4CAF50"
-                      />
-                    </td>
+                    <td>{row.quantity}</td>
                     <td>
                       <span className="d-flex align-items-center gap-3" style={{ cursor: 'pointer' }}>
                         <span onClick={() => {

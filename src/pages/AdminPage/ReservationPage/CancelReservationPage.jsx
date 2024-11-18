@@ -6,7 +6,7 @@ import { Button, Form, Table } from "react-bootstrap";
 import { BiEdit, BiPlus } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
-import { createreservation, deletereservation, getAllreservationsPageable, updatereservation } from "../../../services/ReservationService/ReservationService";
+import { createReservation, deletereservation, getAllreservationsPageable, updatereservation } from "../../../services/ReservationService/ReservationService";
 
 const CancelReservationPage = () => {
 
@@ -45,7 +45,7 @@ const CancelReservationPage = () => {
         AlertUtils.error(response?.message);
       }
     } else {
-      const response = await createreservation(data);
+      const response = await createReservation(data);
       if (response?.status) {
         AlertUtils.success(successMessage);
         setShowModal(false);
