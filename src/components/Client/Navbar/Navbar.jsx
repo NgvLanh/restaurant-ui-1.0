@@ -45,6 +45,7 @@ const Navbar = () => {
                     <Link to="/menu" className="nav-item nav-link">Thực đơn</Link>
                     <Link to="/service" className="nav-item nav-link">Dịch Vụ</Link>
                     <Link to="/about" className="nav-item nav-link">Giới thiệu</Link>
+                    <Link to="/orderhistory" className="nav-item nav-link">Đơn hàng</Link>
                     <div className="nav-item dropdown">
                         <Link to="#" className="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Khác</Link>
                         <div className="dropdown-menu fade-up m-0">

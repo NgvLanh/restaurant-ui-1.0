@@ -36,6 +36,7 @@ import ForgotPasswordPage from "../pages/ClientPage/ForgotPasswordPage/ForgotPas
 import UserInfoPage from "../pages/ClientPage/UserInfoPage/UserInfoPage";
 import EmployeeListPage from "../pages/AdminPage/AccountPage/EmployeeListPage"
 import CheckoutPage from "../pages/ClientPage/CheckoutPage/CheckoutPage";
+import OrderHistoryPage from "../pages/ClientPage/OrderHistoryPage/OrderHistoryPage";
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -55,6 +56,8 @@ export const router = createBrowserRouter((
                 <Route path="reservations" element={<ReservationPage />} />
                 {/*  */}
                 <Route path="register" element={<RegisterPage />} />
+                {/* */}
+                <Route path="orderhistory" element={<OrderHistoryPage/>} />
                 {/*  */}
                 <Route path="login" element={<LoginPage />} />
                 {/*  */}
