@@ -116,6 +116,18 @@ const Sidebar = ({ isCollapsed }) => {
                 ],
             },
             {
+                title: "Người dùng",
+                url: "/admin/users",
+                icon: <i className="fas fa-user"></i>,
+                isActive: false,
+                items: [
+                    {
+                        title: "Danh sách nhân viên",
+                        url: "/admin/employee",
+                    },
+                ],
+            },
+            {
                 title: "Cài đặt",
                 url: "/admin/settings",
                 icon: <i className="fas fa-cogs"></i>,

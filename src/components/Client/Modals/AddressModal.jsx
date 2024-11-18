@@ -132,25 +132,35 @@ const AddressModal = ({ show, handleClose, handleSave }) => {
     };
 
     const handleSaveClick = () => {
-
+        // Regex kiểm tra số điện thoại (03, 08, 09) và có 10 chữ số
+        const phoneRegex = /^(03|08|09)\d{8}$/;
+    
         if (!provinceId || !districtId || !wardId || !fullName || !phoneNumber || !address) {
             AlertUtils.warning("Vui lòng chọn đầy đủ thông tin địa chỉ");
             return;
         }
-
+    
+        // Kiểm tra định dạng số điện thoại
+        if (!phoneRegex.test(phoneNumber)) {
+            AlertUtils.warning("Số điện thoại không hợp lệ, vui lòng nhập đúng định dạng (bắt đầu bằng 03, 08, 09 và có 10 chữ số)");
+            return;
+        }
+    
         handleSave({
             ...shippingFee,
             fullName: fullName,
             phoneNumber: phoneNumber,
             address: document.getElementById('shipping-address').textContent.split(': ')[1] + " / " + address
         });
-
+    
+        // Reset các giá trị sau khi lưu
         setDistrictId('');
         setWardId('');
         setShippingFee(null);
         setFullName('');
         setPhoneNumber('');
     };
+    
 
     return (
         <Modal show={show} onHide={handleClose}>

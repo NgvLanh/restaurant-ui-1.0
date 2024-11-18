@@ -7,40 +7,68 @@ import { BiEdit, BiPlus, BiShow } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import BranchStatusModal from "../BranchPage/Modals/BranchStatusModal";
+import { getAllOrders } from "../../../services/OrderService/OrderService";
 
+const OrderStatus = new Map([
+  ["PENDING_CONFIRMATION", "Chờ xác nhận"],
+  ["CONFIRMED", "Đã xác nhận"],
+  ["ORDERED", "Đã đặt món"],
+  ["IN_KITCHEN", "Đang chế biến"],
+  ["READY_TO_SERVE", "Sẵn sàng phục vụ"],
+  ["SERVED", "Đã phục vụ (ăn tại bàn)"],
+  ["DELIVERY", "Đang giao (giao hàng)"],
+  ["DELIVERED", "Đã giao (giao hàng)"],
+  ["CANCELLED", "Đã hủy"],
+  ["PAID", "Đã thanh toán"],
+]);
 
 const OrderListPage = () => {
-
-  const [branchStatuses, setBranchStatuses] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [initialValues, setInitialValues] = useState({});
-  const [searchKey, setSearchKey] = useState('');
+  const [order, setOrder] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(''); // Trạng thái đang chọn
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
 
+  const fetchOrders = async () => {
+    try {
+      console.log("Fetching orders with status:", selectedStatus, "Current page:", currentPage, "Page size:", pageSize);
+      const response = await getAllOrders(selectedStatus, currentPage, pageSize);
+      console.log("API Response Data:", response?.data);
+  
+      if (response?.data && response.data.content) {
+        setTotalPages(response.data.totalPages || 1);
+        setOrder(response.data.content); // Gán danh sách đơn hàng
+      } else {
+        setOrder([]); // Nếu không có dữ liệu, set rỗng
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu:", error);
+      AlertUtils.error("Không thể tải danh sách đơn hàng.");
+    }
+  };
+  
 
   useEffect(() => {
-    // fetchBranchStatuses();
-  }, [currentPage, searchKey]);
+    console.log("Selected Status in useEffect:", selectedStatus); // Đảm bảo giá trị thay đổi
+    fetchOrders();
+  }, [currentPage, selectedStatus]);  // fetch lại khi page hoặc status thay đổi
+  
 
-  const handleFromDateChange = async () => {
+  const handleStatusChange = (status) => {
+    setSelectedStatus(status); // Cập nhật trạng thái
+    setCurrentPage(0);         // Reset về trang đầu tiên
+  };
 
-  }
-  const handleToDateChange = async () => {
+  // const debouncedSelect = useMemo(() => debounce(handleStatusChange, 500), []);
 
-  }
-  const handleStatusChange = async () => {
-
-  }
   return (
     <>
-      <PageHeader title="Trạng thái hoá đơn" />
+      <PageHeader title="Trạng thái hóa đơn" />
 
       <div className="bg-white shadow-lg p-4 rounded-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-          {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
-          <div className="d-flex gap-3" style={{ maxWidth: '350px' }}>
+           {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
+           {/* <div className="d-flex gap-3" style={{ maxWidth: '350px' }}>
             <Form.Control
               type="month"
               placeholder="Từ ngày"
@@ -53,27 +81,23 @@ const OrderListPage = () => {
                 fontSize: '14px',
               }}
             />
-          </div>
+          </div> */}
 
           {/* Select để lọc theo trạng thái hóa đơn */}
           <div className="action">
             <Form.Select
-              onChange={(e) => handleStatusChange(e.target.value)}
+              value={selectedStatus}
+              onChange={(e) => handleStatusChange(e.target.value)} // Cập nhật selectedStatus
               className="rounded-3"
               style={{ maxWidth: '200px' }}
             >
-              <option value="0">Tất cả</option>
-              <option value="ordered">Đã đặt món</option>
-              <option value="in_kitchen">Đang chế biến</option>
-              <option value="ready_to_serve">Sẵn sàng phục vụ</option>
-              <option value="served">Đã phục vụ</option>
-              <option value="delivery">Đang giao</option>
-              <option value="delivered">Đã giao</option>
-              <option value="cancelled">Đã hủy</option>
+              <option value="">Tất cả</option> {/* Hiển thị tất cả nếu không chọn trạng thái */}
+              {Array.from(OrderStatus.entries()).map(([key, value]) => (
+                <option key={key} value={key}>{value}</option>
+              ))}
             </Form.Select>
           </div>
         </div>
-
 
         <Table borderless hover responsive className="rounded-4">
           <thead style={{ backgroundColor: '#f5f5f5' }}>
@@ -88,31 +112,18 @@ const OrderListPage = () => {
             </tr>
           </thead>
           <tbody>
-            {branchStatuses?.length > 0 ? (
-              branchStatuses.map((row, index) => (
+            {order?.length > 0 ? (
+              order.map((row, index) => (
                 <tr key={row.id} className="align-middle">
                   <td className="text-center">{index + 1}</td>
-                  <td>{row.name}</td>
-                  <td className="text-center" style={{ backgroundColor: row.colorCode }}></td>
-                  <td className="text-center">
-                    <span
-                      className="d-flex justify-content-center align-items-center gap-3"
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {/* Thay thế edit bằng view */}
-                      <span
-                        onClick={() => {
-                          setInitialValues(row);
-                          setShowModal(true);
-                        }}
-                      >
-                        <BiShow size={16} />
-                      </span>
-                      {/* <span onClick={() => handleDelete(row.id)}>
-                        <MdDelete size={16} />
-                      </span> */}
-                    </span>
+                  <td>{row.time}</td>
+                  <td className="text-center" style={{ backgroundColor: row.colorCode }}>
+                    {OrderStatus.get(row.orderStatus)}
                   </td>
+                  <td className="text-center">{row.user.fullName}</td>
+                  <td>{row.user.phoneNumber}</td>
+                  <td>{row.table.number}</td>
+                  <td>{row.address.address}</td>
                 </tr>
               ))
             ) : (
@@ -122,15 +133,7 @@ const OrderListPage = () => {
             )}
           </tbody>
         </Table>
-
       </div>
-
-      {/* <BranchStatusModal
-        showModal={showModal}
-        closeModal={() => setShowModal(false)}
-        handleData={handleModalSubmit}
-        initialValues={initialValues}
-      /> */}
 
       <RenderPagination
         currentPage={currentPage}
@@ -139,7 +142,7 @@ const OrderListPage = () => {
         totalPages={totalPages}
       />
     </>
-  )
-}
+  );
+};
 
-export default OrderListPage
+export default OrderListPage;

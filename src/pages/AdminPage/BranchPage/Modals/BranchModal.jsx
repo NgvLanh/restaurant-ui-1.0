@@ -13,7 +13,7 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const [districtId, setDistrictId] = useState("");
     const [wardId, setWardId] = useState("");
     const [branchStatuses, setBranchStatuses] = useState([]);
-    const [users,setUsers] = useState([]);
+    const [users, setUsers] = useState([]);
     const tokenShipping = import.meta.env.VITE_TOKEN_SHIPPING || "";
     const idShop = import.meta.env.VITE_ID_SHOP || "";
 
@@ -34,15 +34,20 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
                 setValue("wardId", initialValues.wardId);
 
                 setValue("branchStatus", initialValues.branchStatus?.id);
-                setValue("user", initialValues.user?.id)
                 setValue("address", initialValues.address);
             } else {
                 reset();
+                setProvinceId("");
+                setDistrictId("");
+                setWardId("");
+                setDistricts([]);
+                setWards([]);
             }
         };
 
         fetchData();
     }, [initialValues, setValue, reset]);
+
 
     useEffect(() => {
         if (provinceId) {
@@ -102,8 +107,11 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
         }
     };
     const onSubmit = (data) => {
-        handleData(data);
+        handleData(data); // Gửi dữ liệu ra ngoài
+        closeModal(false); // Đóng modal (nếu cần)
+        reset(); // Xóa dữ liệu form sau khi lưu
     };
+
 
     const handleReset = async () => {
         if (initialValues) {
@@ -120,9 +128,15 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
             setValue("branchStatus", initialValues.branchStatus?.id);
             setValue("address", initialValues.address);
         } else {
-            reset();
+            reset(); // Xóa toàn bộ dữ liệu của form
+            setProvinceId("");
+            setDistrictId("");
+            setWardId("");
+            setDistricts([]);
+            setWards([]);
         }
     };
+
 
     return (
         <Modal show={showModal} onHide={() => closeModal(false)} centered size="lg">
