@@ -4,6 +4,7 @@ import { getTablesByBranchIdAndSeats } from "../../../services/TableService/Tabl
 import { getAllBranches } from "../../../services/BranchService/BranchService";
 import { formatDateTime } from "../../../utils/FormatUtils";
 import { createReservation } from "../../../services/ReservationService/ReservationService";
+import AlertUtils from "../../../utils/AlertUtils";
 
 const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     const [tables, setTables] = useState([]);
@@ -24,7 +25,7 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
 
     const fetchTables = async (dataRequest) => {
         if (dataRequest) {
-            setTables(await getTablesByBranchIdAndSeats(dataRequest.branch, dataRequest.time));
+            setTables(await getTablesByBranchIdAndSeats(dataRequest.branch));
         }
     };
 
@@ -55,23 +56,30 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     };
 
     const handleConfirm = async () => {
-        dataRequest.branch = branches.find(e => e.id === parseInt(dataRequest.branch))
-        console.log("Xác nhận đặt bàn:", {
+        dataRequest.branch = branches.find(e => e.id === parseInt(dataRequest.branch));
+
+        const requests = selectedTables.map(table => ({
             ...dataRequest,
-            tables: selectedTables,
+            table: table,
             startTime: dataRequest.bookingDate?.split('T')[1]
-        });
-        const requsest = {
-            ...dataRequest,
-            tables: selectedTables,
-            startTime: dataRequest.bookingDate?.split('T')[1]
-        };
+        }));
+
         document.getElementById('spinner').classList.add('show');
-        await createReservation(requsest);
-        setShowConfirmModal(false);
-        document.getElementById('spinner').classList.remove('show');
-        handleClose();
+        try {
+            for (const request of requests) {
+                await createReservation(request);
+            }
+            setShowConfirmModal(false);
+            handleClose();
+            AlertUtils.success('Đặt bàn thành công');
+        } catch (error) {
+            AlertUtils.error('Lỗi đặt bàn');
+        } finally {
+            document.getElementById('spinner').classList.remove('show');
+
+        }
     };
+
 
     return (
         <>

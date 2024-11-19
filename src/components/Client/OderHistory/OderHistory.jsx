@@ -1,61 +1,45 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Nav, Tab, Card, ListGroup, Button, Image, Modal } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Row, Col, Nav, Tab, Card, ListGroup, Button, Image, Modal } from 'react-bootstrap';
+import { cancelOrder, getAllOrdersByUserId } from '../../../services/OrderService/OrderService';
+import { formatCurrency, formatDateTime } from '../../../utils/FormatUtils';
+import AlertUtils from '../../../utils/AlertUtils';
 
 const OrderHistory = () => {
-  const [key, setKey] = useState('all');
-  const [selectedOrder, setSelectedOrder] = useState(null); // Đơn hàng được chọn để xem chi tiết
-  const [showModal, setShowModal] = useState(false); // Trạng thái hiển thị modal
+  const [key, setKey] = useState('ALL');
+  const [selectedOrder, setSelectedOrder] = useState('ALL');
+  const [showModal, setShowModal] = useState(false);
+  const [orders, setOrders] = useState([]);
 
   const tabs = [
-    { key: 'all', label: 'Tất cả' },
-    { key: 'pending', label: 'Chờ xử lý' },
-    { key: 'shipped', label: 'Đang giao' },
-    { key: 'delivered', label: 'Hoàn thành' },
-    { key: 'cancelled', label: 'Đã hủy' },
+    { key: 'ALL', label: 'Tất cả' },
+    { key: 'PENDING', label: 'Chờ xác nhận' },
+    { key: 'CONFIRMED', label: 'Đã xác nhận' },
+    { key: 'SHIPPED', label: 'Đang giao' },
+    { key: 'DELIVERED', label: 'Hoàn thành' },
+    { key: 'CANCELLED', label: 'Đã hủy' },
   ];
 
-  const orders = [
-    {
-      id: 1234,
-      date: '2023-05-01',
-      status: 'pending',
-      items: [
-        {
-          id: 1,
-          name: 'Sản phẩm A',
-          quantity: 2,
-          price: 50000,
-          total: 100000,
-          imageUrl: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 2,
-          name: 'Sản phẩm B',
-          quantity: 1,
-          price: 75000,
-          total: 75000,
-          imageUrl: 'https://via.placeholder.com/150',
-        },
-      ],
-      totalAmount: 175000,
-    },
-    // Thêm các đơn hàng khác...
-  ];
+  useEffect(() => {
+    fetchOrder();
+  }, [selectedOrder]);
 
-  const statusColors = {
-    pending: '#ffc107',
-    shipped: '#007bff',
-    delivered: '#28a745',
-    cancelled: '#dc3545',
+
+  const fetchOrder = async () => {
+    const response = await getAllOrdersByUserId(selectedOrder);
+    setOrders(response.data || []);
+  }
+
+  const handleTabClick = (tabKey) => {
+    setSelectedOrder(tabKey);
   };
 
-  const handleCancelOrder = (orderId) => {
-    alert(`Hủy đơn hàng #${orderId}`);
-  };
 
-  const handleShowDetails = (order) => {
-    setSelectedOrder(order);
-    setShowModal(true);
+  const handleCancelOrder = async (order) => {
+    const result = await AlertUtils.input(`Bạn có chắc muốn huỷ hoá đơn #${order.id}?`, 'Nhập lý do');
+    if (result) {
+      const response = await cancelOrder(order.id, result);
+      console.log(response);
+    }
   };
 
   const handleCloseModal = () => {
@@ -64,7 +48,7 @@ const OrderHistory = () => {
   };
 
   return (
-    <Container>
+    <div>
       <Tab.Container id="order-history-tabs" activeKey={key} onSelect={(k) => setKey(k)}>
         <Row className="justify-content-center">
           <Col sm={12} md={8}>
@@ -89,6 +73,7 @@ const OrderHistory = () => {
                       borderRadius: '20px',
                       transition: 'all 0.3s ease',
                     }}
+                    onClick={() => handleTabClick(tab.key)}
                   >
                     {tab.label}
                   </Nav.Link>
@@ -102,86 +87,110 @@ const OrderHistory = () => {
             <Tab.Content>
               {tabs.map((tab) => (
                 <Tab.Pane eventKey={tab.key} key={tab.key}>
-                  {orders.filter((order) => tab.key === 'all' || order.status === tab.key).length > 0 ? (
-                    orders
-                      .filter((order) => tab.key === 'all' || order.status === tab.key)
-                      .map((order) => (
-                        <Card key={order.id} className="mb-4 border-0 rounded-lg shadow-lg" style={{ backgroundColor: '#fff' }}>
-                          <Card.Body>
-                            <Card.Title className="fw-bold text-dark">Đơn hàng #{order.id}</Card.Title>
-                            <Card.Subtitle className="text-muted">Ngày đặt: {order.date}</Card.Subtitle>
-                            <div
-                              className="d-flex justify-content-end"
+                  {orders?.length > 0 && orders?.map((order) => (
+                    <Card
+                      key={order.id}
+                      className="mb-4 border-0 rounded-lg shadow-lg"
+                      style={{ backgroundColor: '#fff' }}
+                    >
+                      <Card.Body>
+                        <Card.Title className="fw-bold text-dark">
+                          Đơn hàng #{order.id} | {order.user?.fullName}
+                        </Card.Title>
+                        <Card.Subtitle className="text-muted">
+                          Ngày đặt: {formatDateTime(order.time)} - <small>{order.address.address}</small>
+                        </Card.Subtitle>
+                        <small
+                          className="d-flex justify-content-end"
+                        >
+                          {order.orderStatus === 'PENDING'
+                            ? 'Chờ xác nhận'
+                            : order.orderStatus === 'CONFIRMED'
+                              ? 'Đã xác nhận'
+                              : order.orderStatus === 'DELIVERY'
+                                ? 'Đang giao'
+                                : order.orderStatus === 'DELIVERY'
+                                  ? 'Đang giao'
+                                  : order.orderStatus === 'DELIVERED'
+                                    ? 'Đã giao'
+                                    : 'Đã huỷ'}
+
+                        </small>
+
+                        <ListGroup variant="flush" className="mt-3">
+                          {order.orderItems?.map((item) => (
+                            <ListGroup.Item
+                              key={item.id}
+                              className="border-0 px-0 py-3"
                               style={{
-                                position: 'absolute',
-                                top: '15px',
-                                right: '20px',
-                                backgroundColor: statusColors[order.status],
-                                color: '#fff',
-                                padding: '5px 15px',
-                                borderRadius: '20px',
+                                backgroundColor: '#f9f9f9',
+                                borderRadius: '10px',
+                                marginBottom: '10px',
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                               }}
                             >
-                              {order.status === 'delivered'
-                                ? 'Hoàn thành'
-                                : order.status === 'pending'
-                                ? 'Chờ xử lý'
-                                : order.status === 'shipped'
-                                ? 'Đang giao'
-                                : 'Đã hủy'}
-                            </div>
+                              <Row>
+                                <Col sm={3} className="d-flex align-items-center justify-content-center">
+                                  <Image
+                                    src={`http://localhost:8080/api/files/${item.dish?.image}`}
+                                    className='rounded-3'
+                                    style={{
+                                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                                      maxHeight: '120px',
+                                      maxWidth: '200px'
+                                    }}
+                                  />
+                                </Col>
+                                <Col sm={9}>
+                                  <h6 className="fw-bold mb-2" style={{ color: '#333', fontSize: '16px' }}>
+                                    {item.dish?.name}
+                                  </h6>
+                                  <p className="text-muted mb-1" style={{ fontSize: '14px' }}>
+                                    <b>Danh mục:</b> {item.dish?.category?.name}
+                                  </p>
+                                  <p className="text-muted mb-1" style={{ fontSize: '14px' }}>
+                                    <b>Đơn giá:</b> {formatCurrency(item.price)}
+                                  </p>
+                                  <p className="text-muted mb-1" style={{ fontSize: '14px' }}>
+                                    <b>Số lượng:</b> {item.quantity}
+                                  </p>
+                                  <p
+                                    className="fw-bold mt-2"
+                                    style={{ fontSize: '15px', color: '#ab7442' }}
+                                  >
+                                    Thành tiền: {formatCurrency(item.price * item.quantity)}
+                                  </p>
+                                </Col>
+                              </Row>
+                            </ListGroup.Item>
 
-                            <ListGroup variant="flush" className="mt-3">
-                              {order.items.map((item) => (
-                                <ListGroup.Item key={item.id} className="border-0 px-0">
-                                  <Row>
-                                    <Col sm={3}>
-                                      <Image
-                                        src={item.imageUrl}
-                                        rounded
-                                        fluid
-                                        style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}
-                                      />
-                                    </Col>
-                                    <Col sm={7}>
-                                      <h6 className="fw-bold">{item.name}</h6>
-                                      <p>Số lượng: {item.quantity}</p>
-                                      <p>Đơn giá: {item.price.toLocaleString()} VND</p>
-                                      <p className="fw-bold">Thành tiền: {item.total.toLocaleString()} VND</p>
-                                    </Col>
-                                  </Row>
-                                </ListGroup.Item>
-                              ))}
-                            </ListGroup>
-                            <hr />
-                            <div className="d-flex justify-content-between align-items-center">
-                              <h5 className="fw-bold" style={{ color: '#ab7442' }}>
-                                Tổng cộng: {order.totalAmount.toLocaleString()} VND
-                              </h5>
-                              <Button
-                                variant="dark"
-                                className="shadow-sm"
-                                style={{
-                                  borderRadius: '20px',
-                                  fontWeight: 'bold',
-                                }}
-                                onClick={() => handleShowDetails(order)}
-                              >
-                                Xem chi tiết
-                              </Button>
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      ))
-                  ) : (
+                          ))}
+                        </ListGroup>
+                        <hr />
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h5 className="fw-bold" style={{ color: '#ab7442' }}>
+                            Tổng cộng: {formatCurrency(order.total)}
+                          </h5>
+                          {order.orderStatus === 'PENDING' &&
+                            <Button
+                              variant="dark"
+                              className="shadow-sm"
+                              style={{
+                                borderRadius: '20px',
+                                fontWeight: 'bold',
+                              }}
+                              onClick={() => handleCancelOrder(order)}
+                            >
+                              Huỷ đơn
+                            </Button>}
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                  {orders.length === 0 && (
                     <Card className="text-center shadow-lg border-0" style={{ background: '#fff' }}>
                       <Card.Body>
-                        <Image
-                          src="/images/empty-order.png"
-                          fluid
-                          className="mb-3"
-                          style={{ borderRadius: '10px', maxWidth: '50%' }}
-                        />
+                        <h2 className="m-2 text-primary">FooDY</h2>
                         <Card.Title className="text-muted">Không có đơn hàng</Card.Title>
                         <Card.Text>Hãy đặt món ngay hôm nay để thưởng thức!</Card.Text>
                       </Card.Body>
@@ -190,46 +199,11 @@ const OrderHistory = () => {
                 </Tab.Pane>
               ))}
             </Tab.Content>
+
           </Col>
         </Row>
       </Tab.Container>
-
-      {/* Modal Hiển thị chi tiết */}
-      <Modal show={showModal} onHide={handleCloseModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Chi tiết đơn hàng #{selectedOrder?.id}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedOrder && (
-            <div>
-              <p><strong>Ngày đặt:</strong> {selectedOrder.date}</p>
-              <p><strong>Tổng tiền:</strong> {selectedOrder.totalAmount.toLocaleString()} VND</p>
-              <ListGroup variant="flush">
-                {selectedOrder.items.map((item) => (
-                  <ListGroup.Item key={item.id}>
-                    <Row>
-                      <Col sm={3}>
-                        <Image src={item.imageUrl} rounded fluid />
-                      </Col>
-                      <Col sm={9}>
-                        <h6>{item.name}</h6>
-                        <p>Số lượng: {item.quantity}</p>
-                        <p>Thành tiền: {item.total.toLocaleString()} VND</p>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Đóng
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+    </div>
   );
 };
 

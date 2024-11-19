@@ -57,7 +57,7 @@ export const router = createBrowserRouter((
                 {/*  */}
                 <Route path="register" element={<RegisterPage />} />
                 {/* */}
-                <Route path="orderhistory" element={<OrderHistoryPage/>} />
+                <Route path="order-history" element={<ProtectRoute element={<OrderHistoryPage />} admin={false} />} />
                 {/*  */}
                 <Route path="login" element={<LoginPage />} />
                 {/*  */}
@@ -65,7 +65,6 @@ export const router = createBrowserRouter((
                 {/*  */}
                 <Route path="checkout" element={<ProtectRoute element={<CheckoutPage />} admin={false} />} />
                 {/*  */}
-
                 <Route path="dining-table" element={<ProtectRoute element={<DiningTablePage />} admin={false} />} />
                 {/*  */}
                 <Route path="forgot-password" element={<ForgotPasswordPage />} />
