@@ -119,94 +119,96 @@ const UserInfoPage = () => {
         <>
             <PageHeader title="Quản lý tài khoản" />
             <Container className="py-4">
-                {/* Phần thông tin tài khoản */}
-                <Card className="p-4 mb-4 border-0 shadow-sm rounded">
-                    <h5 className="mb-3 text-primary">
-                        <BiUser className="me-2" /> Hồ sơ của tôi
-                    </h5>
-                    <small className="text-muted">Quản lý thông tin tài khoản để bảo mật.</small>
-
-                    <Form onSubmit={handleSubmit(onSubmit)} className="mt-3">
-                        <Row>
-                            <Col md={6} className="mb-3">
-                                <Form.Group>
-                                    <Form.Label>Tên người dùng</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        defaultValue={user?.fullName}
-                                        placeholder="Nhập tên người dùng"
-                                        {...register("fullName", { required: "Vui lòng nhập tên người dùng" })}
-                                        isInvalid={!!errors.fullName}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {errors.fullName?.message}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                            </Col>
-
-                            <Col md={6} className="mb-3">
-                                <Form.Group>
-                                    <Form.Label>Email</Form.Label>
-                                    <Form.Control
-                                        type="email"
-                                        disabled
-                                        value={user?.email}
-                                        placeholder="Nhập email"
-                                        {...register("email")}
-                                    />
-                                </Form.Group>
-                            </Col>
-
-                            <Col md={6} className="mb-3">
-                                <Form.Group>
-                                    <Form.Label>Số điện thoại</Form.Label>
-                                    <Form.Control
-                                        type="tel"
-                                        defaultValue={user?.phoneNumber}
-                                        placeholder="Nhập số điện thoại"
-                                        {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại" })}
-                                        isInvalid={!!errors.phoneNumber}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {errors.phoneNumber?.message}
-                                    </Form.Control.Feedback>
-                                </Form.Group>
-                            </Col>
-
-                            <Col md={12} className="text-end">
-                                <Button variant="primary" type="submit">
-                                    Lưu Thông Tin
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form>
-                </Card>
-
-                {/* Phần ảnh đại diện và địa chỉ */}
+                {/* Thông tin tài khoản và ảnh đại diện */}
                 <Row>
+                    {/* Hồ sơ cá nhân */}
                     <Col md={6} className="mb-4">
-                        <Card className="p-4 border-0 shadow-sm rounded">
+                        <Card className="p-4 border-0 shadow rounded">
+                            <h5 className="mb-3 text-primary fw-bold">
+                                <BiUser className="me-2" /> Hồ sơ của tôi
+                            </h5>
+                            <small className="text-muted">Quản lý thông tin tài khoản để bảo mật.</small>
+    
+                            <Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+                                <Row>
+                                    <Col md={6} className="mb-4">
+                                        <Form.Group>
+                                            <Form.Label className="fw-semibold">Tên người dùng</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                defaultValue={user?.fullName}
+                                                placeholder="Nhập tên người dùng"
+                                                {...register("fullName", { required: "Vui lòng nhập tên người dùng" })}
+                                                isInvalid={!!errors.fullName}
+                                                className="border-light"
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.fullName?.message}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
+    
+                                    <Col md={6} className="mb-4">
+                                        <Form.Group>
+                                            <Form.Label className="fw-semibold">Email</Form.Label>
+                                            <Form.Control
+                                                type="email"
+                                                disabled
+                                                value={user?.email}
+                                                placeholder="Nhập email"
+                                                className="border-light"
+                                                {...register("email")}
+                                            />
+                                        </Form.Group>
+                                    </Col>
+    
+                                    <Col md={6} className="mb-4">
+                                        <Form.Group>
+                                            <Form.Label className="fw-semibold">Số điện thoại</Form.Label>
+                                            <Form.Control
+                                                type="tel"
+                                                defaultValue={user?.phoneNumber}
+                                                placeholder="Nhập số điện thoại"
+                                                {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại" })}
+                                                isInvalid={!!errors.phoneNumber}
+                                                className="border-light"
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.phoneNumber?.message}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
+    
+                                    <Col md={12} className="text-end">
+                                        <Button variant="primary" type="submit" className="px-4 py-2 fw-bold shadow-sm">
+                                            Lưu Thông Tin
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Card>
+                    </Col>
+    
+                    {/* Ảnh đại diện */}
+                    <Col md={6} className="mb-4">
+                        <Card className="p-4 border-0 shadow rounded text-center">
                             <Form.Group>
-                                <Form.Label className="mb-3" style={{ fontSize: '1.2rem', textAlign: 'center', fontWeight: '500', color: '#333' }}>
+                                <Form.Label className="fw-semibold fs-5 text-secondary">
                                     Ảnh đại diện
                                 </Form.Label>
                                 <div {...getRootProps()} style={{
                                     display: 'inline-block',
                                     width: '180px',
                                     height: '180px',
-                                    backgroundColor: '#fff',
+                                    backgroundColor: '#f8f9fa',
                                     borderRadius: '50%',
+                                    border: '2px dashed #ccc',
                                     cursor: 'pointer',
-                                    boxShadow: '0 15px 40px rgba(0, 0, 0, 0.1)',
-                                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                                    textAlign: 'center',
-                                    margin: 'auto',
+                                    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
+                                    transition: 'all 0.3s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    '&:hover': {
-                                        transform: 'scale(1.05)',
-                                        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.2)',
-                                    }
+                                    margin: '20px auto',
                                 }}>
                                     <input {...getInputProps()} />
                                     {imagePreview ? (
@@ -221,69 +223,50 @@ const UserInfoPage = () => {
                                             }}
                                         />
                                     ) : (
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            height: '100%',
-                                            color: '#AAA',
-                                            fontWeight: '500',
-                                            fontSize: '1rem',
-                                        }}>Chọn ảnh</div>
+                                        <div className="text-secondary fw-bold d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
+                                            Chọn ảnh
+                                        </div>
                                     )}
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: '10px',
-                                        left: '10px',
-                                        right: '10px',
-                                        bottom: '10px',
-                                        borderRadius: '50%',
-                                        background: 'rgba(255, 255, 255, 0.3)',
-                                        zIndex: -1,
-                                    }}></div>
                                 </div>
                             </Form.Group>
-
                         </Card>
                     </Col>
-
+                </Row>
+    
+                {/* Địa chỉ giao hàng */}
+                <Row>
                     <Col md={6} className="mb-4">
-                        <Card className="p-4 border-0 shadow-sm rounded">
-                            <h5 className="mb-3 text-primary">
+                        <Card className="p-4 border-0 shadow rounded">
+                            <h5 className="mb-3 text-primary fw-bold">
                                 <BiPlus className="me-2" /> Địa chỉ giao hàng
                             </h5>
                             <Button
                                 variant="outline-primary"
-                                className="mb-3"
+                                className="mb-3 shadow-sm"
                                 onClick={() => setShowModal(true)}
                             >
                                 Thêm địa chỉ mới
                             </Button>
-
-                            <div className="overflow-auto p-3" style={{ maxHeight: "300px", backgroundColor: "#fdf7f3", borderRadius: "10px" }}>
+    
+                            <div className="overflow-auto p-3 bg-light rounded" style={{ maxHeight: "300px" }}>
                                 {addresses?.map((address, index) => (
                                     <Card
                                         key={index}
-                                        className="mb-3 shadow-sm"
+                                        className="mb-3 shadow-sm border-0 rounded"
                                         style={{
-                                            border: address?.defaultAddress ? "2px solid #AB7442" : "1px solid #dee2e6",
-                                            borderRadius: "12px",
-                                            transition: "transform 0.2s, box-shadow 0.2s",
-                                            backgroundColor: address?.defaultAddress ? "#f9ece5" : "#fff",
+                                            backgroundColor: address?.defaultAddress ? "#f8f9fa" : "#fff",
                                         }}
-                                        onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
-                                        onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
                                     >
                                         <Card.Body className="d-flex align-items-center justify-content-between">
-                                            <div className="d-flex align-items-start">
-                                                <div className="me-3" style={{ fontSize: "1.5rem", color: "#AB7442" }}>
+                                            <div className="d-flex">
+                                                <div className="me-3 text-primary fs-4">
                                                     <i className="bi bi-geo-alt-fill"></i>
                                                 </div>
                                                 <div>
-                                                    <h6 className="mb-1" style={{ fontWeight: address?.defaultAddress ? "bold" : "normal", color: "#6f4f3a" }}>
+                                                    <h6 className={`mb-1 ${address?.defaultAddress ? 'fw-bold' : ''}`}>
                                                         {address?.defaultAddress ? "Địa chỉ chính" : "Địa chỉ phụ"}
                                                     </h6>
-                                                    <p className="mb-0 text-muted" style={{ fontSize: "0.9rem", color: "#8c6b54" }}>
+                                                    <p className="mb-0 text-muted">
                                                         {address?.address}
                                                     </p>
                                                 </div>
@@ -295,16 +278,11 @@ const UserInfoPage = () => {
                                                     className="me-3"
                                                     checked={address?.defaultAddress}
                                                     onChange={(e) => handleSelectDefaultAddress(address?.id, e.target.checked)}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        accentColor: "#AB7442",
-                                                    }}
                                                 />
                                                 <Button
                                                     variant="outline-danger"
                                                     size="sm"
-                                                    className="d-flex align-items-center justify-content-center"
-                                                    style={{ borderRadius: "50%", width: "36px", height: "36px" }}
+                                                    className="rounded-circle"
                                                     onClick={() => handleDelete(address?.id)}
                                                 >
                                                     <i className="bi bi-trash"></i>
@@ -318,17 +296,17 @@ const UserInfoPage = () => {
                     </Col>
                 </Row>
             </Container>
-
+    
             <AddressModal
                 show={showModal}
                 handleClose={() => setShowModal(false)}
                 handleSave={handleSaveAddress}
             />
-
+    
             <Footer />
         </>
     );
-
+    
 };
 
 export default UserInfoPage;
