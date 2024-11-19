@@ -11,7 +11,7 @@ import { MdDelete } from "react-icons/md";
 import { Button, Form, Table } from "react-bootstrap";
 import BranchModal from "./Modals/BranchModal";
 import UserModal from "./Modals/UserModal";
-
+import { updateEmployee } from "../../../services/UserService/UserService"
 const BranchListPage = () => {
     const userInfo = JSON.parse(localStorage.getItem('user_info'));
     const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
@@ -61,39 +61,54 @@ const BranchListPage = () => {
         }
         fetchBranches();
     };
-   
+
     const handleSetRole = async (data) => {
         try {
-            const { confirmPassword, ...reRequest } = data;
-            const userResponse = await createNonAdmin(reRequest);
-            if (userResponse?.status && userResponse?.data?.id) {
-                const user = userResponse?.data;
+            const { confirmPassword, ...requestData } = data;
 
-                if (initialValues?.id) {
-                    // Chỉ gửi userId thay vì một đối tượng user
-                    const updatedBranchData = { ...initialValues, user };
-                    // console.log(initialValues?.id, userResponse?.data);
-                    const branchResponse = await updateBranch01(initialValues?.id, updatedBranchData);
+            if (initialValues?.id) {
+                // Case 1: Updating existing user
+                if (initialValues?.email) {  // Check if it's a user object
+                    const updateResponse = await updateEmployee(initialValues.id, requestData);
+
+                    if (updateResponse?.status) {
+                        AlertUtils.success('Cập nhật thành công!');
+                        setShowUserModal(false);
+                    } else {
+                        AlertUtils.error('Cập nhật thất bại!');
+                    }
+                }
+                // Case 2: Creating new user for existing branch
+                else {
+                    const userResponse = await createNonAdmin(requestData);
+
+                    if (!userResponse?.status || !userResponse?.data?.id) {
+                        AlertUtils.error('Tạo người dùng thất bại!');
+                    }
+
+                    const updatedBranchData = {
+                        ...initialValues,
+                        user: userResponse.data
+                    };
+
+                    const branchResponse = await updateBranch01(initialValues.id, updatedBranchData);
 
                     if (branchResponse?.status) {
                         AlertUtils.success('Tạo người dùng và cập nhật chi nhánh thành công!');
                         setShowUserModal(false);
                     } else {
-                        AlertUtils.error(branchResponse?.message || 'Cập nhật chi nhánh thất bại!');
+                        AlertUtils.error('Cập nhật chi nhánh thất bại!');
                     }
-                } else {
-                    AlertUtils.error('ID của chi nhánh không hợp lệ.');
                 }
             } else {
-                AlertUtils.error(userResponse?.message || 'Tạo người dùng thất bại!');
+                AlertUtils.error('ID của chi nhánh không hợp lệ.');
             }
-        } catch (error) {
-            AlertUtils.error('Đã xảy ra lỗi trong quá trình tạo người dùng hoặc cập nhật chi nhánh.');
-            console.error(error);
-        }
 
-        fetchBranches(); 
-        setInitialValues(null);
+            fetchBranches();
+            setInitialValues(null);
+        } catch (error) {
+            AlertUtils.error(error.message);
+        }
     };
 
     const handleDelete = async (id) => {
@@ -113,7 +128,7 @@ const BranchListPage = () => {
         setInitialValues(branch); // Lưu thông tin chi nhánh
         setShowUserModal(true);    // Mở UserModal
     };
-    
+
     const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
     return (
