@@ -6,39 +6,60 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const { register, handleSubmit, setValue, reset, formState: { errors }, watch } = useForm();
     const password = watch("password");
 
-useEffect(() => {
-    if (showModal) {
-        reset({
-            fullName: null,
-            email: null,
-            phoneNumber: null,
-            role: 'NON_ADMIN',
-            password: null,
-            confirmPassword: null
-        }); 
-    }
-}, [showModal, reset]);
+    useEffect(() => {
+        if (showModal) {
+            reset({
+                fullName: null,
+                email: null,
+                phone: null,
+                role: 'NON_ADMIN',
+                password: null,
+                confirmPassword: null
+            });
+        }
+    }, [showModal, reset]);
 
     useEffect(() => {
-        if (initialValues) {
-            setValue("fullName", initialValues.fullName);
-            setValue("email", initialValues.email);
-            setValue("phoneNumber", initialValues.phoneNumber);
-            setValue("role", initialValues.role || "NON_ADMIN");
+        if (showModal) {
+            // Khi không có initialValues, reset form với giá trị mặc định là null
+            if (!initialValues?.fullName) {
+                reset({
+                    fullName: null,
+                    email: null,
+                    phone: null,  // Sử dụng phone thay vì phoneNumber khi khởi tạo
+                    role: 'NON_ADMIN',
+                    password: null,
+                    confirmPassword: null
+                });
+            } else {
+                // Nếu có initialValues, set các giá trị cho form
+                setValue("fullName", initialValues?.fullName || null);
+                setValue("email", initialValues?.email || null);
+                setValue("phone", initialValues?.phoneNumber || null);  // Sử dụng phone
+                setValue("role", initialValues?.role || 'NON_ADMIN');
+                setValue("password", initialValues?.password);
+                setValue("confirmPassword", initialValues?.password);
+            }
         }
-    }, [initialValues, setValue]);
+    }, [showModal, initialValues, reset, setValue]);
 
     const onSubmit = (data) => {
-        handleData(data); 
-        closeModal(); 
+        const { phone, ...restData } = data;
+        const transformedData = {
+            ...restData,
+            phoneNumber: phone // Chuyển phone thành phoneNumber
+        };
+        handleData(transformedData); // Chỉ gọi 1 lần với dữ liệu đúng
+        closeModal();
     };
 
-    
+
+
 
     return (
         <Modal show={showModal} onHide={() => closeModal(false)} centered size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>{initialValues ? 'Cập Nhật Người Dùng' : 'Thêm Người Dùng'}</Modal.Title>
+                <Modal.Title>{initialValues?.fullName ? 'Thông tin người dùng' : 'Cấp quyền'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -81,67 +102,73 @@ useEffect(() => {
 
                     <Row className="mb-3">
                         <Col xs={12} sm={6}>
-                            <Form.Group controlId="phoneNumber">
+                            <Form.Group controlId="phone">
                                 <Form.Label>Số Điện Thoại</Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Nhập số điện thoại"
-                                    {...register('phoneNumber', {
+                                    {...register('phone', {
                                         required: 'Vui lòng nhập số điện thoại',
                                         pattern: {
                                             value: /^(03|08|09)\d{8}$/,
                                             message: 'Số điện thoại phải bắt đầu bằng 03, 08, hoặc 09 và có 10 chữ số'
                                         }
                                     })}
-                                    isInvalid={errors.phoneNumber}
+                                    isInvalid={errors.phone}
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.phoneNumber?.message}
+                                    {errors.phone?.message}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-                        <Col xs={12} sm={6}>
-                            <Form.Group controlId="password">
-                                <Form.Label>Mật Khẩu</Form.Label>
-                                <Form.Control
-                                    type="password"
-                                    placeholder="Nhập mật khẩu"
-                                    {...register('password', { required: 'Vui lòng nhập mật khẩu' })}
-                                    isInvalid={errors.password}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors.password?.message}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Col>
-                    </Row>
+                        {
+                            !initialValues?.fullName &&
+                            <Col xs={12} sm={6}>
+                                <Form.Group controlId="password">
+                                    <Form.Label>Mật Khẩu</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Nhập mật khẩu"
+                                        {...register('password', { required: 'Vui lòng nhập mật khẩu' })}
+                                        isInvalid={errors.password}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.password?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+                        }
 
-                    <Row className="mb-3">
-
-                        <Col xs={12} sm={6}>
-                            <Form.Group controlId="confirmPassword">
-                                <Form.Label>Xác Nhận Mật Khẩu</Form.Label>
-                                <Form.Control
-                                    type="password"
-                                    placeholder="Xác nhận mật khẩu"
-                                    {...register('confirmPassword', {
-                                        required: 'Vui lòng xác nhận mật khẩu',
-                                        validate: value =>
-                                            value === password || 'Mật khẩu không khớp'
-                                    })}
-                                    isInvalid={errors.confirmPassword}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors.confirmPassword?.message}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Col>
                     </Row>
+                    {
+                        !initialValues?.fullName && <Row className="mb-3">
+
+                            <Col xs={12} sm={6}>
+                                <Form.Group controlId="confirmPassword">
+                                    <Form.Label>Xác Nhận Mật Khẩu</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Xác nhận mật khẩu"
+                                        {...register('confirmPassword', {
+                                            required: 'Vui lòng xác nhận mật khẩu',
+                                            validate: value =>
+                                                value === password || 'Mật khẩu không khớp'
+                                        })}
+                                        isInvalid={errors.confirmPassword}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.confirmPassword?.message}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    }
+
 
                     <div className="d-flex justify-content-end gap-3">
-                       
+
                         <Button type="submit" variant="primary">
-                            Lưu
+                            {initialValues?.fullName ? 'Lưu' : 'Thêm'}
                         </Button>
                     </div>
                 </Form>

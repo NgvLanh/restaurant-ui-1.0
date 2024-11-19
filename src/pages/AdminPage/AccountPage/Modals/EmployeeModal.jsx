@@ -25,6 +25,8 @@ const EmployeeModal = ({ showModal, closeModal, initialValues, handleData }) => 
             setValue("email", initialValues.email);
             setValue("phoneNumber", initialValues.phoneNumber);
             setValue("role", initialValues.role || "EMPLOYEE");
+            setValue("password", initialValues.password );
+            setValue("confirmPassword", initialValues.password);
         }
     }, [initialValues, setValue]);
 
@@ -38,7 +40,7 @@ const EmployeeModal = ({ showModal, closeModal, initialValues, handleData }) => 
     return (
         <Modal show={showModal} onHide={() => closeModal(false)} centered size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>{initialValues ? 'Cập Nhật Người Dùng' : 'Thêm Người Dùng'}</Modal.Title>
+                <Modal.Title>{initialValues ? 'Cập Nhật Nhân Viên' : 'Thêm Nhân Viên'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit(onSubmit)}>
