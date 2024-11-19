@@ -22,7 +22,7 @@ const Navbar = () => {
         }
     }
     const handleLogout = () => {
-        localStorage.clear();
+        localStorage.removeItem('user_info');
         removeCookie('user_token');
     }
 
@@ -52,6 +52,7 @@ const Navbar = () => {
                                 <>
                                     <Link to="/shopping-cart" className="dropdown-item">Giỏ Hàng</Link>
                                     <Link to="/dining-table" className="dropdown-item">Bàn của bạn</Link>
+                                    <Link to="/order-history" className="dropdown-item">Lịch sử mua hàng</Link>
                                     <Link to="/account" className="dropdown-item">Tài khoản</Link>
                                     <a href="/home" className="dropdown-item" onClick={handleLogout}>Đăng xuất</a>
                                 </>

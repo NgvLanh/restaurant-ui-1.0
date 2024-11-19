@@ -64,7 +64,7 @@ const deleteDish = async (dishId) => {
 const getAllDishesByCategoryId = async (categoryId) => {
     try {
         const response = await ApiRequest({
-            path: `dishes/${categoryId}`
+            path: `dishes/${JSON.parse(localStorage.getItem('branch_info'))?.id}/${categoryId}`
         });
         return response?.data?.content;
     } catch (error) {
@@ -76,7 +76,7 @@ const getAllDishesByCategoryId = async (categoryId) => {
 const getAllDishesPageable = async (searchKey = '', currentPage, pageSize) => {
     try {
         const response = await ApiRequest({
-            path: `dishes?name=${searchKey}&page=${currentPage}&size=${pageSize}`
+            path: `dishes?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&name=${searchKey}&page=${currentPage}&size=${pageSize}`
         });
         return response;
     } catch (error) {

@@ -141,26 +141,28 @@ const TableListPage = () => {
                                     <td className="text-center">{index + 1}</td>
                                     <td>
                                         <span style={{
-                                            backgroundColor: 'pink',
                                             display: 'block',
                                             textAlign: 'center',
-                                            borderRadius: '50%',
                                         }}>
                                             {row.number}
                                         </span>
                                     </td>
                                     <td>
                                         <span style={{
-                                            backgroundColor: 'skyblue',
                                             display: 'block',
                                             textAlign: 'center',
-                                            borderRadius: '50%',
                                         }}>
                                             {row.seats}
                                         </span>
                                     </td>
-                                    <td>{TableStatus.get(row.tableStatus)}</td>
-                                    <td>
+                                    <td> <span style={{
+                                        display: 'block',
+                                        textAlign: 'center',
+                                    }}>
+                                        {row.tableStatus ? 'Trống' : 'Đẵ đặt'}
+                                    </span>
+                                    </td>
+                                    <td className="text-center">
                                         {row.zone?.name ? row.zone?.name + ' / ' + row.zone?.address : 'Chưa xác định'}
                                     </td>
 

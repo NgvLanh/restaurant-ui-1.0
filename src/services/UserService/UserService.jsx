@@ -81,8 +81,8 @@ export const deleteEmployee = async (employeeId) => {
         });
         return response;
     } catch (error) {
-        console.error(`Lỗi xóa bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi xóa bàn' };
+        console.error(`Lỗi xóa : ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi xóa ' };
     }
 };
 
@@ -96,9 +96,23 @@ export const updateEmployee = async (employeeId, request) => {
         });
         return response;
     } catch (error) {
-        console.error(`Lỗi cập nhật bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi cập nhật bàn' };
+        console.error(`Lỗi cập nhật: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi cập nhật ' };
     }
 };
 
+
+export const getNonAdmin = async () => {
+    try {
+        const response = await ApiRequest({
+            method: 'GET',
+            path: 'users',
+            data: request,
+        });
+        return response;
+    } catch (error) {
+        console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
+        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
+    }
+};
 

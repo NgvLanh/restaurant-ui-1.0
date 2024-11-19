@@ -106,7 +106,6 @@ const OrderListPage = () => {
   useEffect(() => {
     fetchOrders();
   }, [currentPage, selectedStatus]); // fetch lại khi page hoặc status thay đổi
-
   const handleStatusChange = (status) => {
     setSelectedStatus(status); // Cập nhật selectedStatus
     setCurrentPage(0);         // Reset về trang đầu tiên
@@ -120,7 +119,6 @@ const OrderListPage = () => {
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
           {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
           {/* <div className="d-flex gap-3" style={{ maxWidth: '350px' }}></div> */}
-
           {/* Select để lọc theo trạng thái hóa đơn */}
           <div className="action">
             <Form.Select
@@ -196,6 +194,7 @@ const OrderListPage = () => {
                       </button>
                     )}
                   </td>
+
                 </tr>
               ))
             ) : (

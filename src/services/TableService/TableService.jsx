@@ -74,16 +74,11 @@ const getAllTablesPageable = async (currentPage, pageSize) => {
 };
 
 // Lấy bàn để chọn đặt bàn
-const getTablesByBranchIdAndSeats = async (branchId, time, seats) => {
-    try {
-        const response = await ApiRequest({
-            path: `tables/reservations?branch=${branchId}&time=${time}&seats=${seats}`,
-        });
-        return response?.data;
-    } catch (error) {
-        console.error(`Lỗi lấy danh sách bàn đặt bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách bàn đặt bàn' };
-    }
+const getTablesByBranchIdAndSeats = async (branchId) => {
+    const response = await ApiRequest({
+        path: `tables/reservations?branch=${branchId}`,
+    });
+    return response?.data;
 };
 
 

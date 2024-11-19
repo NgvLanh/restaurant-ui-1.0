@@ -6,7 +6,7 @@ import { Button, Form, Table } from "react-bootstrap";
 import { BiEdit, BiPlus } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
-import { createreservation, deletereservation, getAllreservationsPageable, updatereservation } from "../../../services/ReservationService/ReservationService";
+import { createReservation, cancelReservation, getAllreservationsPageable } from "../../../services/ReservationService/ReservationService";
 
 const CancelReservationPage = () => {
 
@@ -37,7 +37,7 @@ const CancelReservationPage = () => {
   const handleModalSubmit = async (data) => {
     const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
     if (initialValues) {
-      const response = await updatereservation(initialValues?.id, data);
+      const response = await cancelReservation(initialValues?.id, data);
       if (response?.status) {
         AlertUtils.success(successMessage);
         setShowModal(false);
@@ -45,7 +45,7 @@ const CancelReservationPage = () => {
         AlertUtils.error(response?.message);
       }
     } else {
-      const response = await createreservation(data);
+      const response = await createReservation(data);
       if (response?.status) {
         AlertUtils.success(successMessage);
         setShowModal(false);
@@ -58,14 +58,14 @@ const CancelReservationPage = () => {
 
   const handleDelete = async (id) => {
     const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
-    if (result) {
-      const response = await deletereservation(id);
-      if (response?.status) {
-        AlertUtils.success('Xoá thành công!');
-      } else {
-        AlertUtils.error('Xoá thất bại!');
-      }
-    }
+    // if (result) {
+    //   const response = await deleteReservation(id);
+    //   if (response?.status) {
+    //     AlertUtils.success('Xoá thành công!');
+    //   } else {
+    //     AlertUtils.error('Xoá thất bại!');
+    //   }
+    // }
     fetchReservations();
   }
 
