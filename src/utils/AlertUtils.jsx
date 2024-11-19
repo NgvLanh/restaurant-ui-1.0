@@ -50,6 +50,20 @@ const AlertUtils = {
             cancelButtonText: 'Không',
         });
         return result.isConfirmed;
+    },
+
+    input: async (message = 'Nhập thông tin của bạn', title = 'Nhập liệu') => {
+        const result = await MySwal.fire({
+            title,
+            text: message,
+            input: 'text',
+            inputPlaceholder: 'Nhập vào đây...',
+            showCancelButton: true,
+            confirmButtonText: 'Gửi',
+            cancelButtonText: 'Hủy',
+        });
+
+        return result.isConfirmed ? result.value : null;
     }
 };
 
