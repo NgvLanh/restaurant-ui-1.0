@@ -37,6 +37,13 @@ import UserInfoPage from "../pages/ClientPage/UserInfoPage/UserInfoPage";
 import EmployeeListPage from "../pages/AdminPage/AccountPage/EmployeeListPage"
 import CheckoutPage from "../pages/ClientPage/CheckoutPage/CheckoutPage";
 import OrderHistoryPage from "../pages/ClientPage/OrderHistoryPage/OrderHistoryPage";
+<<<<<<< Updated upstream
+=======
+import CreateOrderPage from "../pages/AdminPage/OrderPage/CreateOrderPage";
+import CreateReservationPage from "../pages/AdminPage/ReservationPage/CreateReservationPage";
+import ReservationBookingOrderPage from "../pages/AdminPage/ReservationPage/ReservationBookingOrderPage";
+import OrderListPageForEatAtRes from "../pages/AdminPage/OrderPage/OrderListPageForEatAtRes";
+>>>>>>> Stashed changes
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -103,6 +110,11 @@ export const router = createBrowserRouter((
 
                 <Route path="orders">
                     <Route index element={<OrderListPage />} />
+<<<<<<< Updated upstream
+=======
+                    <Route path="orders-at-res" element={<OrderListPageForEatAtRes />} />
+                    <Route path="create-order" element={<CreateOrderPage />} />
+>>>>>>> Stashed changes
                 </Route>
 
                 <Route path="discounts">

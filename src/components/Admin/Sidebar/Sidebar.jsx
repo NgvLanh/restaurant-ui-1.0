@@ -99,8 +99,21 @@ const Sidebar = ({ isCollapsed }) => {
                 icon: <i className="fas fa-file-invoice"></i>,
                 items: [
                     {
+<<<<<<< Updated upstream
                         title: "Danh sách đơn hàng",
                         url: "/admin/orders",
+=======
+                        title: "Danh sách hoá đơn dành cho giao hàng",
+                        url: "/admin/orders",
+                    },
+                    {
+                        title: "Danh sách hoá đơn dành cho ăn tại nhà hàng",
+                        url: "/admin/orders/orders-at-res",
+                    },
+                    {
+                        title: "Thêm hoá đơn",
+                        url: "/admin/orders/create-order",
+>>>>>>> Stashed changes
                     }
                 ],
             },
