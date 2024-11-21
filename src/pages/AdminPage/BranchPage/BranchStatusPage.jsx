@@ -40,21 +40,26 @@ const BranchStatusPage = () => {
   const handleModalSubmit = async (data) => {
     const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
     if (initialValues) {
-      const response = await updateBranchStatus(initialValues?.id, data);
-      if (response?.status) {
-        AlertUtils.success(successMessage);
-        setShowModal(false);
-      } else {
-        AlertUtils.error(response?.message);
+      try {
+        const response = await updateBranchStatus(initialValues?.id, data);
+        if (response?.status) {
+          AlertUtils.success('Cập nhật trạng thái thành công!');
+          setShowModal(false);
+        }
+      } catch (error) {
+        AlertUtils.error(error.response?.data?.message);
       }
     } else {
-      const response = await createBranchStatus(data);
-      if (response?.status) {
-        AlertUtils.success(successMessage);
-        setShowModal(false);
-      } else {
-        AlertUtils.error(response?.message);
+      try {
+        const response = await createBranchStatus(data);
+        if (response?.status) {
+          AlertUtils.success('Thêm trạng thái thành công!');
+          setShowModal(false);
+        }
+      } catch (error) {
+        AlertUtils.error(error.response?.data?.message);
       }
+
     }
     fetchBranchStatuses();
   };
@@ -62,11 +67,13 @@ const BranchStatusPage = () => {
   const handleDelete = async (id) => {
     const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
     if (result) {
-      const response = await deleteBranchStatus(id);
-      if (response?.status) {
-        AlertUtils.success('Xoá thành công!');
-      } else {
-        AlertUtils.error('Xoá thất bại!');
+      try {
+        const response = await deleteBranchStatus(id);
+        if (response?.status) {
+          AlertUtils.success('Xoá thành công!');
+        }
+      } catch (error) {
+        AlertUtils.error(error.response?.data?.message);
       }
     }
     fetchBranchStatuses();
@@ -78,38 +85,25 @@ const BranchStatusPage = () => {
     <>
       <PageHeader title="Trạng thái chi nhánh" />
 
-      <div className="bg-white shadow-lg p-4 rounded-4">
+      <div className="bg-white shadow-lg p-4 rounded-3">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
           <Form.Control
             type="text"
             placeholder="Tìm kiếm theo tên"
             onChange={(e) => debouncedSearch(e.target.value)}
             style={{
-              maxWidth: '350px',
-              padding: '10px 16px',
-              borderRadius: '20px',
-              border: '1px solid #e0e0e0',
-              fontSize: '14px',
-            }}
+              maxWidth: '350px',            }}
           />
           <div className="action">
             <Button
-              className="d-flex align-items-center rounded-pill px-4"
+              className="d-flex align-items-center rounded-3 px-4"
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
               }}
-              style={{
-                fontSize: '14px',
-                padding: '10px 20px',
-                backgroundColor: '#AB7742',
-                borderColor: '#3A8DFF',
-                color: 'white',
-                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
-              }}
             >
-              <BiPlus className="me-2" />
-              Thêm trạng thái
+              <BiPlus className="me-2 rounded-3" />
+              Thêm
             </Button>
           </div>
         </div>

@@ -107,8 +107,12 @@ const Sidebar = ({ isCollapsed }) => {
                 icon: <i className="fas fa-file-invoice"></i>,
                 items: [
                     {
-                        title: "Danh sách hoá đơn",
+                        title: "Danh sách hoá đơn dành cho giao hàng",
                         url: "/admin/orders",
+                    },
+                    {
+                        title: "Danh sách hoá đơn dành cho ăn tại nhà hàng",
+                        url: "/admin/orders/orders-at-res",
                     },
                     {
                         title: "Thêm hoá đơn",

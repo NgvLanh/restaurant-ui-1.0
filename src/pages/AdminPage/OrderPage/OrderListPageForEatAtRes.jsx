@@ -8,15 +8,12 @@ import { formatDateTime } from "../../../utils/FormatUtils";
 
 // Map trạng thái
 const OrderStatus = new Map([
-  ["PENDING", "Chờ xác nhận"],
-  ["CONFIRMED", "Đã xác nhận"],
-  ["SHIPPED", "Đang giao (giao hàng)"],
-  ["DELIVERED", "Đã giao (giao hàng)"],
-  ["CANCELLED", "Đã hủy"],
+  ["READY_TO_SERVE", "Sẵn sàng phục vụ (Ăn tại nhà hàng)"],
+  ["SERVED", "Đã phục vụ (Ăn tại nhà hàng)"],
   ["PAID", "Đã thanh toán"]
 ]);
 
-const OrderListPage = () => {
+const OrderListPageForEatAtRes = () => {
   const [order, setOrder] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState(""); // Trạng thái đang chọn
   const [currentPage, setCurrentPage] = useState(0);
@@ -43,7 +40,7 @@ const OrderListPage = () => {
   const handleStatusClick = async (orderId, currentStatus) => {
     try {
       // Kiểm tra nếu trạng thái hiện tại là CANCELLED hoặc PAID
-      if (currentStatus === 'CANCELLED' || currentStatus === 'PAID') {
+      if (currentStatus === 'PAID') {
         AlertUtils.error(`Không thể cập nhật trạng thái khi đơn hàng đã ở trạng thái ${OrderStatus.get(currentStatus)}.`);
         return;  // Dừng hàm nếu trạng thái không thể cập nhật
       }
@@ -77,30 +74,6 @@ const OrderListPage = () => {
     }
   };
 
-
-  // Thêm hàm xử lý hủy đơn hàng
-  const handleCancelOrder = async (orderId) => {
-    try {
-      const confirm = await AlertUtils.confirm("Bạn có chắc muốn hủy đơn hàng này?");
-      if (confirm) {
-        const response = await cancelOrderStatusService(orderId);
-
-        console.log("Phản hồi từ API:", response); // Để kiểm tra đầy đủ đối tượng response
-        console.log("Order status trong response:", response?.orderStatus); // Kiểm tra giá trị orderStatus cụ thể
-
-        // Kiểm tra nếu orderStatus là 'CANCELLED'
-        if (response?.orderStatus === 'CANCELLED') {
-          AlertUtils.success("Đơn hàng đã được hủy thành công!");
-          await fetchOrders(); // Làm mới danh sách
-        } else {
-          AlertUtils.error("Không thể hủy đơn hàng. Vui lòng thử lại.");
-        }
-      }
-    } catch (error) {
-      console.error("Lỗi khi hủy đơn hàng:", error);
-      AlertUtils.error("Có lỗi xảy ra khi hủy đơn hàng.");
-    }
-  };
   useEffect(() => {
     fetchOrders();
   }, [currentPage, selectedStatus]); // fetch lại khi page hoặc status thay đổi
@@ -111,7 +84,7 @@ const OrderListPage = () => {
 
   return (
     <>
-      <PageHeader title="Trạng thái hóa đơn giao hàng" />
+      <PageHeader title="Trạng thái hóa đơn ăn tại nhà hàng" />
 
       <div className="bg-white shadow-lg p-4 rounded-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
@@ -141,33 +114,33 @@ const OrderListPage = () => {
               <th className="text-center">Trạng thái</th>
               <th className="text-center">Khách hàng</th>
               <th className="text-center">Số điện thoại</th>
-              <th className="text-center">Địa chỉ</th>
               <th className="text-center">Tùy chọn</th>
             </tr>
           </thead>
           <tbody>
-            {order?.length > 0 ? (order
-              .filter((row) => 
-                ["PENDING", "CONFIRMED", "DELIVERY", "DELIVERED", "CANCELLED", "PAID", "ALL"].includes(row.orderStatus)
-              )
-              .map((row, index) => {
-                if (!row.address) return null; 
-                return (
+            {order?.length > 0 ? (
+              order
+                .filter((row) =>
+                  ["READY_TO_SERVE", "SERVED", "PAID"].includes(row.orderStatus)
+                )
+                .map((row, index) => {
+                if (row.address) return null; 
+                return(
                   <tr key={row.id} className="align-middle border-bottom">
                     <td className="text-center fw-bold">{index + 1}</td>
                     <td>
-                      {formatDateTime(row.time)}
+                    {formatDateTime(row.time)}
                     </td>
                     <td className="text-center">
                       <span
                         className={`badge ${row.orderStatus === 'CANCELLED'
-                            ? 'bg-danger'
+                            ? 'bg-danger rounded-3 p-2'
                             : row.orderStatus === 'PAID'
-                              ? 'bg-success'
+                              ? 'bg-success rounded-3 p-2'
                               : row.orderStatus === 'PENDING'
-                                ? 'bg-warning text-dark'
-                                : 'bg-primary'
-                          } rounded-3 p-2`}
+                                ? 'bg-warning text-dark rounded-3 p-2'
+                                : 'bg-primary rounded-3 p-2'
+                          }`}
                         style={{
                           fontSize: '14px',
                           padding: '10px 16px',
@@ -178,7 +151,6 @@ const OrderListPage = () => {
                     </td>
                     <td className="text-center">{row.user?.fullName}</td>
                     <td className="text-center">{row.user?.phoneNumber}</td>
-                    <td className="text-center">{row.address?.address}</td>
                     <td className="text-center">
                       <div className="d-flex justify-content-center gap-2">
                         <button
@@ -193,25 +165,11 @@ const OrderListPage = () => {
                         >
                           Chuyển trạng thái
                         </button>
-                        {row.orderStatus === 'PENDING' && (
-                          <button
-                            className="btn btn-danger btn-sm"
-                            style={{
-                              width: '120px',
-                              borderRadius: '8px',
-                              fontSize: '14px',
-                              padding: '6px 12px',
-                            }}
-                            onClick={() => handleCancelOrder(row.id)}
-                          >
-                            Hủy đơn
-                          </button>
-                        )}
                       </div>
                     </td>
                   </tr>
-                );
-              })
+                )
+                })
             ) : (
               <tr>
                 <td colSpan={7} className="text-center text-muted py-3">
@@ -219,7 +177,6 @@ const OrderListPage = () => {
                 </td>
               </tr>
             )}
-
           </tbody>
         </Table>
       </div>
@@ -233,4 +190,4 @@ const OrderListPage = () => {
   );
 };
 
-export default OrderListPage;
+export default OrderListPageForEatAtRes;

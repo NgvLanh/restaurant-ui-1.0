@@ -48,13 +48,16 @@ const TableLocationPage = () => {
                 AlertUtils.error(response?.message);
             }
         } else {
-            const response = await createZone(data);
-            if (response?.status) {
-                AlertUtils.success(successMessage);
-                setShowModal(false);
-            } else {
-                AlertUtils.error(response?.message);
+            try {
+                const response = await createZone(data);
+                if (response?.status) {
+                    AlertUtils.success(successMessage);
+                    setShowModal(false);
+                }
+            } catch (error) {
+                AlertUtils.error(error.response?.data?.message);
             }
+
         }
         fetchZones();
     };
@@ -106,7 +109,7 @@ const TableLocationPage = () => {
                         <tr>
                             <th className="text-center">STT</th>
                             <th className="text-center">Khu vực</th>
-                            <th className="text-center">Chi tiết</th>
+                            <th className="text-center">Vị trí</th>
                         </tr>
                     </thead>
                     <tbody>

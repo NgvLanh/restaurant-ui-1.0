@@ -3,43 +3,34 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 
 const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
-    const { register, handleSubmit, setValue, reset, formState: { errors }, watch } = useForm();
+    const { 
+        register, 
+        handleSubmit, 
+        setValue, 
+        reset, 
+        formState: { errors }, 
+        watch 
+    } = useForm();
+
     const password = watch("password");
 
     useEffect(() => {
-        if (showModal) {
+        if (showModal && initialValues?.fullName) {
+            // Set giá trị nếu có initialValues
+            setValue("fullName", initialValues.fullName || "");
+            setValue("email", initialValues.email || "");
+            setValue("phone", initialValues.phoneNumber || "");
+            setValue("role", initialValues.role || 'NON_ADMIN');
+        } else if (showModal && !initialValues) {
+            // Reset giá trị khi mở modal nếu không có initialValues
             reset({
-                fullName: null,
-                email: null,
-                phone: null,
-                role: 'NON_ADMIN',
-                password: null,
-                confirmPassword: null
+                fullName: "",
+                email: "",
+                phone: "",
+                role: "NON_ADMIN",
+                password: "",
+                confirmPassword: "",
             });
-        }
-    }, [showModal, reset]);
-
-    useEffect(() => {
-        if (showModal) {
-            // Khi không có initialValues, reset form với giá trị mặc định là null
-            if (!initialValues?.fullName) {
-                reset({
-                    fullName: null,
-                    email: null,
-                    phone: null,  // Sử dụng phone thay vì phoneNumber khi khởi tạo
-                    role: 'NON_ADMIN',
-                    password: null,
-                    confirmPassword: null
-                });
-            } else {
-                // Nếu có initialValues, set các giá trị cho form
-                setValue("fullName", initialValues?.fullName || null);
-                setValue("email", initialValues?.email || null);
-                setValue("phone", initialValues?.phoneNumber || null);  // Sử dụng phone
-                setValue("role", initialValues?.role || 'NON_ADMIN');
-                setValue("password", initialValues?.password);
-                setValue("confirmPassword", initialValues?.password);
-            }
         }
     }, [showModal, initialValues, reset, setValue]);
 
@@ -47,14 +38,10 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
         const { phone, ...restData } = data;
         const transformedData = {
             ...restData,
-            phoneNumber: phone // Chuyển phone thành phoneNumber
+            phoneNumber: phone,
         };
-        handleData(transformedData); // Chỉ gọi 1 lần với dữ liệu đúng
-        closeModal();
+        handleData(transformedData);
     };
-
-
-
 
     return (
         <Modal show={showModal} onHide={() => closeModal(false)} centered size="lg">
@@ -88,8 +75,8 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                         required: 'Vui lòng nhập email',
                                         pattern: {
                                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                            message: 'Email không hợp lệ'
-                                        }
+                                            message: 'Email không hợp lệ',
+                                        },
                                     })}
                                     isInvalid={errors.email}
                                 />
@@ -111,8 +98,8 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                         required: 'Vui lòng nhập số điện thoại',
                                         pattern: {
                                             value: /^(03|08|09)\d{8}$/,
-                                            message: 'Số điện thoại phải bắt đầu bằng 03, 08, hoặc 09 và có 10 chữ số'
-                                        }
+                                            message: 'Số điện thoại phải bắt đầu bằng 03, 08, hoặc 09 và có 10 chữ số',
+                                        },
                                     })}
                                     isInvalid={errors.phone}
                                 />
@@ -121,8 +108,7 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-                        {
-                            !initialValues?.fullName &&
+                        {!initialValues?.fullName && (
                             <Col xs={12} sm={6}>
                                 <Form.Group controlId="password">
                                     <Form.Label>Mật Khẩu</Form.Label>
@@ -137,12 +123,11 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                     </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>
-                        }
-
+                        )}
                     </Row>
-                    {
-                        !initialValues?.fullName && <Row className="mb-3">
 
+                    {!initialValues?.fullName && (
+                        <Row className="mb-3">
                             <Col xs={12} sm={6}>
                                 <Form.Group controlId="confirmPassword">
                                     <Form.Label>Xác Nhận Mật Khẩu</Form.Label>
@@ -151,8 +136,7 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                         placeholder="Xác nhận mật khẩu"
                                         {...register('confirmPassword', {
                                             required: 'Vui lòng xác nhận mật khẩu',
-                                            validate: value =>
-                                                value === password || 'Mật khẩu không khớp'
+                                            validate: (value) => value === password || 'Mật khẩu không khớp',
                                         })}
                                         isInvalid={errors.confirmPassword}
                                     />
@@ -162,11 +146,9 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                    }
-
+                    )}
 
                     <div className="d-flex justify-content-end gap-3">
-
                         <Button type="submit" variant="primary">
                             {initialValues?.fullName ? 'Lưu' : 'Thêm'}
                         </Button>

@@ -1,121 +1,77 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
 // Lấy danh sách tất cả chi nhánh
-const getAllBranches = async () => {
-    try {
-        const response = await ApiRequest({
-            path: 'branches',
-        });
-        return response?.data?.content;
-    } catch (error) {
-        console.error(`Lỗi lấy danh sách chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách chi nhánh' };
-    }
+export const getAllBranches = async () => {
+    const response = await ApiRequest({
+        path: 'branches',
+    });
+    return response?.data?.content;
+
 };
 
 // Tạo mới một chi nhánh
-const createBranch = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'branches',
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi tạo chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo chi nhánh' };
-    }
+export const createBranch = async (request) => {
+    return await ApiRequest({
+        method: 'POST',
+        path: 'branches',
+        data: request,
+        headers: 'Bearer '
+    });
+
 };
 
 // Cập nhật một chi nhánh theo ID
-const updateBranch = async (branchId, request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'PATCH',
-            path: `branches/${branchId}`,
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi cập nhật chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi cập nhật chi nhánh' };
-    }
+export const updateBranch = async (branchId, request) => {
+    return await ApiRequest({
+        method: 'PATCH',
+        path: `branches/${branchId}`,
+        data: request,
+        headers: 'Bearer '
+    });
+
 };
 
-const updateBranch01 = async (branchId, request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'PATCH',
-            path: `branches/auth/${branchId}`,
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi cập nhật chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi cập nhật chi nhánh' };
-    }
+export const updateBranch01 = async (branchId, request) => {
+    return await ApiRequest({
+        method: 'PATCH',
+        path: `branches/auth/${branchId}`,
+        data: request,
+        headers: 'Bearer '
+    });
 };
 
 // Xóa một chi nhánh theo ID
-const deleteBranch = async (BranchId) => {
-    try {
-        const response = await ApiRequest({
-            method: 'DELETE',
-            path: `branches/${BranchId}`,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi xóa chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi xóa chi nhánh' };
-    }
+export const deleteBranch = async (BranchId) => {
+    return await ApiRequest({
+        method: 'DELETE',
+        path: `branches/${BranchId}`,
+        headers: 'Bearer '
+    });
 };
 
 // Lấy danh sách tất cả chi nhánh
-const getAllBranchesPageable = async (searchKey = '', currentPage, pageSize) => {
-    try {
-        const response = await ApiRequest({
-            path: `branches?name=${searchKey}&page=${currentPage}&size=${pageSize}`,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi lấy danh sách chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách chi nhánh' };
-    }
+export const getAllBranchesPageable = async (searchKey = '', currentPage, pageSize) => {
+    return await ApiRequest({
+        path: `branches?name=${searchKey}&page=${currentPage}&size=${pageSize}`,
+        headers: 'Bearer '
+    });
+
 };
 
-const createNonAdmin = async (request) =>{
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: `users/roles`,
-            headers : 'Bearer ',
-            data : request
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi tạo quản lý chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo quản lý chi nhánh' };
-    }
+export const createNonAdmin = async (request) => {
+    return await ApiRequest({
+        method: 'POST',
+        path: `users/roles`,
+        headers: 'Bearer ',
+        data: request
+    });
 }
 
-const getBranchByUserId = async (UserId) => {
-    try {
-        const response = await ApiRequest({
-            path: `branches/${UserId}`,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi xóa chi nhánh: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi xóa chi nhánh' };
-    }
+export const getBranchByUserId = async (UserId) => {
+    return await ApiRequest({
+        path: `branches/${UserId}`,
+        headers: 'Bearer '
+    });
 };
 
 
-export { getAllBranches, createBranch, updateBranch, deleteBranch, getAllBranchesPageable,createNonAdmin, updateBranch01, getBranchByUserId };

@@ -53,12 +53,15 @@ const TableListPage = () => {
                 AlertUtils.error(response?.message);
             }
         } else {
-            const response = await createTable(data);
-            if (response?.status) {
-                AlertUtils.success(successMessage);
-                setShowModal(false);
-            } else {
-                AlertUtils.error(response?.message);
+            try {
+                const response = await createTable(data);
+                if (response?.status) {
+                    AlertUtils.success(successMessage);
+                    setShowModal(false);
+                }
+            } catch (error) {
+                AlertUtils.error(error.response?.data?.message);
+
             }
         }
         setInitialValues(null);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
-const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
+const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
   const {
     register,
     handleSubmit,
@@ -12,8 +12,8 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      startDate: new Date().toISOString().split("T")[0]
-    }
+      startDate: new Date().toISOString().split("T")[0],
+    },
   });
 
   useEffect(() => {
@@ -25,17 +25,17 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
         endDate: initialValues.endDate,
         discountMethod: initialValues.discountMethod,
         quota: initialValues.quota,
-        value: initialValues.value
+        value: initialValues.value,
       });
     } else {
       reset({
         code: generateRandomCode(),
-        quantity: '',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: '',
-        discountMethod: '', 
-        quota: '',
-        value: ''
+        quantity: "",
+        startDate: new Date().toISOString().split("T")[0],
+        endDate: "",
+        discountMethod: "",
+        quota: "",
+        value: "",
       });
     }
   }, [initialValues]);
@@ -47,7 +47,6 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
       branch: JSON.parse(localStorage.getItem("branch_info")),
     };
     handleData(data);
-
   };
 
   const startDate = watch("startDate");
@@ -62,24 +61,27 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
         endDate: initialValues.endDate,
         discountMethod: initialValues.discountMethod,
         quota: initialValues.quota,
-        value: initialValues.value
+        value: initialValues.value,
       });
     } else {
       reset({
         code: generateRandomCode(),
-        quantity: '',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: '',
-        discountMethod: '',
-        quota: '',
-        value: ''
+        quantity: "",
+        startDate: new Date().toISOString().split("T")[0],
+        endDate: "",
+        discountMethod: "",
+        quota: "",
+        value: "",
       });
     }
   };
 
   const generateRandomCode = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return Array.from(
+      { length: 16 },
+      () => chars[Math.floor(Math.random() * chars.length)]
+    ).join("");
   };
 
   return (
@@ -100,6 +102,10 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                   placeholder="Nhập mã giảm giá"
                   {...register("code", {
                     required: "Số lượng không được để trống",
+                    maxLength: {
+                      value: 16,
+                      message: "Mã giảm không được vượt quá 16 ký tự",
+                    },
                   })}
                   isInvalid={errors.code}
                 />
@@ -138,11 +144,17 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                   placeholder="Chọn ngày áp dụng"
                   {...register("startDate", {
                     required: "Vui lòng chọn ngày áp dụng",
-                    // validate: {
-                    //   isFutureDate: (value) =>
-                    //     new Date(value) > new Date() ||
-                    //     `Ngày áp dụng phải là ngày hôm nay hoặc tương lai ${new Date(value)} | ${new Date()}`,
-                    // },
+                    validate: {
+                      isFutureDate: (value) => {
+                        const selectedDate = new Date(value);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return (
+                          selectedDate >= today ||
+                          "Ngày áp dụng phải là ngày hôm nay hoặc tương lai"
+                        );
+                      },
+                    },
                   })}
                   isInvalid={errors.startDate}
                 />
@@ -163,9 +175,15 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                   {...register("endDate", {
                     required: "Vui lòng chọn ngày kết thúc",
                     validate: {
-                      isFutureDate: (value) =>
-                        new Date(value) >= new Date() ||
-                        "Ngày kết thúc phải là ngày hiện tại hoặc tương lai",
+                      isFutureDate: (value) => {
+                        const selectedDate = new Date(value);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return (
+                          selectedDate >= today ||
+                          "Ngày kết thúc phải là ngày hôm nay hoặc tương lai"
+                        );
+                      },
                       isAfterApplyDate: (value) =>
                         !startDate ||
                         new Date(value) > new Date(startDate) ||
@@ -193,7 +211,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                 >
                   <option value="">Chọn loại giảm giá</option>
                   <option value="PERCENTAGE">Giảm giá phần trăm</option>
-                  <option value="FIXED_AMOUNT">Giảm giá cụ thể</option>
+                  <option value="FIXED_AMOUNT">Giảm giá tiền</option>
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {errors.discountMethod?.message}
@@ -213,6 +231,16 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                     min: {
                       value: 1000,
                       message: "Hạn mức phải từ 1000 trở lên",
+                    },
+                    validate: {
+                      lessThanValue: (value) => {
+                        const valueField = watch("value");
+                        return (
+                          !valueField || 
+                          parseInt(value) < parseInt(valueField) ||
+                          "Hạn mức phải nhỏ hơn Giá trị"
+                        );
+                      },
                     },
                     valueAsNumber: true,
                   })}
@@ -234,16 +262,9 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                   placeholder="Nhập giá trị"
                   {...register("value", {
                     required: "Giá trị không được để trống",
-                    // min: {
-                    //   value: 1000,
-                    //   message: "Giá trị phải từ 1000 trở lên",
-                    // },
-                    validate: {
-                      lessThanLimit: (value) =>
-                        !quota ||
-                        parseInt(value) < parseInt(quota) ||
-                        "Giá trị phải nhỏ hơn hạn mức",
-
+                    min: {
+                      value: 1000,
+                      message: "Giá trị phải từ 1000 trở lên",
                     },
                     valueAsNumber: true,
                   })}
@@ -255,6 +276,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
               </Form.Group>
             </Col>
           </Row>
+
           <div className="d-flex justify-content-end gap-3">
             <Button type="button" variant="secondary" onClick={handleReset}>
               Reset

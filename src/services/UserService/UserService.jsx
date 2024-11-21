@@ -67,17 +67,11 @@ export const createEmployee = async (request) =>
 
 
 export const deleteEmployee = async (employeeId) => {
-    try {
-        const response = await ApiRequest({
+    return await ApiRequest({
             method: 'DELETE',
             path: `users/${employeeId}`,
             headers: 'Bearer '
         });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi xóa : ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi xóa ' };
-    }
 };
 
 export const updateEmployee = async (employeeId, request) => {

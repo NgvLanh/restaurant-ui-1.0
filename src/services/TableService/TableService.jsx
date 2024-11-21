@@ -14,51 +14,32 @@ const getAllTables = async () => {
 };
 
 // Tạo mới một bàn
-const createTable = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'tables',
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi tạo bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo bàn' };
-    }
-};
+const createTable = async (request) =>
+    await ApiRequest({
+        method: 'POST',
+        path: 'tables',
+        data: request,
+        headers: 'Bearer '
+    });
 
 // Cập nhật một bàn theo ID
-const updateTable = async (tableId, request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'PATCH',
-            path: `tables/${tableId}`,
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi cập nhật bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi cập nhật bàn' };
-    }
-};
+const updateTable = async (tableId, request) =>
+    await ApiRequest({
+        method: 'PATCH',
+        path: `tables/${tableId}`,
+        data: request,
+        headers: 'Bearer '
+    });
+
 
 // Xóa một bàn theo ID
-const deleteTable = async (tableId) => {
-    try {
-        const response = await ApiRequest({
-            method: 'DELETE',
-            path: `tables/${tableId}`,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi xóa bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi xóa bàn' };
-    }
-};
+const deleteTable = async (tableId) =>
+    await ApiRequest({
+        method: 'DELETE',
+        path: `tables/${tableId}`,
+        headers: 'Bearer '
+    });
+
 
 // Lấy danh sách tất cả bàn
 const getAllTablesPageable = async (currentPage, pageSize) => {
