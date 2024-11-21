@@ -62,12 +62,14 @@ const MenuListPage = () => {
         AlertUtils.error(response?.message);
       }
     } else {
-      const response = await createDish(data);
-      if (response?.status) {
-        AlertUtils.success(successMessage);
-        setShowModal(false);
-      } else {
-        AlertUtils.error(response?.message);
+      try {
+        const response = await createDish(data);
+        if (response?.status) {
+          AlertUtils.success(successMessage);
+          setShowModal(false);
+        }
+      } catch (error) {
+        AlertUtils.error(error.response?.data?.message);
       }
     }
     fetchDishes();
@@ -155,7 +157,7 @@ const MenuListPage = () => {
               {dishes?.length > 0 ? (
                 dishes.map((item, index) => (
                   <div key={item.id} className="col-lg-3 mb-4 col-md-6">
-                    <div className="card shadow-sm"  style={{ height: '380px' }}>
+                    <div className="card shadow-sm" style={{ height: '380px' }}>
                       <img src={item.image} alt={item.name} className="card-img-top"
                         style={{ minHeight: '200px', maxHeight: '200px', objectFit: 'cover' }} />
                       <div className="card-body">

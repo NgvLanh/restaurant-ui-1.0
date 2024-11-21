@@ -61,7 +61,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                     <Row className="mb-3">
                         <Col xs={12}>
                             <Form.Group controlId="address">
-                                <Form.Label>Khu vực</Form.Label>
+                                <Form.Label>Vị trí</Form.Label>
                                 <Form.Control
                                     as="textarea"
                                     rows={3}

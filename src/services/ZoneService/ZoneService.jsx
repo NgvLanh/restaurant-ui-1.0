@@ -14,20 +14,14 @@ const getAllZones = async () => {
 };
 
 // Tạo mới một bàn
-const createZone = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'zones',
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi tạo bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo bàn' };
-    }
-};
+const createZone = async (request) =>
+    await ApiRequest({
+        method: 'POST',
+        path: 'zones',
+        data: request,
+        headers: 'Bearer '
+    });
+
 
 // Cập nhật một bàn theo ID
 const updateZone = async (zoneId, request) => {
