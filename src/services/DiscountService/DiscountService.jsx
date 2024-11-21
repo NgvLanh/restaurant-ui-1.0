@@ -33,7 +33,7 @@ const createDiscount = async (request) => {
     );
     return {
       status: false,
-      message: error?.response?.data?.message || "Lỗi tạo chi nhánh",
+      message: error?.response?.data?.message || "Mã giảm giá bị trùng",
     };
   }
 };
@@ -53,7 +53,7 @@ const updateDiscount = async (discountId, request) => {
     );
     return {
       status: false,
-      message: error?.response?.data?.message || "Lỗi cập nhật chi nhánh",
+      message: error?.response?.data?.message || "Lỗi cập nhật giảm giá",
     };
   }
 };
