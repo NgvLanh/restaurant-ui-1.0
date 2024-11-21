@@ -14,20 +14,13 @@ const getAllCategories = async () => {
 };
 
 // Tạo mới một danh mục
-const createCategory = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'categories',
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi tạo danh mục: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo danh mục' };
-    }
-};
+const createCategory = async (request) =>
+    await ApiRequest({
+        method: 'POST',
+        path: 'categories',
+        data: request,
+        headers: 'Bearer '
+    });
 
 // Cập nhật một danh mục theo ID
 const updateCategory = async (categoryId, request) => {

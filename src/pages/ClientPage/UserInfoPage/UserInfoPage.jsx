@@ -94,13 +94,18 @@ const UserInfoPage = () => {
             user: user,
             ...data
         }
-        const responese = await createAddress(request);
-        if (responese?.status) {
-            AlertUtils.success('Thêm địa chỉ thành công');
-            setShowModal(false);
-        } else {
-            navigate(0);
+        try {
+            const responese = await createAddress(request);
+            if (responese?.status) {
+                AlertUtils.success('Thêm địa chỉ thành công');
+                setShowModal(false);
+            } else {
+                navigate(0);
+            }
+        } catch (error) {
+            AlertUtils.error(error.response?.data?.message);
         }
+
         fetchAddress();
     };
 
@@ -128,7 +133,7 @@ const UserInfoPage = () => {
                                 <BiUser className="me-2" /> Hồ sơ của tôi
                             </h5>
                             <small className="text-muted">Quản lý thông tin tài khoản để bảo mật.</small>
-    
+
                             <Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
                                 <Row>
                                     <Col md={6} className="mb-4">
@@ -147,7 +152,7 @@ const UserInfoPage = () => {
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                     </Col>
-    
+
                                     <Col md={6} className="mb-4">
                                         <Form.Group>
                                             <Form.Label className="fw-semibold">Email</Form.Label>
@@ -161,7 +166,7 @@ const UserInfoPage = () => {
                                             />
                                         </Form.Group>
                                     </Col>
-    
+
                                     <Col md={6} className="mb-4">
                                         <Form.Group>
                                             <Form.Label className="fw-semibold">Số điện thoại</Form.Label>
@@ -178,7 +183,7 @@ const UserInfoPage = () => {
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                     </Col>
-    
+
                                     <Col md={12} className="text-end">
                                         <Button variant="primary" type="submit" className="px-4 py-2 fw-bold shadow-sm">
                                             Lưu Thông Tin
@@ -188,7 +193,7 @@ const UserInfoPage = () => {
                             </Form>
                         </Card>
                     </Col>
-    
+
                     {/* Ảnh đại diện */}
                     <Col md={6} className="mb-4">
                         <Card className="p-4 border-0 shadow rounded text-center">
@@ -232,7 +237,7 @@ const UserInfoPage = () => {
                         </Card>
                     </Col>
                 </Row>
-    
+
                 {/* Địa chỉ giao hàng */}
                 <Row>
                     <Col md={6} className="mb-4">
@@ -247,7 +252,7 @@ const UserInfoPage = () => {
                             >
                                 Thêm địa chỉ mới
                             </Button>
-    
+
                             <div className="overflow-auto p-3 bg-light rounded" style={{ maxHeight: "300px" }}>
                                 {addresses?.map((address, index) => (
                                     <Card
@@ -296,17 +301,17 @@ const UserInfoPage = () => {
                     </Col>
                 </Row>
             </Container>
-    
+
             <AddressModal
                 show={showModal}
                 handleClose={() => setShowModal(false)}
                 handleSave={handleSaveAddress}
             />
-    
+
             <Footer />
         </>
     );
-    
+
 };
 
 export default UserInfoPage;
