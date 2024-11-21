@@ -34,7 +34,6 @@ const EmployeeModal = ({ showModal, closeModal, initialValues, handleData }) => 
         const branch = JSON.parse(localStorage.getItem('branch_info'));
         const payload = { ...data, branch }; // Thêm branch_id vào dữ liệu
         handleData(payload); // Gửi dữ liệu qua handleData
-        closeModal(); // Đóng modal
     };
 
     return (

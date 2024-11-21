@@ -43,82 +43,86 @@ const BranchListPage = () => {
     const handleModalSubmit = async (data) => {
         const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
         if (initialValues) {
-            const response = await updateBranch(initialValues?.id, data);
-            if (response?.status) {
-                AlertUtils.success(successMessage);
-                setShowModal(false);
-            } else {
-                AlertUtils.error(response?.message);
+            try {
+                const response = await updateBranch(initialValues?.id, data);
+                if (response?.status) {
+                    AlertUtils.success(successMessage);
+                    setShowModal(false);
+                }
+            } catch (error) {
+                AlertUtils.error(error.response?.data?.message);
             }
         } else {
-            const response = await createBranch(data);
-            if (response?.status) {
-                AlertUtils.success(successMessage);
-                setShowModal(false);
-            } else {
-                AlertUtils.error(response?.message);
+            try {
+                const response = await createBranch(data);
+                console.log(response);
+
+                if (response?.status) {
+                    AlertUtils.success(successMessage);
+                    setShowModal(false);
+                }
+            } catch (error) {
+                AlertUtils.error(error.response?.data?.message);
             }
         }
         fetchBranches();
     };
 
     const handleSetRole = async (data) => {
-        try {
-            const { confirmPassword, ...requestData } = data;
-
-            if (initialValues?.id) {
-                // Case 1: Updating existing user
-                if (initialValues?.email) {  // Check if it's a user object
+        const { confirmPassword, ...requestData } = data;
+        if (initialValues?.id) {
+            if (initialValues?.email) {
+                try {
                     const updateResponse = await updateEmployee(initialValues.id, requestData);
-
                     if (updateResponse?.status) {
                         AlertUtils.success('Cập nhật thành công!');
                         setShowUserModal(false);
-                    } else {
-                        AlertUtils.error('Cập nhật thất bại!');
                     }
+                } catch (error) {
+                    AlertUtils.error(error.response?.data?.message);
                 }
-                // Case 2: Creating new user for existing branch
-                else {
+            }
+            else {
+                try {
                     const userResponse = await createNonAdmin(requestData);
-
-                    if (!userResponse?.status || !userResponse?.data?.id) {
-                        AlertUtils.error('Tạo người dùng thất bại!');
-                    }
-
                     const updatedBranchData = {
                         ...initialValues,
                         user: userResponse.data
                     };
-
-                    const branchResponse = await updateBranch01(initialValues.id, updatedBranchData);
-
-                    if (branchResponse?.status) {
-                        AlertUtils.success('Tạo người dùng và cập nhật chi nhánh thành công!');
-                        setShowUserModal(false);
-                    } else {
-                        AlertUtils.error('Cập nhật chi nhánh thất bại!');
+                    try {
+                        const branchResponse = await updateBranch01(initialValues.id, updatedBranchData);
+                        if (branchResponse?.status) {
+                            AlertUtils.success('Tạo người dùng và cập nhật chi nhánh thành công!');
+                            setShowUserModal(false);
+                        }
+                    } catch (error) {
+                        AlertUtils.error(error.response?.data?.message);
                     }
+                } catch (error) {
+                    AlertUtils.error(error.response?.data?.message.email
+                        || error.response?.data?.message.phoneNumher
+                        || error.response?.data?.message.password
+                        || error.response?.data?.message
+                    );
                 }
-            } else {
-                AlertUtils.error('ID của chi nhánh không hợp lệ.');
-            }
 
-            fetchBranches();
-            setInitialValues(null);
-        } catch (error) {
-            AlertUtils.error(error.message);
+            }
+        } else {
+            AlertUtils.error(error.response?.data?.message);
         }
+        fetchBranches();
     };
 
     const handleDelete = async (id) => {
         const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
         if (result) {
-            const response = await deleteBranch(id);
-            if (response?.status) {
-                AlertUtils.success('Xoá thành công!');
-            } else {
-                AlertUtils.error('Xoá thất bại!');
+            try {
+                const response = await deleteBranch(id);
+                if (response?.status) {
+                    AlertUtils.success('Xoá thành công!');
+                }
+            } catch (error) {
+                AlertUtils.error(error.response?.data?.message);
             }
         }
         fetchBranches();
@@ -135,34 +139,21 @@ const BranchListPage = () => {
         <>
             <PageHeader title="Danh sách chi nhánh" />
 
-            <div className="bg-white shadow p-4 rounded-4">
+            <div className="bg-white shadow p-4 rounded-3">
                 <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
                     <Form.Control
                         type="text"
                         placeholder="Tìm kiếm theo tên"
                         onChange={(e) => debouncedSearch(e.target.value)}
                         style={{
-                            maxWidth: '350px',
-                            padding: '10px 16px',
-                            borderRadius: '20px',
-                            border: '1px solid #e0e0e0',
-                            fontSize: '14px',
-                        }}
+                            maxWidth: '350px',}}
                     />
                     <div className="action">
                         <Button
-                            className="d-flex align-items-center rounded-pill px-4"
+                            className="d-flex align-items-center rounded-3 px-4"
                             onClick={() => {
                                 setInitialValues(null);
                                 setShowModal(true);
-                            }}
-                            style={{
-                                fontSize: '14px',
-                                padding: '10px 20px',
-                                backgroundColor: '#AB7742',
-                                borderColor: '#3A8DFF',
-                                color: 'white',
-                                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
                             }}
                         >
                             <BiPlus className="me-2" />

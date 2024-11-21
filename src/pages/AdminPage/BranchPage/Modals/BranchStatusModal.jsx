@@ -11,7 +11,7 @@ const BranchStatusModal = ({ showModal, closeModal, initialValues, handleData })
             setValue('colorCode', initialValues?.colorCode);
         } else {
             reset({
-                name: '',
+                name: null,
                 colorCode: '#FFFFFF'
             })
         }

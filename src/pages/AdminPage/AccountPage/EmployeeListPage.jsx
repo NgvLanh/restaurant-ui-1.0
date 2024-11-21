@@ -13,27 +13,21 @@ const EmployeeListPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize] = useState(10);
-
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState(null);
-
-    // Fetch employees when the page or pageSize changes
     const fetchEmployee = async () => {
         const response = await getEmployee(currentPage, pageSize);
         setTotalPages(response?.data?.totalPages);
         setEmployees(response?.data?.content);
     };
-
-    // Trigger fetch when the currentPage changes
     useEffect(() => {
         fetchEmployee();
     }, [currentPage, pageSize]);
-
     const handleModalSubmit = async (data) => {
         const branch = JSON.parse(localStorage.getItem('branch_info'));
         const { confirmPassword, ...dataWithoutConfirmPassword } = data;
         const payload = { ...dataWithoutConfirmPassword, branch };
-    
+
         if (initialValues) {
             try {
                 const response = await updateEmployee(initialValues?.id, payload);
@@ -50,27 +44,22 @@ const EmployeeListPage = () => {
         } else {
             try {
                 const response = await createEmployee(payload);
-                console.log(response?.message);
                 if (response?.status) {
                     AlertUtils.success('Thêm nhân viên thành công');
                     setShowModal(false);
-                } else if (response?.message === 'Email này đã tồn tại') {
-                    AlertUtils.error('Email này đã tồn tại');
-                } else if (response?.message === 'Số điện thoại này đã tồn tại') {
-                    AlertUtils.error('Số điện thoại này đã tồn tại');
                 }
             } catch (error) {
-                console.error('Error during create:', error); // Log toàn bộ lỗi
-                const errorMessage = error.response?.data?.message || 'Đã xảy ra lỗi khi thêm nhân viên';
-                AlertUtils.error(errorMessage);
+                AlertUtils.error(error.response?.data?.message.email
+                    || error.response?.data?.message.phoneNumber
+                    || error.response?.data?.message.password
+                    || error.response?.data?.message
+                );
             }
         }
-    
-        setShowModal(false);
-        fetchEmployee(); // Reload employee data
-        setInitialValues(null); // Reset initial values
+
+        fetchEmployee();
     };
-    
+
 
     const handleDelete = async (id) => {
         const result = await AlertUtils.confirm("Bạn có chắc chắn muốn xoá nhân viên này?");
@@ -78,7 +67,7 @@ const EmployeeListPage = () => {
             try {
                 await deleteEmployee(id);
                 AlertUtils.success('Nhân viên đã bị xoá thành công');
-                fetchEmployee(); // Reload employee data after deletion
+                fetchEmployee();
             } catch (error) {
                 AlertUtils.error('Đã xảy ra lỗi khi xoá nhân viên');
             }
@@ -95,25 +84,15 @@ const EmployeeListPage = () => {
                         placeholder="Tìm kiếm theo số điện thoại"
                         style={{
                             maxWidth: "350px",
-                            padding: "10px 16px",
-                            borderRadius: "20px",
-                            border: "1px solid #e0e0e0",
-                            fontSize: "14px",
                         }}
                     />
                     <Button
-                        className="d-flex align-items-center rounded-pill px-4"
+                        className="d-flex align-items-center rounded-3 px-4"
                         onClick={() => {
                             setInitialValues(null);
                             setShowModal(true);
                         }}
-                        style={{
-                            fontSize: "14px",
-                            padding: "10px 20px",
-                            backgroundColor: "#AB7742",
-                            borderColor: "#3A8DFF",
-                            color: "white",
-                        }}
+
                     >
                         <BiPlus className="me-2" />
                         Thêm
@@ -141,9 +120,9 @@ const EmployeeListPage = () => {
                                     <td className="text-center">
                                         <span
                                             onClick={() => {
-                                                    setInitialValues(employee);
-                                                    setShowModal(true);
-                                                }}
+                                                setInitialValues(employee);
+                                                setShowModal(true);
+                                            }}
                                             className="btn btn-light"
                                             style={{ cursor: "pointer" }}
                                         >
