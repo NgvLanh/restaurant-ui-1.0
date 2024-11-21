@@ -1,28 +1,19 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
 //Tổng doanh thu
-const getTotalRevenue = async (request) => {
-    try {
-        const response = await ApiRequest({
-            path: 'invoices/total-revenue',
-            headers: 'Bearer ',
-            data: request
-        });
-        console.log("API Response:", response); // Kiểm tra giá trị trả về
-        return response || null; // Trả về giá trị số nếu có, hoặc null nếu không
-    } catch (error) {
-        console.error(`Lỗi lấy tổng doanh thu: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách chi nhánh' };
-    }
+export const getTotalRevenue = async (request) => {
+    return await ApiRequest({
+        path: 'invoices/total-revenue',
+        headers: 'Bearer ',
+        data: request
+    });
 };
-
-export { getTotalRevenue };
 
 //Tổng món ăn
 const getTotalDishes = async (request) => {
     try {
         const response = await ApiRequest({
-            path: 'dishes/total-dishes', 
+            path: 'dishes/total-dishes',
             headers: 'Bearer ',
             data: request
         });
@@ -41,7 +32,7 @@ export { getTotalDishes };
 const getTotalUsers = async (request) => {
     try {
         const response = await ApiRequest({
-            path: 'users/total-users', 
+            path: 'users/total-users',
             headers: 'Bearer ',
             data: request
         });
@@ -59,7 +50,7 @@ export { getTotalUsers };
 const getTotalOrders = async (request) => {
     try {
         const response = await ApiRequest({
-            path: 'orders/total-order', 
+            path: 'orders/total-order',
             headers: 'Bearer ',
             data: request
         });
@@ -89,14 +80,14 @@ export { getTotalOrders };
 // };
 
 const getMonthlyRevenue = async (request) => {
-    try{
+    try {
         const response = await ApiRequest({
             path: 'invoices/monthly-revenue',
             data: request,
-            headers: 'Bearer ' 
+            headers: 'Bearer '
         })
         return response?.data.content;
-    }catch(error) {
+    } catch (error) {
         console.error(`Lỗi đỗ danh sách: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
         return { status: false, message: error?.response?.data?.message || 'Lỗi tạo đặt bàn' };
     }
@@ -107,7 +98,7 @@ export { getMonthlyRevenue };
 const getTotalOrdersCanCelled = async (request) => {
     try {
         const response = await ApiRequest({
-            path: 'orders/total-order-cancelled', 
+            path: 'orders/total-order-cancelled',
             headers: 'Bearer ',
             data: request
         });

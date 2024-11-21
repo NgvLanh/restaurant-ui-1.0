@@ -7,7 +7,7 @@ import RenderPagination from "../../../components/Admin/RenderPagination/RenderP
 
 // Map trạng thái
 const OrderStatus = new Map([
-  ["PENDING_CONFIRMATION", "Chờ xác nhận"],
+  ["PENDING", "Chờ xác nhận"],
   ["CONFIRMED", "Đã xác nhận"],
   ["ORDERED", "Đã đặt món"],
   ["IN_KITCHEN", "Đang chế biến"],
@@ -144,7 +144,6 @@ const OrderListPage = () => {
               <th className="text-center">Khách hàng</th>
               <th className="text-center">Số điện thoại</th>
               <th className="text-center">Địa chỉ</th>
-              <th className="text-center">Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -166,7 +165,7 @@ const OrderListPage = () => {
                           ? 'bg-danger'
                           : row.orderStatus === 'PAID'
                             ? 'bg-success'
-                            : row.orderStatus === 'PENDING_CONFIRMATION'
+                            : row.orderStatus === 'PENDING'
                               ? 'bg-warning text-dark'
                               : 'bg-primary'
                         }`}
@@ -180,11 +179,11 @@ const OrderListPage = () => {
                       {OrderStatus.get(row.orderStatus)}
                     </span>
                   </td>
-                  <td className="text-center">{row.user.fullName}</td>
-                  <td className="text-center">{row.user.phoneNumber}</td>
-                  <td className="text-center">{row.address.address}</td>
+                  <td className="text-center">{row.fullName || row.user?.fullName}</td>
+                  <td className="text-center">{row.user?.phoneNumber}</td>
+                  <td className="text-center">{row.address?.address}</td>
                   <td className="text-center">
-                    {row.orderStatus === 'PENDING_CONFIRMATION' && (
+                    {row.orderStatus === 'PENDING' && (
                       <button
                         className="btn btn-danger btn-sm"
                         style={{ borderRadius: '8px', fontSize: '14px' }}
