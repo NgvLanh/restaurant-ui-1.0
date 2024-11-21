@@ -14,20 +14,13 @@ const getAllDishes = async () => {
 };
 
 // Tạo mới một món ăn
-const createDish = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'dishes',
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi tạo món ăn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo món ăn' };
-    }
-};
+const createDish = async (request) =>
+    await ApiRequest({
+        method: 'POST',
+        path: 'dishes',
+        data: request,
+        headers: 'Bearer '
+    });
 
 // Cập nhật một món ăn theo ID
 const updateDish = async (dishId, request) => {
@@ -64,7 +57,7 @@ const deleteDish = async (dishId) => {
 const getAllDishesByCategoryId = async (categoryId) => {
     try {
         const response = await ApiRequest({
-            path: `dishes/${categoryId}`
+            path: `dishes/${JSON.parse(localStorage.getItem('branch_info'))?.id}/${categoryId}`
         });
         return response?.data?.content;
     } catch (error) {
@@ -76,7 +69,7 @@ const getAllDishesByCategoryId = async (categoryId) => {
 const getAllDishesPageable = async (searchKey = '', currentPage, pageSize) => {
     try {
         const response = await ApiRequest({
-            path: `dishes?name=${searchKey}&page=${currentPage}&size=${pageSize}`
+            path: `dishes?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&name=${searchKey}&page=${currentPage}&size=${pageSize}`
         });
         return response;
     } catch (error) {

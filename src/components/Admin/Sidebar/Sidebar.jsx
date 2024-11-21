@@ -68,8 +68,16 @@ const Sidebar = ({ isCollapsed }) => {
                 isActive: false,
                 items: [
                     {
+                        title: "Xem Bàn hôm nay + Đặt bàn + Gọi món",
+                        url: "/admin/reservations/booking-order",
+                    },
+                    {
                         title: "Lịch đặt bàn",
                         url: "/admin/reservations/schedule",
+                    },
+                    {
+                        title: "Thêm đặt bàn",
+                        url: "/admin/reservations/create",
                     },
                     {
                         title: "Bàn đã huỷ",
@@ -94,13 +102,21 @@ const Sidebar = ({ isCollapsed }) => {
                 ],
             },
             {
-                title: "Đơn hàng",
+                title: "Hoá đơn",
                 url: "/admin/orders",
                 icon: <i className="fas fa-file-invoice"></i>,
                 items: [
                     {
-                        title: "Danh sách đơn hàng",
+                        title: "Danh sách hoá đơn dành cho giao hàng",
                         url: "/admin/orders",
+                    },
+                    {
+                        title: "Danh sách hoá đơn dành cho ăn tại nhà hàng",
+                        url: "/admin/orders/orders-at-res",
+                    },
+                    {
+                        title: "Thêm hoá đơn",
+                        url: "/admin/orders/create-order",
                     }
                 ],
             },

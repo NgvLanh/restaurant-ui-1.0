@@ -8,6 +8,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+*,
+html {
+  box-shadow: none !important;
+}
+
 ._outline_none *:focus {
   background-color: white;
   border: none !important;

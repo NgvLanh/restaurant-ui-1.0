@@ -98,7 +98,7 @@ const Menus = () => {
                             className="portfolio-item wow fadeInUp"
                             data-wow-delay="0.1s"
                             style={{
-                                flex: '1 1 calc(33.333% - 20px)', // Chiều ngang tự động co giãn
+                                flex: '1 1 calc(33.333% - 20px)',
                                 maxWidth: 'calc(33.333% - 20px)',
                                 margin: '10px',
                                 boxSizing: 'border-box',

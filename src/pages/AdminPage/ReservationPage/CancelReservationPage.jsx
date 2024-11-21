@@ -6,7 +6,8 @@ import { Button, Form, Table } from "react-bootstrap";
 import { BiEdit, BiPlus } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
-import { createreservation, deletereservation, getAllreservationsPageable, updatereservation } from "../../../services/ReservationService/ReservationService";
+import { getAllCancelReservationsPageable } from "../../../services/ReservationService/ReservationService";
+import { formatDateTime } from "../../../utils/FormatUtils";
 
 const CancelReservationPage = () => {
 
@@ -24,9 +25,13 @@ const CancelReservationPage = () => {
   }, [currentPage, searchKey]);
 
   const fetchReservations = async () => {
-    const response = await getAllreservationsPageable(searchKey, currentPage, pageSize);
-    setTotalPages(response?.data?.totalPages);
-    setReservations(response?.data?.content);
+    try {
+      const response = await getAllCancelReservationsPageable(searchKey, currentPage, pageSize);
+      setTotalPages(response?.data?.totalPages);
+      setReservations(response?.data?.content);
+    } catch (error) {
+      AlertUtils.error(`Lỗi lấy danh sách huỷ bàn`, error);
+    }
   }
 
   const handleSearch = (key) => {
@@ -34,38 +39,9 @@ const CancelReservationPage = () => {
     setCurrentPage(0);
   }
 
-  const handleModalSubmit = async (data) => {
-    const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
-    if (initialValues) {
-      const response = await updatereservation(initialValues?.id, data);
-      if (response?.status) {
-        AlertUtils.success(successMessage);
-        setShowModal(false);
-      } else {
-        AlertUtils.error(response?.message);
-      }
-    } else {
-      const response = await createreservation(data);
-      if (response?.status) {
-        AlertUtils.success(successMessage);
-        setShowModal(false);
-      } else {
-        AlertUtils.error(response?.message);
-      }
-    }
-    fetchReservations();
-  };
 
   const handleDelete = async (id) => {
     const result = await AlertUtils.confirm('Bạn có chắc chắn muốn xoá trạng thái này');
-    if (result) {
-      const response = await deletereservation(id);
-      if (response?.status) {
-        AlertUtils.success('Xoá thành công!');
-      } else {
-        AlertUtils.error('Xoá thất bại!');
-      }
-    }
     fetchReservations();
   }
 
@@ -83,36 +59,12 @@ const CancelReservationPage = () => {
             onChange={(e) => debouncedSearch(e.target.value)}
             style={{
               maxWidth: '350px',
-              padding: '10px 16px',
-              borderRadius: '20px',
-              border: '1px solid #e0e0e0',
-              fontSize: '14px',
             }}
           />
-          <div className="action">
-            <Button
-              className="d-flex align-items-center rounded-pill px-4"
-              onClick={() => {
-                setInitialValues(null);
-                setShowModal(true);
-              }}
-              style={{
-                fontSize: '14px',
-                padding: '10px 20px',
-                backgroundColor: '#AB7742',
-                borderColor: '#3A8DFF',
-                color: 'white',
-                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
-              }}
-            >
-              <BiPlus className="me-2" />
-              Thêm
-            </Button>
-          </div>
         </div>
 
-        <Table borderless hover responsive className="rounded-4">
-          <thead style={{ backgroundColor: '#f5f5f5' }}>
+        <Table hover responsive className="rounded-4">
+          <thead>
             <tr>
               <th className="text-center">STT</th>
               <th className="text-center">Thời gian</th>
@@ -125,40 +77,16 @@ const CancelReservationPage = () => {
           <tbody>
             {reservations?.length > 0 ? (
               reservations.map((row, index) => (
-                <tr key={row.id} className="align-middle" style={{ backgroundColor: '#ffffff' }}>
+                <tr key={row.id} className="align-middle" >
                   <td className="text-center">{index + 1}</td>
-                  <td className="text-center">{row.startTime}</td>
+                  <td className="text-center">{formatDateTime(`${row.bookingDate}T${row.startTime}`)}</td>
                   <td className="text-center">{row.fullName}</td>
                   <td className="text-center">{row.phoneNumber}</td>
-                  <td className="text-center">{row.notes}</td>
+                  <td className="text-center">{row.cancelReason}</td>
                   <td className="text-center">
                     <span className="d-flex justify-content-center align-items-center gap-3">
                       <span
-                        onClick={() => {
-                          setInitialValues(row);
-                          setShowModal(true);
-                        }}
-                        style={{
-                          padding: '8px',
-                          backgroundColor: '#f0f0f0',
-                          borderRadius: '12px',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.3s ease',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                        }}
-                      >
-                        <BiEdit size={16} />
-                      </span>
-                      <span
                         onClick={() => { handleDelete(row.id) }}
-                        style={{
-                          padding: '8px',
-                          backgroundColor: '#f0f0f0',
-                          borderRadius: '12px',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.3s ease',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                        }}
                       >
                         <MdDelete size={16} />
                       </span>
@@ -174,13 +102,6 @@ const CancelReservationPage = () => {
           </tbody>
         </Table>
       </div>
-
-      {/* <BranchStatusModal
-        showModal={showModal}
-        closeModal={() => setShowModal(false)}
-        handleData={handleModalSubmit}
-        initialValues={initialValues}
-      /> */}
 
       <RenderPagination
         currentPage={currentPage}

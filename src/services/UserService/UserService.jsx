@@ -56,20 +56,14 @@ export const getEmployee = async (currentPage, pageSize) => {
     }
 };
 
-export const createEmployee = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'users/employee',
-            data: request,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
-    }
-};
+export const createEmployee = async (request) =>
+    await ApiRequest({
+        method: 'POST',
+        path: 'users/employee',
+        data: request,
+        headers: 'Bearer '
+    });
+
 
 
 export const deleteEmployee = async (employeeId) => {
@@ -96,7 +90,7 @@ export const updateEmployee = async (employeeId, request) => {
 };
 
 
-export const getNonAdmin = async () => {
+export const getNonAdmin = async (request) => {
     try {
         const response = await ApiRequest({
             method: 'GET',

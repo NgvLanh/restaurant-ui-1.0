@@ -13,8 +13,8 @@ import BranchModal from "./Modals/BranchModal";
 import UserModal from "./Modals/UserModal";
 import { updateEmployee } from "../../../services/UserService/UserService"
 const BranchListPage = () => {
-    const userInfo = JSON.parse(localStorage.getItem('user_info'));
-    const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
+    // const userInfo = JSON.parse(localStorage.getItem('user_info'));
+    // const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
     const [branches, setBranches] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState({});

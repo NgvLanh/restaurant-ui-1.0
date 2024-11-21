@@ -35,8 +35,6 @@ const MenuListPage = () => {
 
   const fetchDishes = async () => {
     const response = await getAllDishesPageable(searchKey, currentPage, pageSize);
-    console.log(response);
-
     setTotalPages(response?.data?.totalPages);
     setDishes(response?.data?.content);
   }
@@ -64,12 +62,14 @@ const MenuListPage = () => {
         AlertUtils.error(response?.message);
       }
     } else {
-      const response = await createDish(data);
-      if (response?.status) {
-        AlertUtils.success(successMessage);
-        setShowModal(false);
-      } else {
-        AlertUtils.error(response?.message);
+      try {
+        const response = await createDish(data);
+        if (response?.status) {
+          AlertUtils.success(successMessage);
+          setShowModal(false);
+        }
+      } catch (error) {
+        AlertUtils.error(error.response?.data?.message);
       }
     }
     fetchDishes();
@@ -157,7 +157,7 @@ const MenuListPage = () => {
               {dishes?.length > 0 ? (
                 dishes.map((item, index) => (
                   <div key={item.id} className="col-lg-3 mb-4 col-md-6">
-                    <div className="card shadow-sm"  style={{ height: '380px' }}>
+                    <div className="card shadow-sm" style={{ height: '380px' }}>
                       <img src={item.image} alt={item.name} className="card-img-top"
                         style={{ minHeight: '200px', maxHeight: '200px', objectFit: 'cover' }} />
                       <div className="card-body">
@@ -206,7 +206,7 @@ const MenuListPage = () => {
                 <th>Tên món ăn</th>
                 <th>Giá</th>
                 <th>Mô tả</th>
-                <th>Trạng thái</th>
+                <th>Số lượng</th>
                 <th>Hành động</th>
               </tr>
             </thead>
@@ -222,14 +222,7 @@ const MenuListPage = () => {
                     <td>{row.name}</td>
                     <td>{formatCurrency(row.price)}</td>
                     <td>{row.description}</td>
-                    <td>
-                      <Switch
-                        onChange={() => handleToggleStatus(row.id, row.status)}
-                        checked={row.status}
-                        offColor="#ccc"
-                        onColor="#4CAF50"
-                      />
-                    </td>
+                    <td>{row.quantity}</td>
                     <td>
                       <span className="d-flex align-items-center gap-3" style={{ cursor: 'pointer' }}>
                         <span onClick={() => {

@@ -4,7 +4,7 @@ import { Button, Form, Modal, Container, Row, Col, Image, Card } from "react-boo
 import { useDropzone } from "react-dropzone";
 import Footer from "../../../components/client/footer/Footer";
 import PageHeader from "../../../components/Client/PageHeader/PageHeader";
-import { BiPlus } from "react-icons/bi";
+import { BiPlus, BiUser } from "react-icons/bi";
 import { updateUser } from "../../../services/UserService/UserService";
 import { uploadFile } from "../../../services/UploadFileService/UploadFileService";
 import AlertUtils from "../../../utils/AlertUtils";
@@ -94,13 +94,18 @@ const UserInfoPage = () => {
             user: user,
             ...data
         }
-        const responese = await createAddress(request);
-        if (responese?.status) {
-            AlertUtils.success('Thêm địa chỉ thành công');
-            setShowModal(false);
-        } else {
-            navigate(0);
+        try {
+            const responese = await createAddress(request);
+            if (responese?.status) {
+                AlertUtils.success('Thêm địa chỉ thành công');
+                setShowModal(false);
+            } else {
+                navigate(0);
+            }
+        } catch (error) {
+            AlertUtils.error(error.response?.data?.message);
         }
+
         fetchAddress();
     };
 
@@ -117,112 +122,185 @@ const UserInfoPage = () => {
 
     return (
         <>
-            <PageHeader title="Tài khoản" />
-            <Container>
-                <Card className="p-3 border-0 shadow-sm mb-3">
-                    <h6>Hồ sơ của tôi</h6>
-                    <small>Quản lý hồ sơ để bảo mật tài khoản</small>
-                </Card>
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                    <Row>
-                        <Col md={6}>
-                            {/* Form các thông tin người dùng */}
-                            <Form.Group className="mb-3">
-                                <Form.Label>Tên người dùng</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    defaultValue={user?.fullName}
-                                    {...register("fullName", { required: "Vui lòng nhập tên người dùng" })}
-                                    isInvalid={!!errors.fullName}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors.fullName?.message}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+            <PageHeader title="Quản lý tài khoản" />
+            <Container className="py-4">
+                {/* Thông tin tài khoản và ảnh đại diện */}
+                <Row>
+                    {/* Hồ sơ cá nhân */}
+                    <Col md={6} className="mb-4">
+                        <Card className="p-4 border-0 shadow rounded">
+                            <h5 className="mb-3 text-primary fw-bold">
+                                <BiUser className="me-2" /> Hồ sơ của tôi
+                            </h5>
+                            <small className="text-muted">Quản lý thông tin tài khoản để bảo mật.</small>
 
-                            <Form.Group className="mb-3">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control
-                                    type="email"
-                                    disabled
-                                    value={user?.email}
-                                    {...register("email", { required: "Vui lòng nhập email" })}
-                                    isInvalid={!!errors.email}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors.email?.message}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                            <Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+                                <Row>
+                                    <Col md={6} className="mb-4">
+                                        <Form.Group>
+                                            <Form.Label className="fw-semibold">Tên người dùng</Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                defaultValue={user?.fullName}
+                                                placeholder="Nhập tên người dùng"
+                                                {...register("fullName", { required: "Vui lòng nhập tên người dùng" })}
+                                                isInvalid={!!errors.fullName}
+                                                className="border-light"
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.fullName?.message}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
 
-                            <Form.Group className="mb-3">
-                                <Form.Label>Số điện thoại</Form.Label>
-                                <Form.Control
-                                    type="tel"
-                                    defaultValue={user?.phoneNumber}
-                                    {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại" })}
-                                    isInvalid={!!errors.phoneNumber}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors.phoneNumber?.message}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                                    <Col md={6} className="mb-4">
+                                        <Form.Group>
+                                            <Form.Label className="fw-semibold">Email</Form.Label>
+                                            <Form.Control
+                                                type="email"
+                                                disabled
+                                                value={user?.email}
+                                                placeholder="Nhập email"
+                                                className="border-light"
+                                                {...register("email")}
+                                            />
+                                        </Form.Group>
+                                    </Col>
 
-                            <Button variant="primary" type="submit">Lưu Thông Tin</Button>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group className="mb-3 d-grid">
-                                <Form.Label>Ảnh đại diện</Form.Label>
+                                    <Col md={6} className="mb-4">
+                                        <Form.Group>
+                                            <Form.Label className="fw-semibold">Số điện thoại</Form.Label>
+                                            <Form.Control
+                                                type="tel"
+                                                defaultValue={user?.phoneNumber}
+                                                placeholder="Nhập số điện thoại"
+                                                {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại" })}
+                                                isInvalid={!!errors.phoneNumber}
+                                                className="border-light"
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.phoneNumber?.message}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                    </Col>
+
+                                    <Col md={12} className="text-end">
+                                        <Button variant="primary" type="submit" className="px-4 py-2 fw-bold shadow-sm">
+                                            Lưu Thông Tin
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Card>
+                    </Col>
+
+                    {/* Ảnh đại diện */}
+                    <Col md={6} className="mb-4">
+                        <Card className="p-4 border-0 shadow rounded text-center">
+                            <Form.Group>
+                                <Form.Label className="fw-semibold fs-5 text-secondary">
+                                    Ảnh đại diện
+                                </Form.Label>
                                 <div {...getRootProps()} style={{
-                                    border: "1px solid var(--primary)",
-                                    padding: "20px",
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    maxWidth: '250px',
+                                    display: 'inline-block',
+                                    width: '180px',
+                                    height: '180px',
+                                    backgroundColor: '#f8f9fa',
                                     borderRadius: '50%',
+                                    border: '2px dashed #ccc',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
+                                    transition: 'all 0.3s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    margin: '20px auto',
                                 }}>
                                     <input {...getInputProps()} />
                                     {imagePreview ? (
-                                        <Image src={imagePreview}
+                                        <Image
+                                            src={imagePreview}
+                                            alt="Avatar"
                                             style={{
-                                                margin: 'auto',
-                                                maxWidth: '200px',
-                                                maxHeight: '200px',
-                                                minWidth: '200px',
-                                                minHeight: '200px',
-                                                borderRadius: '50%'
-                                            }} />
+                                                width: '100%',
+                                                height: '100%',
+                                                borderRadius: '50%',
+                                                objectFit: 'cover',
+                                            }}
+                                        />
                                     ) : (
-                                        <p>Kéo thả ảnh vào đây hoặc nhấn để chọn ảnh</p>
+                                        <div className="text-secondary fw-bold d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
+                                            Chọn ảnh
+                                        </div>
                                     )}
                                 </div>
                             </Form.Group>
-                            <h5>Địa chỉ giao hàng<BiPlus onClick={() => setShowModal(true)} className="ms-2" /></h5>
+                        </Card>
+                    </Col>
+                </Row>
 
-                            <Row>
-                                {addresses?.length > 0 && addresses?.map((address, index) => (
-                                    <Col key={index} md={12} className="mb-3">
-                                        <Card>
-                                            <Card.Body className="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <Form.Check
-                                                        type="radio"
-                                                        label="Mặc định"
-                                                        checked={address?.defaultAddress}
-                                                        onChange={(e) => handleSelectDefaultAddress(address?.id, e.target.checked)}
-                                                    />
-                                                    <Card.Text className="mb-0 ms-2">{address?.address}</Card.Text>
+                {/* Địa chỉ giao hàng */}
+                <Row>
+                    <Col md={6} className="mb-4">
+                        <Card className="p-4 border-0 shadow rounded">
+                            <h5 className="mb-3 text-primary fw-bold">
+                                <BiPlus className="me-2" /> Địa chỉ giao hàng
+                            </h5>
+                            <Button
+                                variant="outline-primary"
+                                className="mb-3 shadow-sm"
+                                onClick={() => setShowModal(true)}
+                            >
+                                Thêm địa chỉ mới
+                            </Button>
+
+                            <div className="overflow-auto p-3 bg-light rounded" style={{ maxHeight: "300px" }}>
+                                {addresses?.map((address, index) => (
+                                    <Card
+                                        key={index}
+                                        className="mb-3 shadow-sm border-0 rounded"
+                                        style={{
+                                            backgroundColor: address?.defaultAddress ? "#f8f9fa" : "#fff",
+                                        }}
+                                    >
+                                        <Card.Body className="d-flex align-items-center justify-content-between">
+                                            <div className="d-flex">
+                                                <div className="me-3 text-primary fs-4">
+                                                    <i className="bi bi-geo-alt-fill"></i>
                                                 </div>
-                                                <Button variant="outline-danger" size="sm"
-                                                    onClick={() => handleDelete(address?.id)}>Xóa</Button>
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
+                                                <div>
+                                                    <h6 className={`mb-1 ${address?.defaultAddress ? 'fw-bold' : ''}`}>
+                                                        {address?.defaultAddress ? "Địa chỉ chính" : "Địa chỉ phụ"}
+                                                    </h6>
+                                                    <p className="mb-0 text-muted">
+                                                        {address?.address}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex align-items-center">
+                                                <Form.Check
+                                                    type="radio"
+                                                    name="defaultAddress"
+                                                    className="me-3"
+                                                    checked={address?.defaultAddress}
+                                                    onChange={(e) => handleSelectDefaultAddress(address?.id, e.target.checked)}
+                                                />
+                                                <Button
+                                                    variant="outline-danger"
+                                                    size="sm"
+                                                    className="rounded-circle"
+                                                    onClick={() => handleDelete(address?.id)}
+                                                >
+                                                    <i className="bi bi-trash"></i>
+                                                </Button>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
                                 ))}
-                            </Row>
-                        </Col>
-                    </Row>
-                </Form>
-            </Container >
+                            </div>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
 
             <AddressModal
                 show={showModal}
@@ -233,6 +311,7 @@ const UserInfoPage = () => {
             <Footer />
         </>
     );
+
 };
 
 export default UserInfoPage;

@@ -36,6 +36,12 @@ import ForgotPasswordPage from "../pages/ClientPage/ForgotPasswordPage/ForgotPas
 import UserInfoPage from "../pages/ClientPage/UserInfoPage/UserInfoPage";
 import EmployeeListPage from "../pages/AdminPage/AccountPage/EmployeeListPage"
 import CheckoutPage from "../pages/ClientPage/CheckoutPage/CheckoutPage";
+import OrderHistoryPage from "../pages/ClientPage/OrderHistoryPage/OrderHistoryPage";
+import CreateOrderPage from "../pages/AdminPage/OrderPage/CreateOrderPage";
+import CreateReservationPage from "../pages/AdminPage/ReservationPage/CreateReservationPage";
+import ReservationBookingOrderPage from "../pages/AdminPage/ReservationPage/ReservationBookingOrderPage";
+import OrderListPageForEatAtRes from "../pages/AdminPage/OrderPage/OrderListPageForEatAtRes";
+
 
 export const router = createBrowserRouter((
     createRoutesFromElements(
@@ -55,6 +61,8 @@ export const router = createBrowserRouter((
                 <Route path="reservations" element={<ReservationPage />} />
                 {/*  */}
                 <Route path="register" element={<RegisterPage />} />
+                {/* */}
+                <Route path="order-history" element={<ProtectRoute element={<OrderHistoryPage />} admin={false} />} />
                 {/*  */}
                 <Route path="login" element={<LoginPage />} />
                 {/*  */}
@@ -62,7 +70,6 @@ export const router = createBrowserRouter((
                 {/*  */}
                 <Route path="checkout" element={<ProtectRoute element={<CheckoutPage />} admin={false} />} />
                 {/*  */}
-
                 <Route path="dining-table" element={<ProtectRoute element={<DiningTablePage />} admin={false} />} />
                 {/*  */}
                 <Route path="forgot-password" element={<ForgotPasswordPage />} />
@@ -87,7 +94,9 @@ export const router = createBrowserRouter((
 
                 <Route path="reservations">
                     <Route index element={<ReservationSchedulePage />} />
+                    <Route path="booking-order" element={<ReservationBookingOrderPage />} />
                     <Route path="schedule" element={<ReservationSchedulePage />} />
+                    <Route path="create" element={<CreateReservationPage />} />
                     <Route path="canceled" element={<CancelReservationPage />} />
                 </Route>
                 <Route path="">
@@ -101,6 +110,9 @@ export const router = createBrowserRouter((
 
                 <Route path="orders">
                     <Route index element={<OrderListPage />} />
+                    <Route path="orders-at-res" element={<OrderListPageForEatAtRes />} />
+                    <Route path="create-order" element={<CreateOrderPage />} />
+                    <Route path="create-order" element={<CreateOrderPage />} />
                 </Route>
 
                 <Route path="discounts">

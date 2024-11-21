@@ -7,7 +7,6 @@ import { useDropzone } from 'react-dropzone';
 const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm();
     const [categories, setCategories] = useState([]);
-
     const [preview, setPreview] = useState(null);
     const [file, setFile] = useState(null);
 
@@ -26,47 +25,60 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
         if (initialValues) {
             setValue('name', initialValues.name);
             setValue('price', initialValues.price);
+            setValue('quantity', initialValues.quantity);
             setValue('description', initialValues.description);
             setValue('category', initialValues.category?.id);
             setPreview(initialValues.image);
         } else {
-            reset({
-                name: '',
-                price: '',
-                description: '',
-                category: '',
-            });
-            setPreview(null);
+            resetForm();
         }
     }, [initialValues]);
 
     const fetchCategories = async () => {
-        setCategories(await getAllCategories());
-    }
+        try {
+            const response = await getAllCategories();
+            setCategories(response);
+        } catch (error) {
+            console.error('Lỗi khi tải danh mục:', error);
+        }
+    };
 
-    const onSubmit = (data) => {
-        data.category = categories.find(e => e.id === parseInt(data.category))
-        handleData({
-            ...data,
-            image: file
+    const resetForm = () => {
+        reset({
+            name: '',
+            price: '',
+            quantity: '',
+            description: '',
+            category: '',
         });
+        setPreview(null);
+    };
+
+    const onSubmit = async (data) => {
+        try {
+            data.category = categories.find(e => e.id === parseInt(data.category));
+            await handleData({
+                ...data,
+                branch: JSON.parse(localStorage.getItem('branch_info')),
+                image: file,
+            });
+            closeModal(false);
+        } catch (error) {
+            console.error('Lỗi gửi dữ liệu:', error);
+            alert(error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại!');
+        }
     };
 
     const handleReset = () => {
         if (initialValues) {
             setValue('name', initialValues.name);
             setValue('price', initialValues.price);
+            setValue('quantity', initialValues.quantity);
             setValue('description', initialValues.description);
             setValue('category', initialValues.category?.id);
             setPreview(initialValues.image);
         } else {
-            reset({
-                name: '',
-                price: '',
-                description: '',
-                category: '',
-            });
-            setPreview(null);
+            resetForm();
         }
     };
 
@@ -98,11 +110,31 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 <Form.Control
                                     type="number"
                                     placeholder="Nhập giá"
-                                    {...register('price', { required: 'Giá không được để trống' })}
+                                    {...register('price', {
+                                        required: 'Giá không được để trống',
+                                     max: { value: 5000000, message: 'Giá món ăn phải nhỏ hơn hoặc bằng 5.000.000' }
+                                    })}
                                     isInvalid={errors.price}
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     {errors.price?.message}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Col>
+                        <Col xs={12} className="mt-2">
+                            <Form.Group controlId="quantity">
+                                <Form.Label>Số lượng</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    placeholder="Nhập số lượng"
+                                    {...register('quantity', {
+                                        required: 'Số lượng không được để trống',
+                                        max: { value: 200, message: 'Số lượng phải nhỏ hơn hoặc bằng 200' }
+                                    })}
+                                    isInvalid={errors.quantity}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.quantity?.message}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
@@ -124,7 +156,7 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-                        <Col xs={12} className='mt-2'>
+                        <Col xs={12} className="mt-2">
                             <Form.Group controlId="image">
                                 <Form.Label>Ảnh danh mục</Form.Label>
                                 <div
@@ -165,7 +197,6 @@ const MenuModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-
                     </Row>
                     <div className="d-flex justify-content-end gap-3">
                         <Button type="button" variant="secondary" onClick={handleReset}>
