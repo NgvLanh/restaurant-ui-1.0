@@ -8,7 +8,7 @@ import { formatDateTime } from "../../../utils/FormatUtils";
 
 // Map trạng thái
 const OrderStatus = new Map([
-  ["PENDING_CONFIRMATION", "Chờ xác nhận"],
+  ["PENDING", "Chờ xác nhận"],
   ["CONFIRMED", "Đã xác nhận"],
   ["SHIPPED", "Đang giao (giao hàng)"],
   ["DELIVERED", "Đã giao (giao hàng)"],
@@ -142,58 +142,11 @@ const OrderListPage = () => {
               <th className="text-center">Khách hàng</th>
               <th className="text-center">Số điện thoại</th>
               <th className="text-center">Địa chỉ</th>
-<<<<<<< Updated upstream
-              <th className="text-center">Hành động</th>
-=======
               <th className="text-center">Tùy chọn</th>
->>>>>>> Stashed changes
             </tr>
           </thead>
           <tbody>
-            {order?.length > 0 ? (
-<<<<<<< Updated upstream
-              order.map((row, index) => (
-                <tr key={row.id} className="align-middle border-bottom">
-                  <td className="text-center fw-bold">{index + 1}</td>
-                  <td>{new Intl.DateTimeFormat('vi-VN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                  }).format(new Date(row.time))}</td>
-                  <td className="text-center">
-                    <span
-                      className={`badge ${row.orderStatus === 'CANCELLED'
-                          ? 'bg-danger'
-                          : row.orderStatus === 'PAID'
-                            ? 'bg-success'
-                            : row.orderStatus === 'PENDING_CONFIRMATION'
-                              ? 'bg-warning text-dark'
-                              : 'bg-primary'
-                        }`}
-                      style={{
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        padding: '10px 16px',
-                      }}
-                      onClick={() => handleStatusClick(row.id, row.orderStatus)}
-                    >
-                      {OrderStatus.get(row.orderStatus)}
-                    </span>
-                  </td>
-                  <td className="text-center">{row.user.fullName}</td>
-                  <td className="text-center">{row.user.phoneNumber}</td>
-                  <td className="text-center">{row.address.address}</td>
-                  <td className="text-center">
-                    {row.orderStatus === 'PENDING_CONFIRMATION' && (
-                      <button
-                        className="btn btn-danger btn-sm"
-                        style={{ borderRadius: '8px', fontSize: '14px' }}
-                        onClick={() => handleCancelOrder(row.id)}
-=======
-              order
+            {order?.length > 0 ? (order
               .filter((row) => 
                 ["PENDING", "CONFIRMED", "DELIVERY", "DELIVERED", "CANCELLED", "PAID", "ALL"].includes(row.orderStatus)
               )
@@ -219,7 +172,6 @@ const OrderListPage = () => {
                           fontSize: '14px',
                           padding: '10px 16px',
                         }}
->>>>>>> Stashed changes
                       >
                         {OrderStatus.get(row.orderStatus)}
                       </span>
