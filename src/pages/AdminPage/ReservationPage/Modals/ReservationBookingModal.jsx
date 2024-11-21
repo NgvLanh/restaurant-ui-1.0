@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Modal, Button, Card, Col, Row, Image, Form } from "react-bootstrap";
 import { getTablesByBranchIdAndSeats } from "../../../../services/TableService/TableService";
+import { formatDateTime } from "../../../../utils/FormatUtils";
 
 
-const ReservationBookingOrderPage = ({ showModal, handleClose, selectedDate }) => {
+const ReservationBookingModal = ({ showModal, handleClose, selectedDate }) => {
     const [tables, setTables] = useState([]);
     const [branch, setBranch] = useState({});
     const [selectedTables, setSelectedTables] = useState([]);
@@ -62,9 +63,6 @@ const ReservationBookingOrderPage = ({ showModal, handleClose, selectedDate }) =
     };
 
     const filteredTables = tables.filter((table) => {
-        console.log(table.tableStatus.toString(), filters.status);
-
-
         const matchesSeats = filters.seats ? table.seats === parseInt(filters.seats) : true;
         const matchesZone = filters.zone ? table.zone.name === filters.zone : true;
         const matchesStatus = filters.status ? table.tableStatus.toString() === filters.status : true;
@@ -83,7 +81,7 @@ const ReservationBookingOrderPage = ({ showModal, handleClose, selectedDate }) =
             {/* Modal chọn bàn */}
             <Modal show={showModal} onHide={handleClose} fullscreen>
                 <Modal.Header className="d-flex flex-column">
-                    <Modal.Title>Chọn Bàn Đặt</Modal.Title>
+                    <Modal.Title>Danh sách bàn</Modal.Title>
                     <Row className="w-100">
                         <Form>
                             <Row className="mb-4">
@@ -147,24 +145,32 @@ const ReservationBookingOrderPage = ({ showModal, handleClose, selectedDate }) =
                                 <Card
                                     style={{
                                         cursor: table.tableStatus ? 'pointer' : 'not-allowed',
-                                        opacity: table.tableStatus ? '1' : '0.5',
-                                        borderWidth: '3px'
-                                    }}
-                                    className={`h-100 rounded-3 
-                                            ${!table.tableStatus ?
-                                            "border-danger" :
+                                        borderWidth: '3px',
+                                        borderColor: !table.tableStatus ? '#229cf6' :
                                             selectedTables?.some((t) => t.id === table.id) ?
-                                                "border-success" :
-                                                "border-secondary-subtle"}`}
+                                                "green" :
+                                                "lightgray"
+                                    }}
+                                    className={`h-100 rounded-3`}
                                     onClick={() => table.tableStatus && handleSelectTable(table)}
                                 >
                                     <Card.Body>
                                         <Card.Title>Bàn số: {table.number}</Card.Title>
                                         <Card.Text>Số ghế: {table.seats}</Card.Text>
                                         <Card.Text>Vị trí: {table.zone?.name}</Card.Text>
+                                        {table.reservations[0]?.startTime && (
+                                            <Card.Text>
+                                                Thời gian: {new Date(`${table.reservations[0]?.bookingDate}T${table.reservations[0]?.startTime}`).toLocaleString('vi-VN')}
+                                                {new Date(`${table.reservations[0]?.bookingDate}T${table.reservations[0]?.startTime}`) > new Date() ? (
+                                                    <span> - Chưa đến giờ</span>
+                                                ) : (
+                                                    <span> - Thời gian này đã qua</span>
+                                                )}
+                                            </Card.Text>
+                                        )}
                                         <Card.Text>Trạng thái: {table.tableStatus ?
                                             <><span className="text-success">Có sẵn</span></> :
-                                            <><span className="text-danger">Đã đặt</span></>}
+                                            <><span style={{ color: '#229cf6' }}>Đã đặt</span></>}
                                         </Card.Text>
                                     </Card.Body>
                                 </Card>
@@ -190,4 +196,4 @@ const ReservationBookingOrderPage = ({ showModal, handleClose, selectedDate }) =
     );
 };
 
-export default ReservationBookingOrderPage;
+export default ReservationBookingModal;

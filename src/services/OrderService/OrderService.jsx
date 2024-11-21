@@ -60,13 +60,13 @@ export const getAllOrdersByUserId = async (orderStatus) => {
     });
 };
 
-export const cancelOrder = async (orderId, reason) => {
-    return await ApiRequest({
+export const cancelOrder = async (orderId, reason) =>
+    await ApiRequest({
         method: 'patch',
         path: `orders/cancel/${orderId}?reason=${reason}`,
         headers: `Bearer `
     });
-};
+
 
 export const getAllOrdersWithTable = async (date) => {
     const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
