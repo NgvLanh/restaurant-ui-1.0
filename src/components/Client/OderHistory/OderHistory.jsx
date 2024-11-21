@@ -37,14 +37,16 @@ const OrderHistory = () => {
   const handleCancelOrder = async (order) => {
     const result = await AlertUtils.input(`Bạn có chắc muốn huỷ hoá đơn #${order.id}?`, 'Nhập lý do');
     if (result) {
-      const response = await cancelOrder(order.id, result);
-      console.log(response);
+      try {
+        const response = await cancelOrder(order.id, result);
+        if (response) {
+          AlertUtils.success(`Huỷ hoá đơn thành công`);
+          fetchOrder();
+        }
+      } catch (error) {
+        AlertUtils.error(`Lỗi huỷ hoá đơn`, error);
+      }
     }
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedOrder(null);
   };
 
   return (
@@ -65,14 +67,7 @@ const OrderHistory = () => {
                 <Nav.Item key={tab.key}>
                   <Nav.Link
                     eventKey={tab.key}
-                    className="px-3 py-2"
-                    style={{
-                      color: key === tab.key ? '#fff' : '#333',
-                      fontWeight: key === tab.key ? 'bold' : 'normal',
-                      backgroundColor: key === tab.key ? '#ab7442' : 'transparent',
-                      borderRadius: '20px',
-                      transition: 'all 0.3s ease',
-                    }}
+                    className="px-3 py-2 rounded-3"
                     onClick={() => handleTabClick(tab.key)}
                   >
                     {tab.label}

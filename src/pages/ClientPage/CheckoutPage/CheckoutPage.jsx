@@ -56,7 +56,7 @@ const CheckoutPage = () => {
         }
         const result = await AlertUtils.confirm('Bạn có chắn chắn đặt đơn hàng này');
         if (result) {
-            const method = checkoutMethod === 'online' ? 'CONFIRMED' : 'PENDING_CONFIRMATION';
+            const method = checkoutMethod === 'online' ? 'CONFIRMED' : 'PENDING';
             const request = {
                 user: userInfo,
                 address: defaultAddress,
@@ -68,7 +68,7 @@ const CheckoutPage = () => {
                     ? calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0)
                     : calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0)
             }
-            if (method === 'PENDING_CONFIRMATION') {
+            if (method === 'PENDING') {
                 const response = await orderOffLineService(request);
                 if (response.status) {
                     AlertUtils?.success('Đặt hàng thành công!');
