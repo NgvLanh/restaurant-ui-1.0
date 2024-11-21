@@ -50,25 +50,18 @@ const EmployeeListPage = () => {
         } else {
             try {
                 const response = await createEmployee(payload);
-                console.log(response?.message);
+                
                 if (response?.status) {
                     AlertUtils.success('Thêm nhân viên thành công');
                     setShowModal(false);
-                } else if (response?.message === 'Email này đã tồn tại') {
-                    AlertUtils.error('Email này đã tồn tại');
-                } else if (response?.message === 'Số điện thoại này đã tồn tại') {
-                    AlertUtils.error('Số điện thoại này đã tồn tại');
-                }
+                } 
             } catch (error) {
-                console.error('Error during create:', error); // Log toàn bộ lỗi
-                const errorMessage = error.response?.data?.message || 'Đã xảy ra lỗi khi thêm nhân viên';
-                AlertUtils.error(errorMessage);
+                AlertUtils.error(error.response?.data?.message);
             }
         }
     
-        setShowModal(false);
-        fetchEmployee(); // Reload employee data
-        setInitialValues(null); // Reset initial values
+        fetchEmployee();
+        setInitialValues(null); 
     };
     
 
