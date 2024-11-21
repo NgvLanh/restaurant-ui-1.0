@@ -62,24 +62,16 @@ const deleteTable = async (tableId) => {
 
 // Lấy danh sách tất cả bàn
 const getAllTablesPageable = async (currentPage, pageSize) => {
-    try {
-        const response = await ApiRequest({
-            path: `tables?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi lấy danh sách bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách bàn' };
-    }
+    return await ApiRequest({
+        path: `tables?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
+    });
 };
 
 // Lấy bàn để chọn đặt bàn
-const getTablesByBranchIdAndSeats = async (branchId) => {
-    const response = await ApiRequest({
+const getTablesByBranchIdAndSeats = async (branchId) =>
+    await ApiRequest({
         path: `tables/reservations?branch=${branchId}`,
     });
-    return response?.data;
-};
 
 
 

@@ -20,7 +20,6 @@ const Reservation = () => {
     const onSubmit = (data) => {
         setShowModal(true)
         setDataRequest(data);
-        // Thực hiện logic gửi dữ liệu lên server hoặc các hành động khác
     };
 
     return (
@@ -41,59 +40,96 @@ const Reservation = () => {
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <div className="row g-3">
                                     <div className="col-12 col-sm-6">
-                                        <select className="form-select border-0" {...register("branch", { required: "Vui lòng chọn chi nhánh" })} style={{ height: '55px' }}>
-                                            <option value="">Chọn chi nhánh</option>
-                                            {branches?.map((branch) => (
-                                                <option key={branch.id} value={branch.id}>{branch.name}</option>
-                                            ))}
-                                        </select>
-                                        {errors.branch && <span className="text-danger">{errors.branch.message}</span>}
+                                        <div className="form-floating">
+                                            <select className="form-select border-0" {...register("branch", { required: "Vui lòng chọn chi nhánh" })} id="floatingBranch" style={{ height: '55px' }}>
+                                                {branches?.map((branch) => (
+                                                    <option key={branch.id} value={branch.id}>{branch.name}</option>
+                                                ))}
+                                            </select>
+                                            <label htmlFor="floatingBranch">Chi Nhánh</label>
+                                            {errors.branch && <span className="text-danger">{errors.branch.message}</span>}
+                                        </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
-                                        <input type="text" className="form-control border-0" placeholder="Tên Của Bạn" {...register("fullName", { required: "Vui lòng nhập tên của bạn" })} style={{ height: '55px' }} />
-                                        {errors.fullName && <span className="text-danger">{errors.fullName.message}</span>}
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control border-0" placeholder="Tên Của Bạn" {...register("fullName", { required: "Vui lòng nhập tên của bạn" })} id="floatingFullName" />
+                                            <label htmlFor="floatingFullName">Tên Của Bạn</label>
+                                            {errors.fullName && <span className="text-danger">{errors.fullName.message}</span>}
+                                        </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
-                                        <input type="email" className="form-control border-0" placeholder="Email Của Bạn" {...register("email", { required: "Vui lòng nhập email của bạn", pattern: { value: /^\S+@\S+$/i, message: "Email không hợp lệ" } })} style={{ height: '55px' }} />
-                                        {errors.email && <span className="text-danger">{errors.email.message}</span>}
+                                        <div className="form-floating">
+                                            <input type="email" className="form-control border-0" placeholder="Email Của Bạn" {...register("email", { pattern: { value: /^\S+@\S+$/i, message: "Email không hợp lệ" } })} id="floatingEmail" />
+                                            <label htmlFor="floatingEmail">Email Của Bạn</label>
+                                            {errors.email && <span className="text-danger">{errors.email.message}</span>}
+                                        </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
-                                        <input type="text" className="form-control border-0" placeholder="Số Điện Thoại" {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại của bạn" })} style={{ height: '55px' }} />
-                                        {errors.phoneNumber && <span className="text-danger">{errors.phoneNumber.message}</span>}
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control border-0" placeholder="Số Điện Thoại" {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại của bạn" })} id="floatingPhoneNumber" />
+                                            <label htmlFor="floatingPhoneNumber">Số Điện Thoại</label>
+                                            {errors.phoneNumber && <span className="text-danger">{errors.phoneNumber.message}</span>}
+                                        </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
-                                        <input
-                                            type="datetime-local"
-                                            className="form-control border-0"
-                                            {...register("bookingDate", {
-                                                required: "Vui lòng chọn ngày đặt bàn",
-                                                validate: (value) => {
-                                                    const selectedDate = new Date(value);
-                                                    const selectedHours = selectedDate.getHours();
-                                                    const selectedMinutes = selectedDate.getMinutes();
-                                                    if (selectedHours < 9 || (selectedHours === 21 && selectedMinutes > 0) || selectedHours > 21) {
-                                                        return "Thời gian phải nằm trong khoảng 09:00 AM - 09:00 PM";
-                                                    }
-                                                    return true; 
-                                                },
-                                            })}
-                                            style={{ height: "55px" }}
-                                        />
-                                        {errors.bookingDate && <span className="text-danger">{errors.bookingDate.message}</span>}
+                                        <div className="form-floating">
+                                            <input
+                                                type="date"
+                                                className="form-control border-0"
+                                                defaultValue={new Date().toISOString().split("T")[0]}
+                                                {...register("bookingDate", {
+                                                    required: "Vui lòng chọn ngày đặt bàn",
+                                                    validate: (value) => {
+                                                        const today = new Date();
+                                                        const selectedDate = new Date(value);
+                                                        today.setHours(0, 0, 0, 0);
+                                                        if (selectedDate < today) {
+                                                            return "Ngày đặt bàn phải là hôm nay hoặc trong tương lai";
+                                                        }
+                                                        return true;
+                                                    },
+                                                })}
+                                                id="floatingBookingDate"
+                                            />
+                                            <label htmlFor="floatingBookingDate">Ngày Đặt Bàn</label>
+                                            {errors.bookingDate && <span className="text-danger">{errors.bookingDate.message}</span>}
+                                        </div>
                                     </div>
-
                                     <div className="col-12 col-sm-6">
-                                        <input type="number" className="form-control border-0" placeholder="Số Người"  {...register("seats", { required: "Vui lòng nhập số người" })} style={{ height: '55px' }} />
-                                        {errors.seats && <span className="text-danger">{errors.seats.message}</span>}
+                                        <div className="form-floating">
+                                            <input
+                                                type="time"
+                                                className="form-control border-0"
+                                                {...register("startTime", {
+                                                    required: "Vui lòng chọn giờ đặt bàn",
+                                                    validate: (value) => {
+                                                        const [hours, minutes] = value.split(":").map(Number);
+                                                        if (hours < 9 || (hours === 21 && minutes > 0) || hours > 21) {
+                                                            return "Thời gian phải nằm trong khoảng 09:00 AM - 09:00 PM";
+                                                        }
+                                                        if (minutes % 5 !== 0) {
+                                                            return "Thời gian phải không được là phút lẻ";
+                                                        }
+                                                        return true;
+                                                    },
+                                                })}
+                                                id="floatingBookingTime"
+                                            />
+                                            <label htmlFor="floatingBookingTime">Giờ Đặt Bàn</label>
+                                            {errors.startTime && <span className="text-danger">{errors.startTime.message}</span>}
+                                        </div>
                                     </div>
                                     <div className="col-12">
-                                        <textarea className="form-control border-0" placeholder="Yêu Cầu Đặc Biệt (nếu có)" {...register("notes")}></textarea>
+                                        <div className="form-floating">
+                                            <textarea className="form-control border-0" placeholder="Yêu Cầu Đặc Biệt (nếu có)" {...register("notes")} id="floatingNotes" style={{ height: '100px' }}></textarea>
+                                            <label htmlFor="floatingNotes">Yêu Cầu Đặc Biệt (nếu có)</label>
+                                        </div>
                                     </div>
                                     <div className="col-12">
-                                        <button className="btn btn-primary w-100 py-3"
-                                            type="submit">Đặt Bàn</button>
+                                        <button className="btn btn-primary w-100 py-3" type="submit">Đặt Bàn</button>
                                     </div>
                                 </div>
+
                             </form>
                         </div>
                     </div>

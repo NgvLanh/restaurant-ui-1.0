@@ -25,17 +25,10 @@ export const cancelReservation = async (reservationId, reason) =>
 
 
 // Lấy danh sách tất cả đặt bàn
-export const getAllreservationsPageable = async (currentPage, pageSize) => {
-    try {
-        const response = await ApiRequest({
-            path: `reservations?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi lấy danh sách đặt bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách đặt bàn' };
-    }
-};
+export const getAllCancelReservationsPageable = async (currentPage, pageSize) =>
+    await ApiRequest({
+        path: `reservations/cancel?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
+        headers: 'Bearer '
+    });
 
 

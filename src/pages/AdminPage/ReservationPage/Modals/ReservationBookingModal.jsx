@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
 import { Modal, Button, Card, Col, Row, Image, Form } from "react-bootstrap";
-import { getTablesByBranchIdAndSeats } from "../../../services/TableService/TableService";
-import { getAllBranches } from "../../../services/BranchService/BranchService";
-import { formatDate, formatDateTime } from "../../../utils/FormatUtils";
-import { createReservation } from "../../../services/ReservationService/ReservationService";
-import AlertUtils from "../../../utils/AlertUtils";
+import { getTablesByBranchIdAndSeats } from "../../../../services/TableService/TableService";
 
-const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
+
+const ReservationBookingOrderPage = ({ showModal, handleClose, selectedDate }) => {
     const [tables, setTables] = useState([]);
-    const [branches, setBranches] = useState([]);
     const [branch, setBranch] = useState({});
     const [selectedTables, setSelectedTables] = useState([]);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [showSelectModal, setShowSelectModal] = useState(showModal);
     const [seats, setSeats] = useState(null);
     const [zones, setZones] = useState(null);
     const [statuses, setStatuses] = useState(null);
@@ -23,32 +18,22 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     });
 
     useEffect(() => {
-        fetchTables(dataRequest);
-    }, [dataRequest]);
-
-    useEffect(() => {
-        setShowSelectModal(showModal);
-        fetchBranches();
+        fetchTables();
     }, [showModal]);
 
-    const fetchTables = async (dataRequest) => {
-        if (dataRequest) {
-            const responese = await getTablesByBranchIdAndSeats(dataRequest.branch);
-            setTables(responese.data);
-            const seatsNumber = new Set(responese.data.map(e => e.seats));
-            setSeats([...seatsNumber]);
-            const zones = new Set(responese.data.map(e => e.zone?.name));
-            setZones([...zones]);
-            const statuses = new Set(responese.data.map(e => e.tableStatus));
-            setStatuses([...statuses]);
-        }
+    const fetchTables = async () => {
+        const responese = await getTablesByBranchIdAndSeats(JSON.parse(localStorage.getItem('branch_info'))?.id);
+        console.log(responese.data);
+        setTables(responese.data);
+        const seatsNumber = new Set(responese.data.map(e => e.seats));
+        setSeats([...seatsNumber]);
+        const zones = new Set(responese.data.map(e => e.zone?.name));
+        setZones([...zones]);
+        const statuses = new Set(responese.data.map(e => e.tableStatus));
+        setStatuses([...statuses]);
+
     };
 
-    const fetchBranches = async () => {
-        const allBranches = await getAllBranches();
-        setBranches(allBranches);
-        setBranch(allBranches.find((e) => e.id === parseInt(dataRequest?.branch)));
-    };
 
     const handleSelectTable = (table) => {
         setSelectedTables((prev) => {
@@ -61,13 +46,11 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     };
 
     const handleOpenConfirmModal = () => {
-        setShowSelectModal(false);
         setShowConfirmModal(true);
     };
 
     const handleCloseConfirm = () => {
         setShowConfirmModal(false);
-        setShowSelectModal(true);
     };
 
     const handleFilterChange = (e) => {
@@ -91,34 +74,14 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
 
 
     const handleConfirm = async () => {
-        dataRequest.branch = branches.find(e => e.id === parseInt(dataRequest.branch));
 
-        const requests = selectedTables.map(table => ({
-            ...dataRequest,
-            table: table,
-        }));
-
-        document.getElementById('spinner').classList.add('show');
-        try {
-            for (const request of requests) {
-                await createReservation(request);
-            }
-            setShowConfirmModal(false);
-            handleClose();
-            AlertUtils.success('Đặt bàn thành công');
-        } catch (error) {
-            AlertUtils.error('Lỗi đặt bàn');
-        } finally {
-            setSelectedTables([]);
-            document.getElementById('spinner').classList.remove('show');
-        }
     };
 
 
     return (
         <>
             {/* Modal chọn bàn */}
-            <Modal show={showSelectModal} onHide={handleClose} fullscreen>
+            <Modal show={showModal} onHide={handleClose} fullscreen>
                 <Modal.Header className="d-flex flex-column">
                     <Modal.Title>Chọn Bàn Đặt</Modal.Title>
                     <Row className="w-100">
@@ -223,72 +186,8 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
                     </Button>
                 </Modal.Footer>
             </Modal >
-
-            {/* Modal xác nhận đặt bàn */}
-            <Modal show={showConfirmModal} onHide={handleCloseConfirm} centered size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>Xác Nhận Đặt Bàn</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {/* Card User Information */}
-                    <Card className="mb-4 shadow-lg rounded-3">
-                        <Card.Body>
-                            <div className="text-center mb-3">
-                                <h2 className="m-0 text-primary">FooDY</h2>
-                                <h5 className="mt-2">{branch?.name}</h5>
-                            </div>
-                            <div className="mb-3 row">
-                                <div className="col-md-6">
-                                    <p><strong>Khách hàng:</strong> {dataRequest?.fullName}</p>
-                                    <p><strong>Email:</strong> {dataRequest?.email}</p>
-                                    <p><strong>Số điện thoại:</strong> {dataRequest?.phoneNumber}</p>
-                                </div>
-                                <div className="col-md-6">
-                                    <p><strong>Số lượng bàn:</strong> {selectedTables?.length} bàn</p>
-                                    <p><strong>Ngày:</strong> {formatDate(dataRequest?.bookingDate)}</p>
-                                    <p><strong>Thời gian:</strong> {dataRequest?.startTime}</p>
-                                </div>
-                            </div>
-                        </Card.Body>
-                    </Card>
-
-                    {/* Card Reserved Tables Information */}
-                    <Card className="shadow-lg rounded-3">
-                        <Card.Body>
-                            <h5 className="mb-3 text-center">Thông Tin Các Bàn Đặt</h5>
-                            <div className="row">
-                                {selectedTables.length > 0 ? (
-                                    selectedTables.map((table) => (
-                                        <div key={table.id} className="col-lg-4 col-md-6 mb-3">
-                                            <div className="border border-2 border-success p-3 rounded-3">
-                                                <p><strong>Bàn số:</strong> {table.number} / {table.seats} ghế</p>
-                                                <p><strong>Vị trí:</strong> {table.zone?.name}</p>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p>Không có bàn nào được chọn.</p>
-                                )}
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Modal.Body>
-
-                <Modal.Footer className="d-flex justify-content-between">
-                    <small className="text-muted">Cảm ơn quý khách đã tin tưởng chúng tôi!</small>
-                    <div>
-                        <Button variant="secondary" onClick={handleCloseConfirm}>
-                            Quay Lại
-                        </Button>
-                        <Button variant="primary" onClick={handleConfirm} className="ms-2">
-                            Xác Nhận
-                        </Button>
-                    </div>
-                </Modal.Footer>
-            </Modal >
-
         </>
     );
 };
 
-export default SelectTableReservation;
+export default ReservationBookingOrderPage;
