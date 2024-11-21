@@ -19,7 +19,7 @@ import { formatCurrency, formatDate } from "../../../utils/FormatUtils";
 const DiscountListPage = () => {
   const [discounts, setDiscount] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [initialValues, setInitialValues] = useState(null);
+  const [initialValues, setInitialValues] = useState({});
   const [searchKey, setSearchKey] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -39,16 +39,11 @@ const DiscountListPage = () => {
     fetchDiscount();
   }, [currentPage]);
 
-  // const handleSearch = (key) => {
-  //   setSearchKey(key);
-  //   setCurrentPage(0);
-  // };
-
   const handleModalSubmit = async (data) => {
     const successMessage = initialValues
       ? "Cập nhật thành công"
       : "Thêm mới thành công";
-
+    useEffect;
     try {
       const response = initialValues
         ? await updateDiscount(initialValues.id, data)
@@ -67,7 +62,9 @@ const DiscountListPage = () => {
   };
 
   const handleDelete = async (id) => {
-    const result = await AlertUtils.confirm("Bạn có chắc chắn muốn xoá mã giảm giá này");
+    const result = await AlertUtils.confirm(
+      "Bạn có chắc chắn muốn xoá mã giảm giá này"
+    );
     if (result) {
       const response = await deleteDiscount(id);
       if (response?.status) {
@@ -86,15 +83,9 @@ const DiscountListPage = () => {
       <PageHeader title="Danh sách mã giảm giá" />
       <div className="bg-white shadow rounded-lg p-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-          <Form.Control
-            type="text"
-            placeholder="Tìm kiếm theo tên"
-            // onChange={(e) => debouncedSearch(e.target.value)}
-            style={{ maxWidth: "350px", borderRadius: "8px" }}
-          />
-          <div className="action d-flex gap-2">
+          <div className="action d-flex gap-2 ms-auto">
             <Button
-              className="d-flex align-items-center btn-primary rounded-3 px-4"
+              className=" rounded-3 "
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
@@ -105,9 +96,9 @@ const DiscountListPage = () => {
             </Button>
           </div>
         </div>
+
         <Table striped bordered hover responsive className="shadow-sm rounded">
           <thead>
-
             <tr>
               <th>STT</th>
               <th>Mã</th>
@@ -133,11 +124,15 @@ const DiscountListPage = () => {
                     {row.discountMethod === "PERCENTAGE"
                       ? "Giảm giá phần trăm"
                       : row.discountMethod === "FIXED_AMOUNT"
-                        ? "Giảm giá cụ thể"
-                        : "Chưa xác định"}
+                      ? "Giảm giá cụ thể"
+                      : "Chưa xác định"}
                   </td>
                   <td>{formatCurrency(row.quota)}</td>
-                  <td>{row.discountMethod === 'PERCENTAGE' ? `${row.value} %` : `${formatCurrency(row.value)}`}</td>
+                  <td>
+                    {row.discountMethod === "PERCENTAGE"
+                      ? `${row.value} %`
+                      : `${formatCurrency(row.value)}`}
+                  </td>
                   <td className="text-center">
                     <span
                       className="d-flex justify-content-center align-items-center gap-3"
