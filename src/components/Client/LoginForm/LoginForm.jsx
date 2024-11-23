@@ -49,7 +49,7 @@ const LoginForm = () => {
             const defaultBranch = branches[0];
             localStorage.setItem('branch_info', JSON.stringify(defaultBranch));
             navigate('/admin');
-        } else if (role === 'NON_ADMIN') {
+        } else if (role === 'NON_ADMIN' || role === 'EMPLOYEE') {
             try {
                 const branchInfo = await getBranchByUserId(userId);
                 localStorage.setItem('branch_info', JSON.stringify(branchInfo.data));
@@ -57,7 +57,7 @@ const LoginForm = () => {
             } catch (error) {
                 console.error(error);
             }
-        } else {
+        }else {
             navigate('/home');
         }
         navigate(0);
@@ -139,7 +139,7 @@ const LoginForm = () => {
                 {/* Image Section */}
                 <div className="col-md-6">
                     <img
-                        src="https://via.placeholder.com/500x500"
+                        src="/assets/img/banhmi.jpg"
                         alt="Login Illustration"
                         className="img-fluid rounded"
                     />

@@ -21,7 +21,7 @@ export const createBranchStatus = async (request) =>
 
 // Cập nhật một trạng thái theo ID
 export const updateBranchStatus = async (branchStatusId, request) => {
-    return response = await ApiRequest({
+    return await ApiRequest({
         method: 'PATCH',
         path: `branch-status/${branchStatusId}`,
         data: request,

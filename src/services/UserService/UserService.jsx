@@ -68,10 +68,10 @@ export const createEmployee = async (request) =>
 
 export const deleteEmployee = async (employeeId) => {
     return await ApiRequest({
-            method: 'DELETE',
-            path: `users/${employeeId}`,
-            headers: 'Bearer '
-        });
+        method: 'DELETE',
+        path: `users/${employeeId}`,
+        headers: 'Bearer '
+    });
 };
 
 export const updateEmployee = async (employeeId, request) => {
@@ -102,5 +102,15 @@ export const getNonAdmin = async (request) => {
         console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
         return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
     }
+};
+
+export const getUserById = async (id) => {
+
+    return await ApiRequest({
+        path: `users/${id}`,
+        headers: 'Bearer '
+    })
+
+
 };
 
