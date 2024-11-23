@@ -13,26 +13,41 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
     } = useForm();
 
     const password = watch("password");
-
     useEffect(() => {
-        if (showModal && initialValues?.fullName) {
-            // Set giá trị nếu có initialValues
-            setValue("fullName", initialValues.fullName || "");
-            setValue("email", initialValues.email || "");
-            setValue("phone", initialValues.phoneNumber || "");
-            setValue("role", initialValues.role || 'NON_ADMIN');
-        } else if (showModal && !initialValues) {
-            // Reset giá trị khi mở modal nếu không có initialValues
+        if (!showModal) {
             reset({
                 fullName: "",
                 email: "",
                 phone: "",
                 role: "NON_ADMIN",
                 password: "",
-                confirmPassword: "",
+                confirmPassword: ""
             });
         }
-    }, [showModal, initialValues, reset, setValue]);
+    }, [showModal, reset]);
+    useEffect(() => {
+        if (showModal) {
+            if (initialValues?.email) {
+                reset({
+                    fullName: initialValues.fullName || "",
+                    email: initialValues.email || "",
+                    phone: initialValues.phoneNumber || "",
+                    role: initialValues.role || "NON_ADMIN",
+                    password: "",
+                    confirmPassword: ""
+                });
+            } else {
+                reset({
+                    fullName: "",
+                    email: "",
+                    phone: "",
+                    role: "NON_ADMIN",
+                    password: "",
+                    confirmPassword: ""
+                });
+            }
+        }
+    }, [showModal, initialValues, reset]);
 
     const onSubmit = (data) => {
         const { phone, ...restData } = data;
@@ -43,10 +58,22 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
         handleData(transformedData);
     };
 
+    const handleClose = () => {
+        reset({
+            fullName: "",
+            email: "",
+            phone: "",
+            role: "NON_ADMIN",
+            password: "",
+            confirmPassword: ""
+        });
+        closeModal(false);
+    };
+
     return (
-        <Modal show={showModal} onHide={() => closeModal(false)} centered size="lg">
+        <Modal show={showModal} onHide={handleClose} centered size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>{initialValues?.fullName ? 'Thông tin người dùng' : 'Cấp quyền'}</Modal.Title>
+                <Modal.Title>{initialValues?.email ? 'Thông tin người dùng' : 'Cấp quyền'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -108,7 +135,7 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
-                        {!initialValues?.fullName && (
+                        {!initialValues?.email && (
                             <Col xs={12} sm={6}>
                                 <Form.Group controlId="password">
                                     <Form.Label>Mật Khẩu</Form.Label>
@@ -126,7 +153,7 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                         )}
                     </Row>
 
-                    {!initialValues?.fullName && (
+                    {!initialValues?.email && (
                         <Row className="mb-3">
                             <Col xs={12} sm={6}>
                                 <Form.Group controlId="confirmPassword">
@@ -150,7 +177,7 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
 
                     <div className="d-flex justify-content-end gap-3">
                         <Button type="submit" variant="primary">
-                            {initialValues?.fullName ? 'Lưu' : 'Thêm'}
+                            {initialValues?.email ? 'Lưu' : 'Thêm'}
                         </Button>
                     </div>
                 </Form>

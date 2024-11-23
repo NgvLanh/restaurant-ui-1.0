@@ -9,7 +9,7 @@ export function NavUser({ user }) {
     const navigate = useNavigate();
 
     const logout = () => {
-        localStorage.clear();
+        localStorage.removeItem('user_info');
         removeCookie('user_token');
         navigate("/home");
     };
