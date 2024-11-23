@@ -28,7 +28,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
         data.zone = zones.find((zone) => zone.id === parseInt(data.zone));
         data = {
             ...data,
-            branch: JSON.parse(localStorage.getItem('branch_info'))
+            branchId: JSON.parse(localStorage.getItem('branch_info'))?.id
         }
         handleData(data);
     };
@@ -80,29 +80,10 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                     </Row>
                     <Row className="mb-3">
                         <Col xs={12}>
-                            <Form.Group controlId="status">
-                                <Form.Label>Trạng thái bàn</Form.Label>
-                                <Form.Select
-                                    {...register('status', { required: 'Vui lòng chọn trạng thái bàn' })}
-                                    isInvalid={errors.status}
-                                >
-                                    <option value="AVAILABLE">Còn trống</option>
-                                    <option value="OCCUPIED">Đang sử dụng</option>
-                                    <option value="RESERVED">Đã đặt trước</option>
-                                    <option value="OUT_OF_SERVICE">Không sử dụng được</option>
-                                </Form.Select>
-                                <Form.Control.Feedback type="invalid">
-                                    {errors.status?.message}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row className="mb-3">
-                        <Col xs={12}>
                             <Form.Group controlId="zone">
                                 <Form.Label>Khu vực</Form.Label>
                                 <Form.Select
-                                    {...register('zone', { required: 'Vui lòng chọn khu vực bàn' })}
+                                    {...register('zoneId', { required: 'Vui lòng chọn khu vực bàn' })}
                                     isInvalid={errors.status}
                                 >
                                     <option value="">Chọn khu vực</option>
@@ -113,7 +94,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
                                     ))}
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.zone?.message}
+                                    {errors.zoneId?.message}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
