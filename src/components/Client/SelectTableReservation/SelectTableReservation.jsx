@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Modal, Button, Card, Col, Row, Image, Form } from "react-bootstrap";
 import { getAllBranches } from "../../../services/BranchService/BranchService";
-import { formatDate } from "../../../utils/FormatUtils";
+import { formatDate, formatDateTime } from "../../../utils/FormatUtils";
 import { createReservation } from "../../../services/ReservationService/ReservationService";
 import AlertUtils from "../../../utils/AlertUtils";
 import { getTablesByBranchIdAndDate } from "../../../services/TableService/TableService";
@@ -175,35 +175,61 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
                 <Modal.Body>
 
                     <Row>
-                        {filteredTables?.length > 0 && filteredTables?.map((table) => (
-                            <Col md={3} lg={2} key={table.id} className="mb-4">
-                                <Card
-                                    style={{
-                                        cursor: table.tableStatus ? 'pointer' : 'not-allowed',
-                                        opacity: table.tableStatus ? '1' : '0.5',
-                                        borderWidth: '3px'
-                                    }}
-                                    className={`h-100 rounded-3 
-                                            ${!table.tableStatus ?
-                                            "border-danger" :
-                                            selectedTables?.some((t) => t.id === table.id) ?
-                                                "border-success" :
-                                                "border-secondary-subtle"}`}
-                                    onClick={() => table.tableStatus && handleSelectTable(table)}
-                                >
-                                    <Card.Body>
-                                        <Card.Title>Bàn số: {table.number}</Card.Title>
-                                        <Card.Text>Số ghế: {table.seats}</Card.Text>
-                                        <Card.Text>Vị trí: {table.zone?.name}</Card.Text>
-                                        <Card.Text>Trạng thái: {table.tableStatus ?
-                                            <><span className="text-success">Có sẵn</span></> :
-                                            <><span className="text-danger">Đã đặt</span></>}
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Card>
+                        {filteredTables?.length > 0 &&
+                            filteredTables.map((table) => {
+                                const reservation = table.reservations?.[0];
 
-                            </Col>
-                        ))}
+
+                                let borderColor = "lightgray";
+                                let cursorStyle = "not-allowed";
+                                let bgColor = "white";
+                                if (!reservation) {
+                                    if (selectedTables?.some((t) => t.id === table.id)) {
+                                        borderColor = "green";
+                                    } else {
+                                        borderColor = "lightgray";
+                                        bgColor = "white";
+                                    }
+                                    cursorStyle = "pointer";
+                                } else {
+                                    borderColor = "red";
+                                }
+
+                                selectedTables?.some((t) => t.id === table.id) ? bgColor = "#e4f2e4" : null;
+
+                                return (
+                                    <Col md={3} lg={2} key={table.id} className="mb-4">
+                                        <Card
+                                            style={{
+                                                cursor: cursorStyle,
+                                                borderWidth: "3px",
+                                                borderColor: borderColor,
+                                                backgroundColor: bgColor,
+                                                userSelect: 'none',
+                                                opacity: reservation && 0.5
+                                            }}
+                                            className={`h-100 rounded-3`}
+                                            onClick={() => !reservation && handleSelectTable(table)}
+                                        >
+                                            <Card.Body>
+                                                <div className="d-flex align-items-center justify-content-between">
+                                                    <Card.Title>Bàn số: {table.number}</Card.Title>
+                                                </div>
+                                                <Card.Text>Số ghế: {table.seats}</Card.Text>
+                                                <Card.Text>Vị trí: {table.zone?.name}</Card.Text>
+                                                <Card.Text>
+                                                    Trạng thái:{" "}
+                                                    {!reservation ? (
+                                                        <b className="text-success">Có sẵn</b>
+                                                    ) : (
+                                                        <b className="text-danger">Đã đặt</b>
+                                                    )}
+                                                </Card.Text>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                );
+                            })}
                     </Row>
                 </Modal.Body>
                 <Modal.Footer>
