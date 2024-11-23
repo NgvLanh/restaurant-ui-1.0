@@ -188,7 +188,6 @@ const TableListPage = () => {
                             <tr>
                                 <th className="text-center">Số bàn</th>
                                 <th className="text-center">Số ghế</th>
-                                <th className="text-center">Trạng thái bàn</th>
                                 <th className="text-center">Khu vực</th>
                                 <th className="text-center">Tuỳ chọn</th>
                             </tr>
@@ -202,13 +201,6 @@ const TableListPage = () => {
                                         </td>
                                         <td className="text-center">
                                             {row.seats}
-                                        </td>
-                                        <td className="text-center">
-                                            {row.tableStatus ? (
-                                                <span className="badge bg-success rounded-3 p-2">Trống</span>
-                                            ) : (
-                                                <span className="badge bg-danger rounded-3 p-2">Đã đặt</span>
-                                            )}
                                         </td>
                                         <td className="text-center">
                                             {row.zone?.name ? row.zone?.name + ' / ' + row.zone?.address : 'Chưa xác định'}
