@@ -13,7 +13,8 @@ import BranchModal from "./Modals/BranchModal";
 import UserModal from "./Modals/UserModal";
 import { updateEmployee } from "../../../services/UserService/UserService"
 const BranchListPage = () => {
-
+    // const userInfo = JSON.parse(localStorage.getItem('user_info'));
+    // const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
     const [branches, setBranches] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState({});
@@ -22,7 +23,8 @@ const BranchListPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
     const [showUserModal, setShowUserModal] = useState(false);
-
+    const [showUserDataModal, setShowUserDataModal] = useState(false);
+    const [selectedUserData, setSelectedUserData] = useState(null);
     useEffect(() => {
         fetchBranches();
     }, [currentPage, searchKey]);
@@ -46,24 +48,26 @@ const BranchListPage = () => {
                 if (response?.status) {
                     AlertUtils.success(successMessage);
                     setShowModal(false);
+                    fetchBranches();
                 }
             } catch (error) {
-                AlertUtils.info(error.response?.data?.message);
+                AlertUtils.error(error.response?.data?.message);
+                return false; 
             }
         } else {
             try {
                 const response = await createBranch(data);
-                console.log(response);
-
                 if (response?.status) {
                     AlertUtils.success(successMessage);
                     setShowModal(false);
+                    fetchBranches();
                 }
             } catch (error) {
-                AlertUtils.info(error.response?.data?.message);
+                AlertUtils.error(error.response?.data?.message);
+                return false;
             }
         }
-        fetchBranches();
+        return true; 
     };
 
     const handleSetRole = async (data) => {
@@ -77,7 +81,7 @@ const BranchListPage = () => {
                         setShowUserModal(false);
                     }
                 } catch (error) {
-                    AlertUtils.info(error.response?.data?.message);
+                    AlertUtils.error(error.response?.data?.message);
                 }
             }
             else {
@@ -94,10 +98,10 @@ const BranchListPage = () => {
                             setShowUserModal(false);
                         }
                     } catch (error) {
-                        AlertUtils.info(error.response?.data?.message);
+                        AlertUtils.error(error.response?.data?.message);
                     }
                 } catch (error) {
-                    AlertUtils.info(error.response?.data?.message.email
+                    AlertUtils.error(error.response?.data?.message.email
                         || error.response?.data?.message.phoneNumher
                         || error.response?.data?.message.password
                         || error.response?.data?.message
@@ -106,7 +110,7 @@ const BranchListPage = () => {
 
             }
         } else {
-            AlertUtils.info(`error.response?.data?.message`);
+            //
         }
         fetchBranches();
     };
@@ -120,15 +124,15 @@ const BranchListPage = () => {
                     AlertUtils.success('Xoá thành công!');
                 }
             } catch (error) {
-                AlertUtils.info(error.response?.data?.message);
+                AlertUtils.error(error.response?.data?.message);
             }
         }
         fetchBranches();
     };
 
     const handleUserModalOpen = (branch) => {
-        setInitialValues(branch);
-        setShowUserModal(true);
+        setInitialValues(branch); 
+        setShowUserModal(true);    
     };
 
     const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
@@ -142,11 +146,9 @@ const BranchListPage = () => {
                     <Form.Control
                         type="text"
                         placeholder="Tìm kiếm theo tên"
-                        className="rounded-3"
                         onChange={(e) => debouncedSearch(e.target.value)}
                         style={{
-                            maxWidth: '350px',
-                        }}
+                            maxWidth: '350px',}}
                     />
                     <div className="action">
                         <Button
@@ -162,8 +164,8 @@ const BranchListPage = () => {
                     </div>
                 </div>
 
-                <Table hover responsive className="rounded-4">
-                    <thead>
+                <Table borderless hover responsive className="rounded-4">
+                    <thead style={{ backgroundColor: '#f5f5f5' }}>
                         <tr>
                             <th className="text-center">STT</th>
                             <th>Tên chi nhánh</th>
@@ -189,17 +191,38 @@ const BranchListPage = () => {
                                                     setInitialValues(row);
                                                     setShowModal(true);
                                                 }}
+                                                style={{
+                                                    padding: '8px',
+                                                    backgroundColor: '#F1F3F4',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.3s ease',
+                                                }}
                                             >
                                                 <BiEdit size={16} />
                                             </span>
                                             <span
                                                 onClick={() => { handleDelete(row.id) }}
+                                                style={{
+                                                    padding: '8px',
+                                                    backgroundColor: '#F1F3F4',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.3s ease',
+                                                }}
                                             >
                                                 <MdDelete size={16} />
                                             </span>
 
                                             <span
                                                 onClick={() => row.user ? handleUserModalOpen(row?.user) : handleUserModalOpen(row)}
+                                                style={{
+                                                    padding: '8px',
+                                                    backgroundColor: '#F1F3F4',
+                                                    borderRadius: '12px',
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.3s ease',
+                                                }}
                                             >
                                                 {row.user ? <BiCheck size={16} color="green" /> : <BiUser size={16} />}
                                             </span>
@@ -229,8 +252,8 @@ const BranchListPage = () => {
             <UserModal
                 showModal={showUserModal}
                 closeModal={() => setShowUserModal(false)}
-                initialValues={initialValues}  
-                handleData={handleSetRole}    
+                initialValues={initialValues}  // Truyền thông tin chi nhánh (bao gồm branchId)
+                handleData={handleSetRole}         // Gửi dữ liệu người dùng và branchId đến handleSetRole
             />
 
             <RenderPagination

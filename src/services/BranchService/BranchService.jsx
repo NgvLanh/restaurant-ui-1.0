@@ -67,9 +67,9 @@ export const createNonAdmin = async (request) => {
     });
 }
 
-export const getBranchByUserId = async (UserId) => {
+export const getBranchByUserId = async (userId) => {
     return await ApiRequest({
-        path: `branches/${UserId}`,
+        path: `branches/${userId}`,
         headers: 'Bearer '
     });
 };

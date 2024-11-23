@@ -24,9 +24,10 @@ const ProtectRoute = ({ element, admin = true }) => {
                 if (introspect === undefined) {
                     navigate('/login');
                     AlertUtils.info('Vui lòng đăng nhập để tiếp tục!', 'Bạn chưa đăng nhập');
-                } else if (introspect.roles[0] !== 'ADMIN' && introspect.roles[0] !== 'NON_ADMIN') {
+                } else if (introspect.roles[0] !== 'ADMIN'
+                    && introspect.roles[0] !== 'NON_ADMIN'
+                    && introspect.roles[0] !== 'EMPLOYEE') {
                     navigate('/login');
-
                     AlertUtils.info('Localstroge #: CÓ, TOKEN ko phải ADMIN', 'Quyền truy cập bị từ chối!');
                 }
             }
@@ -34,11 +35,6 @@ const ProtectRoute = ({ element, admin = true }) => {
             if (!userInfo) {
                 navigate('/login');
                 AlertUtils.info('Vui lòng đăng nhập để tiếp tục!', 'Bạn chưa đăng nhập');
-                // } else {
-                //     console.log('MỆT');
-
-                //     // navigate('/login');
-                //     // AlertUtils.info('Vui lòng đăng nhập để tiếp tục!', 'Bạn chưa đăng nhập');
             }
         }
 

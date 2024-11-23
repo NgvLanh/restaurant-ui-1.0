@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown, Button, ButtonGroup, Nav } from "react-bootstrap";
+import { Dropdown, ButtonGroup, Nav } from "react-bootstrap";
 import "./SidebarHeader.css"
 
 export const SidebarHeader = ({ teams }) => {
     const [activeTeam, setActiveTeam] = useState(teams[0] || null);
-    const [branches, setBranches] = useState([]);
     const getUser = JSON.parse(localStorage.getItem('user_info'));
     const getUserRoles = getUser?.roles[0];
 

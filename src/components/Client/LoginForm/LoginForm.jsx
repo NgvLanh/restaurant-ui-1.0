@@ -54,12 +54,18 @@ const LoginForm = () => {
                 localStorage.setItem('branch_info', JSON.stringify(branchInfo.data));
                 navigate('/admin');
             } catch (error) {
-                console.error(error);
+                AlertUtils.error(error);
+            }
+        } else if (role === 'EMPLOYEE') {
+            try {
+                localStorage.setItem('branch_info', JSON.stringify(data?.branch));
+                navigate('/admin');
+            } catch (error) {
+                AlertUtils.error(error);
             }
         } else {
             navigate('/home');
         }
-        navigate(0);
     };
 
 
