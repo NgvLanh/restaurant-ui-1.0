@@ -3,30 +3,56 @@ import { useEffect, useState } from "react";
 import { formatCurrency, formatDate } from "../../../../utils/FormatUtils";
 import { createOrderItem, deleteOrderItem, updateQuantityOrderItem } from "../../../../services/OrderItemService/OrderItemService";
 import AlertUtils from "../../../../utils/AlertUtils";
-import { getAllOrdersWithTable, updateServedOrder } from "../../../../services/OrderService/OrderService";
+import { getAllOrders, getAllOrdersWithTable, updateServedOrder } from "../../../../services/OrderService/OrderService";
 import { IoMdClose } from "react-icons/io";
+import { getAllDishesByCategoryId } from "../../../../services/DishService/DishService";
+import { getAllCategories } from "../../../../services/CategoryService/CategoryService";
 
-const DishListModal = ({ showDetailsModal, setShowDetailsModal, dishes, currentOrder }) => {
-    const [cart, setCart] = useState(currentOrder?.orderItems || []);
+const DishListModal = ({ showDetailsModal, setShowDetailsModal, selectTables }) => {
+    const [cart, setCart] = useState(selectTables[0]?.reservations?.
+        order?.id.orderItems || []);
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
     const [discount, setDiscount] = useState(0);
+    const [dishes, setDishes] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(0);
+    const [categories, setCategories] = useState([]);
+
 
     useEffect(() => {
         fetchOrder();
-    }, [currentOrder]);
+        fetchCategories();
+    }, [showDetailsModal]);
+
+    useEffect(() => {
+        fetchDishByCategoryId(selectedCategory);
+    }, [selectedCategory]);
+
+
+    const fetchCategories = async () => {
+        const response = await getAllCategories();
+        setCategories(response);
+    }
+
+    const fetchDishByCategoryId = async (categoryId) => {
+        const response = await getAllDishesByCategoryId(categoryId);
+        setDishes(response);
+    }
 
     const fetchOrder = async () => {
-        const response = await getAllOrdersWithTable(formatDate(new Date().toISOString().split("T")[0]));
-        const current = response.data?.find(e => e.id === parseInt(currentOrder?.id));
+        const response = await getAllOrders();
+        const current = response.data.content.find(e => e.id === parseInt(selectTables[0]?.reservations[0]?.order?.id));
+
         setCart(current?.orderItems);
+
     }
+
 
     const addToCart = async (dish) => {
         const request = {
             quantity: 1,
             price: dish.price,
-            order: currentOrder,
-            dish: dish
+            orderId: selectTables[0]?.reservations[0]?.order?.id,
+            dishId: dish.id
         };
 
         try {
@@ -61,7 +87,7 @@ const DishListModal = ({ showDetailsModal, setShowDetailsModal, dishes, currentO
                     fetchOrder();
                 }
             } catch (error) {
-                AlertUtils.error(`Lỗi cập nhật số lượng`, error);
+                AlertUtils.info(error.response?.data?.message);
             }
         }
     };
@@ -74,7 +100,7 @@ const DishListModal = ({ showDetailsModal, setShowDetailsModal, dishes, currentO
 
     const handleCheckout = async () => {
         try {
-            const response = await updateServedOrder(currentOrder.id);
+            const response = await updateServedOrder(selectTables[0]?.reservations[0]?.order?.id, calculateTotal());
             if (response.status) {
                 AlertUtils.success(`Thanh toán thành công`);
             }
@@ -101,8 +127,24 @@ const DishListModal = ({ showDetailsModal, setShowDetailsModal, dishes, currentO
                     <Row>
                         {/* Left Column: Dish List */}
                         <Col lg={9} className="border rounded-3">
-                            <div className="row">
-                                {dishes?.length > 0 && dishes.map((dish) => (
+                            <div className="row mt-3 wow fadeInUp" data-wow-delay="0.3s">
+                                <div className="col-12 text-center">
+                                    <ul className="list-inline mb-5" id="portfolio-flters">
+                                        <li className={`mx-2 ${selectedCategory === 0 ? 'active' : ''}`}
+                                            onClick={() => setSelectedCategory(0)}
+                                        >
+                                            Tất cả</li>
+                                        {categories?.map((category) => (
+                                            <li key={category?.id}
+                                                className={`mx-2 ${selectedCategory === category.id ? 'active' : ''}`}
+                                                onClick={() => setSelectedCategory(category?.id)}
+                                            >{category?.name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="row g-4 portfolio-container d-flex flex-wrap">
+                                {dishes?.map((dish) => (
                                     <div
                                         key={dish?.id}
                                         className="portfolio-item col-lg-2 col-md-3 wow fadeInUp mt-3"

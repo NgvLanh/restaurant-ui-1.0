@@ -12,18 +12,13 @@ export const getCartItemsByUserId = async (userId) => {
     }
 }
 
-export const updateCartItemQuantity = async (cartItemId, quantity) => {
-    try {
-        const res = await ApiRequest({
-            method: 'PATCH',
-            path: `cart-items/${cartItemId}/${quantity}`,
-            headers: 'Bearer '
-        });
-        return res?.data;
-    } catch (error) {
-        console.log(error);
-    }
-}
+export const updateCartItemQuantity = async (cartItemId, quantity) =>
+    await ApiRequest({
+        method: 'PATCH',
+        path: `cart-items/${cartItemId}/${quantity}`,
+        headers: 'Bearer '
+    });
+
 
 export const updateSelectAll = async (userId, check) => {
     try {
@@ -51,42 +46,26 @@ export const updateToggleSelect = async (cartItemId) => {
     }
 }
 
-export const deleteCartItem = async (cartItemId) => {
-    try {
-        const res = await ApiRequest({
-            method: 'DELETE',
-            path: `cart-items/${cartItemId}`,
-            headers: 'Bearer '
-        });
-        return res?.data;
-    } catch (error) {
-        console.log(error);
-    }
-}
+export const deleteCartItem = async (cartItemId) =>
+    await ApiRequest({
+        method: 'DELETE',
+        path: `cart-items/${cartItemId}`,
+        headers: 'Bearer '
+    });
 
 
-export const deleteCartItemByUserId = async (userId) => {
-    try {
-        const response = await ApiRequest({
-            method: 'delete',
-            path: `cart-items/${userId}`,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.log(error);
-    }
-}
 
-export const addToCart = async (userId, dishId, quantity) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: `cart-items/${userId}/${dishId}/${quantity}`,
-            headers: 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.log(error);
-    }
-}
+export const deleteCartItemByUserId = async (userId) =>
+    await ApiRequest({
+        method: 'delete',
+        path: `cart-items/cart/${userId}`,
+        headers: 'Bearer '
+    });
+
+
+export const addToCart = async (userId, dishId, quantity) =>
+    await ApiRequest({
+        method: 'POST',
+        path: `cart-items/${userId}/${dishId}/${quantity}`,
+        headers: 'Bearer '
+    });

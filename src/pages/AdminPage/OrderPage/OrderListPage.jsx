@@ -18,7 +18,7 @@ const OrderStatus = new Map([
 
 const OrderListPage = () => {
   const [order, setOrder] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState(""); // Trạng thái đang chọn
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
@@ -27,12 +27,8 @@ const OrderListPage = () => {
   const fetchOrders = async () => {
     try {
       const response = await getAllOrders(selectedStatus, currentPage, pageSize);
-      if (response?.data && response.data.content) {
-        setTotalPages(response.data.totalPages || 1);
-        setOrder(response.data.content); // Gán danh sách đơn hàng
-      } else {
-        setOrder([]); // Nếu không có dữ liệu, set rỗng
-      }
+      setTotalPages(response.data.totalPages || 1);
+      setOrder(response.data.content);
     } catch (error) {
       AlertUtils.error("Không thể tải danh sách đơn hàng.");
     }
@@ -103,10 +99,11 @@ const OrderListPage = () => {
   };
   useEffect(() => {
     fetchOrders();
-  }, [currentPage, selectedStatus]); // fetch lại khi page hoặc status thay đổi
+  }, [currentPage, selectedStatus]);
+
   const handleStatusChange = (status) => {
-    setSelectedStatus(status); // Cập nhật selectedStatus
-    setCurrentPage(0);         // Reset về trang đầu tiên
+    setSelectedStatus(status);
+    setCurrentPage(0);
   };
 
   return (
@@ -115,17 +112,15 @@ const OrderListPage = () => {
 
       <div className="bg-white shadow-lg p-4 rounded-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-          {/* Chọn khoảng thời gian "Từ ngày - Đến ngày" */}
-          {/* <div className="d-flex gap-3" style={{ maxWidth: '350px' }}></div> */}
-          {/* Select để lọc theo trạng thái hóa đơn */}
+
           <div className="action">
             <Form.Select
               value={selectedStatus}
-              onChange={(e) => handleStatusChange(e.target.value)} // Cập nhật selectedStatus
+              onChange={(e) => handleStatusChange(e.target.value)}
               className="rounded-3"
               style={{ maxWidth: '200px' }}
             >
-              <option value="">Tất cả</option> {/* Hiển thị tất cả nếu không chọn trạng thái */}
+              <option value="">Tất cả</option>
               {Array.from(OrderStatus.entries()).map(([key, value]) => (
                 <option key={key} value={key}>{value}</option>
               ))}
@@ -134,7 +129,7 @@ const OrderListPage = () => {
         </div>
 
         <Table hover responsive className="rounded-4 shadow-sm">
-          <thead className="table-light border-bottom">
+          <thead>
             <tr>
               <th className="text-center">STT</th>
               <th>Thời gian</th>
@@ -146,79 +141,59 @@ const OrderListPage = () => {
             </tr>
           </thead>
           <tbody>
-            {order?.length > 0 ? (order
-              .filter((row) => 
-                ["PENDING", "CONFIRMED", "DELIVERY", "DELIVERED", "CANCELLED", "PAID", "ALL"].includes(row.orderStatus)
-              )
-              .map((row, index) => {
-                if (!row.address) return null; 
-                return (
-                  <tr key={row.id} className="align-middle border-bottom">
-                    <td className="text-center fw-bold">{index + 1}</td>
-                    <td>
-                      {formatDateTime(row.time)}
-                    </td>
-                    <td className="text-center">
-                      <span
-                        className={`badge ${row.orderStatus === 'CANCELLED'
-                            ? 'bg-danger'
-                            : row.orderStatus === 'PAID'
-                              ? 'bg-success'
-                              : row.orderStatus === 'PENDING'
-                                ? 'bg-warning text-dark'
-                                : 'bg-primary'
-                          } rounded-3 p-2`}
-                        style={{
-                          fontSize: '14px',
-                          padding: '10px 16px',
-                        }}
-                      >
-                        {OrderStatus.get(row.orderStatus)}
-                      </span>
-                    </td>
-                    <td className="text-center">{row.user?.fullName}</td>
-                    <td className="text-center">{row.user?.phoneNumber}</td>
-                    <td className="text-center">{row.address?.address}</td>
-                    <td className="text-center">
-                      <div className="d-flex justify-content-center gap-2">
+            {order?.length > 0 && order?.map((row, index) => {
+              if (!row.address) return null;
+              return (
+                <tr key={row.id} className="align-middle border-bottom">
+                  <td className="text-center fw-bold">{index + 1}</td>
+                  <td>
+                    {formatDateTime(row.time)}
+                  </td>
+                  <td className="text-center">
+                    <span
+                      className={`badge ${row.orderStatus === 'CANCELLED'
+                        ? 'bg-danger'
+                        : row.orderStatus === 'PAID'
+                          ? 'bg-success'
+                          : row.orderStatus === 'PENDING'
+                            ? 'bg-warning text-dark'
+                            : 'bg-primary'
+                        } rounded-3 p-2`}
+                      style={{
+                        fontSize: '14px',
+                        padding: '10px 16px',
+                      }}
+                    >
+                      {OrderStatus.get(row.orderStatus)}
+                    </span>
+                  </td>
+                  <td className="text-center">{row.user?.fullName}</td>
+                  <td className="text-center">{row.user?.phoneNumber}</td>
+                  <td className="text-center">{row.address?.address}</td>
+                  <td className="text-center">
+                    <div className="d-flex justify-content-center gap-2">
+                      {row.orderStatus !== 'CANCELLED' && (
                         <button
                           className="btn btn-primary btn-sm"
-                          style={{
-                            width: '120px',
-                            borderRadius: '8px',
-                            fontSize: '14px',
-                            padding: '6px 12px',
-                          }}
                           onClick={() => handleStatusClick(row.id, row.orderStatus)}
                         >
-                          Chuyển trạng thái
+                          xác nhận
                         </button>
-                        {row.orderStatus === 'PENDING' && (
-                          <button
-                            className="btn btn-danger btn-sm"
-                            style={{
-                              width: '120px',
-                              borderRadius: '8px',
-                              fontSize: '14px',
-                              padding: '6px 12px',
-                            }}
-                            onClick={() => handleCancelOrder(row.id)}
-                          >
-                            Hủy đơn
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan={7} className="text-center text-muted py-3">
-                  Không có dữ liệu
-                </td>
-              </tr>
-            )}
+                      )}
+                      {row.orderStatus === 'PENDING' && (
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleCancelOrder(row.id)}
+                        >
+                          Hủy đơn
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+
 
           </tbody>
         </Table>

@@ -16,11 +16,12 @@ export const createReservation = async (request) =>
     });
 
 // Cập nhật một đặt bàn theo ID
-export const cancelReservation = async (reservationId, reason) =>
+export const cancelReservation = async (request) =>
     await ApiRequest({
         method: 'PATCH',
-        path: `reservations/cancel/${reservationId}/${reason}`,
-        headers: 'Bearer '
+        path: `reservations/cancel`,
+        headers: 'Bearer ',
+        data: request
     });
 
 
@@ -31,4 +32,11 @@ export const getAllCancelReservationsPageable = async (currentPage, pageSize) =>
         headers: 'Bearer '
     });
 
-
+// Tạo mới một đặt bàn tại quầy
+export const createReservationOffline = async (request) =>
+    await ApiRequest({
+        method: 'POST',
+        path: 'reservations/offline',
+        data: request,
+        headers: 'Bearer '
+    });

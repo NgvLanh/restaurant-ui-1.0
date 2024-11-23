@@ -17,7 +17,6 @@ const getTotalDishes = async (request) => {
             headers: 'Bearer ',
             data: request
         });
-        console.log("API Response:", response); // Kiểm tra giá trị trả về
         return response || null; // Trả về giá trị số nếu có, hoặc null nếu không
     } catch (error) {
         console.error(`Lỗi lấy tổng món ăn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
@@ -36,7 +35,6 @@ const getTotalUsers = async (request) => {
             headers: 'Bearer ',
             data: request
         });
-        console.log("API Response:", response); // Kiểm tra giá trị trả về
         return response || null; // Trả về giá trị số nếu có, hoặc null nếu không
     } catch (error) {
         console.error(`Lỗi lấy tổng số người đăng ký: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
@@ -54,7 +52,6 @@ const getTotalOrders = async (request) => {
             headers: 'Bearer ',
             data: request
         });
-        console.log("API Response:", response); // Kiểm tra giá trị trả về
         return response || null; // Trả về giá trị số nếu có, hoặc null nếu không
     } catch (error) {
         console.error(`Lỗi lấy tổng đơn hàng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
@@ -102,7 +99,6 @@ const getTotalOrdersCanCelled = async (request) => {
             headers: 'Bearer ',
             data: request
         });
-        console.log("API Response:", response); // Kiểm tra giá trị trả về
         return response || null; // Trả về giá trị số nếu có, hoặc null nếu không
     } catch (error) {
         console.error(`Lỗi lấy tổng đơn hàng đã hủy: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);

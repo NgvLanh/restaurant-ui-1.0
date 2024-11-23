@@ -1,23 +1,26 @@
 import moment from 'moment';
 
-const formatDateTime = (dateString) => {
+export const formatDateTime = (dateString) => {
     if (!dateString) return '';
     return moment(dateString).format('DD/MM/YYYY - HH:mm:ss');
 };
 
-const formatDate = (dateString) => {
+export const formatDate = (dateString) => {
     if (!dateString) return '';
     return moment(dateString).format('DD/MM/YYYY');
 };
 
-const formatCurrency = (amount) => {
+export const formatTime = (timeString) => {
+    if (!timeString) return '';
+    return moment(timeString, 'HH:mm:ss').format('HH:mm:ss');
+};
+
+export const formatCurrency = (amount) => {
     if (isNaN(amount)) return '';
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-const formatNumber = (number) => {
+export const formatNumber = (number) => {
     if (isNaN(number)) return '';
     return new Intl.NumberFormat('vi-VN').format(number);
 };
-
-export { formatDateTime, formatDate, formatCurrency, formatNumber };

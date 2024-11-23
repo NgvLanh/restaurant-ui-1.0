@@ -33,13 +33,13 @@ const ReservationDetailsModal = ({ showModal, setShowModal, selectedEvent }) => 
                             <strong>Tên khách hàng:</strong> <span>{selectedEvent.title}</span>
                         </div>
                         <div className="mb-2">
-                            <strong>Email:</strong> <span>{selectedEvent.extendedProps.email}</span>
+                            {/* <strong>Email:</strong> <span>{selectedEvent.extendedProps.email}</span> */}
                         </div>
                         <div className="mb-2">
-                            <strong>Số điện thoại:</strong> <span>{selectedEvent.extendedProps.phoneNumber}</span>
+                            {/* <strong>Số điện thoại:</strong> <span>{selectedEvent.extendedProps.phoneNumber}</span> */}
                         </div>
                         <div className="mb-2">
-                            <strong>Ghi chú:</strong> <span>{selectedEvent.extendedProps.notes}</span>
+                            {/* <strong>Ghi chú:</strong> <span>{selectedEvent.extendedProps.notes}</span> */}
                         </div>
                     </div>
                 </div>
@@ -47,16 +47,16 @@ const ReservationDetailsModal = ({ showModal, setShowModal, selectedEvent }) => 
                     <div className="card-body">
                         <h5 className="card-title">Thông tin bàn</h5>
                         <div className="mb-2">
-                            <strong>Số bàn:</strong> <span>{selectedEvent.extendedProps.table.number}</span>
+                            {/* <strong>Số bàn:</strong> <span>{selectedEvent.extendedProps.table.number}</span> */}
                         </div>
                         <div className="mb-2">
-                            <strong>Số ghế:</strong> <span>{selectedEvent.extendedProps.table.seats}</span>
+                            {/* <strong>Số ghế:</strong> <span>{selectedEvent.extendedProps.table.seats}</span> */}
                         </div>
                         <div className="mb-2">
                             <strong>Vị trí: </strong>
                             <span>
-                                {selectedEvent.extendedProps.table.zone.name} -{" "}
-                                {selectedEvent.extendedProps.table.zone.address}
+                                {/* {selectedEvent.extendedProps.table.zone.name} -{" "} */}
+                                {/* {selectedEvent.extendedProps.table.zone.address} */}
                             </span>
                         </div>
                         <div className="mb-2">

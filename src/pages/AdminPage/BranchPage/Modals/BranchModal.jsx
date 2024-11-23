@@ -13,7 +13,6 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const [districtId, setDistrictId] = useState("");
     const [wardId, setWardId] = useState("");
     const [branchStatuses, setBranchStatuses] = useState([]);
-    const [users, setUsers] = useState([]);
     const tokenShipping = import.meta.env.VITE_TOKEN_SHIPPING || "";
     const idShop = import.meta.env.VITE_ID_SHOP || "";
 
@@ -28,10 +27,14 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
                 setValue("provinceId", initialValues.provinceId);
 
                 await fetchDistricts(initialValues.provinceId);
-                setValue("districtId", initialValues.districtId);
+                setTimeout(() => {
+                    setValue("districtId", initialValues.districtId);
+                }, 200);
 
                 await fetchWards(initialValues.districtId);
-                setValue("wardId", initialValues.wardId);
+                setTimeout(() => {
+                    setValue("wardId", initialValues.wardId);
+                }, 300);
 
                 setValue("branchStatus", initialValues.branchStatus?.id);
                 setValue("address", initialValues.address);
@@ -107,9 +110,9 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
         }
     };
     const onSubmit = (data) => {
-        handleData(data); // Gửi dữ liệu ra ngoài
-        closeModal(false); // Đóng modal (nếu cần)
-        reset(); // Xóa dữ liệu form sau khi lưu
+        handleData(data);
+        closeModal(false);
+        reset();
     };
 
 

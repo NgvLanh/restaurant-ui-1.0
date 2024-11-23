@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
-import OverviewCard from "../../../components/Admin/OverviewCard/OverviewCard";
+import { Card, Table } from "react-bootstrap";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import SalesChart from "../../../components/Admin/SalesChart/SalesChart";
 import { FaRegNewspaper, FaUtensils } from "react-icons/fa6";
@@ -8,14 +7,23 @@ import { IoPeopleOutline } from "react-icons/io5";
 import { CiMoneyCheck1 } from "react-icons/ci";
 import "./DashboardPage.css"; // Tạo một file CSS để quản lý các style tùy chỉnh
 import { getTotalRevenue, getTotalDishes, getTotalUsers, getTotalOrders, getTotalOrdersCanCelled } from "../../../services/DashboardService/DashboardService";
+import { getAllOrders } from "../../../services/OrderService/OrderService";
+import { formatCurrency, formatDateTime } from "../../../utils/FormatUtils";
 
 const DashboardPage = () => {
     const [totalRevenue, setTotalRevenue] = useState(null);
     const [totalDishes, setTotalDishes] = useState(null);
     const [totalUsers, setTotalUsers] = useState(null);
     const [totalOrders, setTotalOrders] = useState(null);
+    const [orders, setOrders] = useState(null);
     const [totalOrdersCancelled, setTotalOrdersCancelled] = useState(null);
+
     useEffect(() => {
+        const fetchOrder = async () => {
+            const response = await getAllOrders();
+            setOrders(response?.data?.content);
+        };
+
         const fetchTotalRevenue = async () => {
             const revenueResponse = await getTotalRevenue();
             if (revenueResponse) {
@@ -54,6 +62,7 @@ const DashboardPage = () => {
         fetchTotalUsers();
         fetchTotalOdrers();
         fetchTotalOdrersCancelled();
+        fetchOrder();
     }, []);
 
 
@@ -152,9 +161,44 @@ const DashboardPage = () => {
                             <Card.Title>Hoá đơn gần đây</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            {/* Hiển thị bảng hóa đơn */}
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Thời gian</th>
+                                        <th>Số tiền</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders?.length > 0 ? (
+                                        orders
+                                            ?.slice(-10)
+                                            ?.map((row, index) => (
+                                                <tr key={row.id}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{formatDateTime(row.time)}</td>
+                                                    <td>{formatCurrency(row.total)}</td>
+                                                    <td>
+                                                        {row.orderStatus === 'PAID' ? 'Đã thanh toán' :
+                                                            row.orderStatus === 'PENDING' ? 'Chờ xác nhận' :
+                                                                row.orderStatus === 'CONFIRMED' ? 'Đã xác nhận' :
+                                                                    row.orderStatus === 'CANCELLED' ? 'Đã huỷ' :
+                                                                        row.orderStatus === 'READY_TO_SERVE' ? 'Đang phục vụ' : ''}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4" className="text-center">Không có dữ liệu</td>
+                                        </tr>
+                                    )}
+
+                                </tbody>
+                            </Table>
                         </Card.Body>
                     </Card>
+
                 </div>
             </div>
         </>
