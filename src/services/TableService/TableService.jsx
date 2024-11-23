@@ -2,15 +2,10 @@ import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
 // Lấy danh sách tất cả bàn
 const getAllTables = async () => {
-    try {
-        const response = await ApiRequest({
-            path: 'tables',
-        });
-        return response?.data?.content;
-    } catch (error) {
-        console.error(`Lỗi lấy danh sách bàn: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi lấy danh sách bàn' };
-    }
+    const response = await ApiRequest({
+        path: 'tables',
+    });
+    return response?.data?.content;
 };
 
 // Tạo mới một bàn
@@ -49,12 +44,12 @@ const getAllTablesPageable = async (currentPage, pageSize) => {
 };
 
 // Lấy bàn để chọn đặt bàn
-const getTablesByBranchIdAndSeats = async (branchId) =>
+export const getTablesByBranchIdAndDate = async (branchId, date) =>
     await ApiRequest({
-        path: `tables/reservations?branch=${branchId}`,
+        path: `tables/reservations?branch=${branchId}&date=${date}`,
     });
 
 
 
 
-export { getAllTables, createTable, updateTable, deleteTable, getAllTablesPageable, getTablesByBranchIdAndSeats };
+export { getAllTables, createTable, updateTable, deleteTable, getAllTablesPageable };

@@ -6,6 +6,7 @@ import { formatCurrency } from '../../../utils/FormatUtils';
 import { getUserService } from '../../../services/AuthService/AuthService';
 import { asyncCartService, getCartByUserId } from '../../../services/CartService/CartService';
 import { addToCart, getCartItemsByUserId } from '../../../services/CartItemService/CartItemService';
+import AlertUtils from '../../../utils/AlertUtils';
 
 const Menus = () => {
     const cartTemps = JSON.parse(localStorage.getItem('cart_temps')) || [];
@@ -64,7 +65,11 @@ const Menus = () => {
             }
             localStorage.setItem('cart_temps', JSON.stringify(cartTemps));
         } else {
-            await addToCart(userInfo?.id, dish.id, quantity);
+            try {
+                await addToCart(userInfo?.id, dish.id, quantity);
+            } catch (error) {
+                AlertUtils.info(error.response?.data?.message);
+            }
         }
     };
 

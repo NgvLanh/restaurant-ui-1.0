@@ -84,9 +84,9 @@ export const createOrderManualService = async (data) =>
         headers: `Bearer `
     });
 
-export const updateServedOrder = async (orderId) =>
+export const updateServedOrder = async (orderId, total) =>
     await ApiRequest({
         method: 'PATCH',
-        path: `orders/Served/${orderId}`,
+        path: `orders/served/${orderId}/${total}`,
         headers: 'Bearer ',
     });

@@ -25,7 +25,6 @@ const LoginForm = () => {
 
     const onSubmit = async (request) => {
         const response = await loginService(request);
-        console.log(response);
         if (response?.status) {
             AlertUtils.success('Đăng nhập thành công');
             saveLocalAndCookie(response?.data);

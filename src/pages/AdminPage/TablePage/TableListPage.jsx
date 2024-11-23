@@ -1,16 +1,14 @@
 import { useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Badge, Button, Form, Table } from "react-bootstrap";
-import { BiEdit, BiPlus } from "react-icons/bi";
-import { MdDelete } from "react-icons/md";
+import { Button, Form, Table } from "react-bootstrap";
+import { BiPlus } from "react-icons/bi";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import { debounce } from "../../../utils/Debounce";
 import AlertUtils from "../../../utils/AlertUtils";
 import { createTable, deleteTable, getAllTablesPageable, updateTable } from "../../../services/TableService/TableService";
 import TableModal from "./Modals/TableModal";
-import { FaDeleteLeft } from "react-icons/fa6";
 import { CiEdit, CiViewList, CiViewTable } from "react-icons/ci";
 import { GoTrash } from "react-icons/go";
 
@@ -20,11 +18,10 @@ const TableListPage = () => {
     const [tables, settables] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState({});
-    const [searchKey, setSearchKey] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
-    const [viewMode, setViewMode] = useState('table');
+    const [viewMode, setViewMode] = useState('card');
 
 
     useEffect(() => {
@@ -37,11 +34,6 @@ const TableListPage = () => {
         settables(response?.data?.content);
     }
 
-    const handleSearch = (key) => {
-        setSearchKey(key);
-        setCurrentPage(0);
-    }
-
     const handleModalSubmit = async (data) => {
         const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
         if (initialValues) {
@@ -50,7 +42,7 @@ const TableListPage = () => {
                 AlertUtils.success(successMessage);
                 setShowModal(false);
             } else {
-                AlertUtils.error(response?.message);
+                AlertUtils.info(response?.message);
             }
         } else {
             try {
@@ -60,7 +52,7 @@ const TableListPage = () => {
                     setShowModal(false);
                 }
             } catch (error) {
-                AlertUtils.error(error.response?.data?.message);
+                AlertUtils.info(error.response?.data?.message);
 
             }
         }
@@ -75,14 +67,13 @@ const TableListPage = () => {
             if (response?.status) {
                 AlertUtils.success('Xoá thành công!');
             } else {
-                AlertUtils.error('Xoá thất bại!');
+                AlertUtils.info('Xoá thất bại!');
             }
         }
         fetchtables();
         setCurrentPage(0);
     }
 
-    const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
     return (
         <>
@@ -91,7 +82,7 @@ const TableListPage = () => {
             <div className="bg-white shadow-lg p-4 rounded-4">
                 <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
                     <Form.Select
-                        onChange={(e) => debouncedSearch(e.target.value)}
+                        onChange={(e) => {}}
                         style={{
                             maxWidth: '350px',
                         }}
@@ -139,7 +130,6 @@ const TableListPage = () => {
                             tables.map((row, index) => (
                                 <div className="col-lg-2 col-md-4" key={row.id}>
                                     <div className="card shadow-sm rounded-3">
-                                        {/* Add an image */}
                                         <img
                                             src={`/assets/img/—Pngtree—dining table_5635354.png`}
                                             className="card-img-top rounded-top-3"

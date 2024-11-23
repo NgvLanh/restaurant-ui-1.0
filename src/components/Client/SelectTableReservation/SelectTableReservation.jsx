@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Modal, Button, Card, Col, Row, Image, Form } from "react-bootstrap";
-import { getTablesByBranchIdAndSeats } from "../../../services/TableService/TableService";
 import { getAllBranches } from "../../../services/BranchService/BranchService";
-import { formatDate, formatDateTime } from "../../../utils/FormatUtils";
+import { formatDate } from "../../../utils/FormatUtils";
 import { createReservation } from "../../../services/ReservationService/ReservationService";
 import AlertUtils from "../../../utils/AlertUtils";
+import { getTablesByBranchIdAndDate } from "../../../services/TableService/TableService";
 
 const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     const [tables, setTables] = useState([]);
@@ -33,7 +33,7 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
 
     const fetchTables = async (dataRequest) => {
         if (dataRequest) {
-            const responese = await getTablesByBranchIdAndSeats(dataRequest.branch);
+            const responese = await getTablesByBranchIdAndDate(dataRequest.branch, formatDate(dataRequest.bookingDate));
             setTables(responese.data);
             const seatsNumber = new Set(responese.data.map(e => e.seats));
             setSeats([...seatsNumber]);
@@ -79,9 +79,6 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     };
 
     const filteredTables = tables.filter((table) => {
-        console.log(table.tableStatus.toString(), filters.status);
-
-
         const matchesSeats = filters.seats ? table.seats === parseInt(filters.seats) : true;
         const matchesZone = filters.zone ? table.zone.name === filters.zone : true;
         const matchesStatus = filters.status ? table.tableStatus.toString() === filters.status : true;
@@ -91,18 +88,17 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
 
 
     const handleConfirm = async () => {
-        dataRequest.branch = branches.find(e => e.id === parseInt(dataRequest.branch));
+        const { branch, ...data } = dataRequest;
 
-        const requests = selectedTables.map(table => ({
-            ...dataRequest,
-            table: table,
-        }));
+        const request = {
+            branchId: branch,
+            ...data,
+            tableIds: selectedTables.map(t => t.id)
+        }
 
         document.getElementById('spinner').classList.add('show');
         try {
-            for (const request of requests) {
-                await createReservation(request);
-            }
+            await createReservation(request);
             setShowConfirmModal(false);
             handleClose();
             AlertUtils.success('Đặt bàn thành công');

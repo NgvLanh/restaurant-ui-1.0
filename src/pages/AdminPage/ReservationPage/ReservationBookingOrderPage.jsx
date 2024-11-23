@@ -3,8 +3,6 @@ import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { BiDish } from "react-icons/bi";
-import { CiCalendar } from "react-icons/ci";
 import ReservationBookingModal from "./Modals/ReservationBookingModal";
 import { useState } from "react";
 
@@ -34,12 +32,15 @@ const ReservationBookingOrderPage = () => {
                     }}
                     noEventsContent="Không có sự kiện."
                     height="auto"
+                    validRange={{
+                        start: new Date().toISOString().split('T')[0],
+                    }}
                 />
             </Row>
 
             <ReservationBookingModal
                 showModal={showModalOrder}
-                handleClose={setShowModalOrder}
+                handleClose={() => setShowModalOrder(false)}
                 selectedDate={selectedDate}
             />
         </>

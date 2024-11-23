@@ -7,7 +7,7 @@ import AlertUtils from "../../../utils/AlertUtils";
 import { Button, Form, Table } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
 import CategoryModal from "./Modals/CategoryModal";
-import { createCategory, deleteCategory, getAllCategories, getAllCategoriesPageable, updateCategory } from "../../../services/CategoryService/CategoryService";
+import { createCategory, deleteCategory, getAllCategoriesPageable, updateCategory } from "../../../services/CategoryService/CategoryService";
 import { uploadFile } from "../../../services/UploadFileService/UploadFileService";
 import { CiBoxList } from "react-icons/ci";
 
@@ -96,29 +96,18 @@ const MenuCategoryPage = () => {
           <Form.Control
             type="text"
             placeholder="Tìm kiếm theo tên"
+            className="rounded-3"
             onChange={(e) => debouncedSearch(e.target.value)}
             style={{
               maxWidth: '350px',
-              padding: '10px 16px',
-              borderRadius: '20px',
-              border: '1px solid #e0e0e0',
-              fontSize: '14px',
             }}
           />
           <div className="action d-flex gap-2">
             <Button
-              className="d-flex align-items-center rounded-pill px-4"
+              className="d-flex align-items-center rounded-3 px-3"
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
-              }}
-              style={{
-                fontSize: '14px',
-                padding: '10px 20px',
-                backgroundColor: '#AB7742',
-                borderColor: '#3A8DFF',
-                color: 'white',
-                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
               }}
             >
               <BiPlus className="me-2" />
@@ -128,10 +117,7 @@ const MenuCategoryPage = () => {
               className="d-flex align-items-center rounded-3"
               onClick={toggleGridView}
               style={{
-                padding: '10px 16px',
-                backgroundColor: '#f5f5f5',
-                borderColor: '#ddd',
-                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                backgroundColor: 'transparent',
               }}
             >
               {!isGridView ? (
@@ -145,12 +131,11 @@ const MenuCategoryPage = () => {
 
         {isGridView ? (
           <div className="grid-view">
-            {/* Hiển thị dạng lưới */}
             <div className="row">
               {categories?.length > 0 ? (
-                categories.map((item, index) => (
-                  <div key={item.id} className="col-md-4 mb-4">
-                    <div className="card shadow-sm rounded-4">
+                categories.map((item) => (
+                  <div key={item.id} className="col-lg-2 col-md-4 mb-4">
+                    <div className="card shadow-sm rounded-3">
                       <img
                         src={item.image}
                         alt={item.name}
@@ -187,12 +172,11 @@ const MenuCategoryPage = () => {
             </div>
           </div>
         ) : (
-          <Table borderless hover responsive className="shadow-sm rounded-4">
-            {/* Hiển thị dạng danh sách */}
-            <thead style={{ backgroundColor: '#f5f5f5' }}>
+          <Table hover responsive className="shadow-sm rounded-4">
+            <thead>
               <tr>
                 <th className="text-center">STT</th>
-                <th>Ảnh</th>
+                <th className="text-center">Ảnh</th>
                 <th>Tên danh mục</th>
                 <th>Mô tả</th>
                 <th className="text-center">Tuỳ chọn</th>
@@ -203,11 +187,12 @@ const MenuCategoryPage = () => {
                 categories.map((row, index) => (
                   <tr key={row.id} className="align-middle">
                     <td className="text-center">{index + 1}</td>
-                    <td>
+                    <td className="text-center">
                       <img
                         src={row.image}
                         alt={row.name}
-                        style={{ minWidth: '250px', maxWidth: '100%', height: '100px' }}
+                        className="rounded-3"
+                        style={{ maxWidth: '250px', width: '100%', height: '100px' }}
                       />
                     </td>
                     <td>{row.name}</td>
@@ -219,28 +204,12 @@ const MenuCategoryPage = () => {
                             setInitialValues(row);
                             setShowModal(true);
                           }}
-                          style={{
-                            padding: '8px',
-                            backgroundColor: '#f0f0f0',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.3s ease',
-                            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                          }}
                         >
                           <BiEdit size={16} />
                         </span>
                         <span
                           onClick={() => {
                             handleDelete(row.id);
-                          }}
-                          style={{
-                            padding: '8px',
-                            backgroundColor: '#f0f0f0',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.3s ease',
-                            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
                           }}
                         >
                           <MdDelete size={16} />

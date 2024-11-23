@@ -68,21 +68,21 @@ const Sidebar = ({ isCollapsed }) => {
                 isActive: false,
                 items: [
                     {
-                        title: "Xem Bàn hôm nay + Đặt bàn + Gọi món",
+                        title: "Đặt bàn - Gọi món",
                         url: "/admin/reservations/booking-order",
                     },
                     {
                         title: "Lịch đặt bàn",
                         url: "/admin/reservations/schedule",
                     },
-                    {
-                        title: "Thêm đặt bàn",
-                        url: "/admin/reservations/create",
-                    },
-                    {
-                        title: "Bàn đã huỷ",
-                        url: "/admin/reservations/canceled",
-                    }
+                    // {
+                    //     title: "Thêm đặt bàn",
+                    //     url: "/admin/reservations/create",
+                    // },
+                    // {
+                    //     title: "Bàn đã huỷ",
+                    //     url: "/admin/reservations/canceled",
+                    // }
                 ],
             },
             {
@@ -107,17 +107,17 @@ const Sidebar = ({ isCollapsed }) => {
                 icon: <i className="fas fa-file-invoice"></i>,
                 items: [
                     {
-                        title: "Danh sách hoá đơn dành cho giao hàng",
+                        title: "Hoá đơn (món ăn)",
                         url: "/admin/orders",
                     },
                     {
-                        title: "Danh sách hoá đơn dành cho ăn tại nhà hàng",
+                        title: "Hoá đơn (đặt bàn)",
                         url: "/admin/orders/orders-at-res",
                     },
-                    {
-                        title: "Thêm hoá đơn",
-                        url: "/admin/orders/create-order",
-                    }
+                    // {
+                    //     title: "Thêm hoá đơn",
+                    //     url: "/admin/orders/create-order",
+                    // }
                 ],
             },
             {
@@ -143,17 +143,17 @@ const Sidebar = ({ isCollapsed }) => {
                     },
                 ],
             },
-            {
-                title: "Cài đặt",
-                url: "/admin/settings",
-                icon: <i className="fas fa-cogs"></i>,
-                items: [
-                    {
-                        title: "Chung",
-                        url: "/admin/settings",
-                    }
-                ],
-            },
+            // {
+            //     title: "Cài đặt",
+            //     url: "/admin/settings",
+            //     icon: <i className="fas fa-cogs"></i>,
+            //     items: [
+            //         {
+            //             title: "Chung",
+            //             url: "/admin/settings",
+            //         }
+            //     ],
+            // },
             {
                 title: "Thống kê",
                 url: "/admin/statistics",
@@ -192,11 +192,11 @@ const Sidebar = ({ isCollapsed }) => {
                 url: "/admin/dashboard",
                 icon: <i className="fas fa-terminal"></i>,
             },
-            {
-                name: "Thống kê",
-                url: "/admin/statistics",
-                icon: <i className="fas fa-chart-line"></i>,
-            },
+            // {
+            //     name: "Thống kê",
+            //     url: "/admin/statistics",
+            //     icon: <i className="fas fa-chart-line"></i>,
+            // },
             // {
             //     name: "Bản đồ",
             //     url: "/admin/map",

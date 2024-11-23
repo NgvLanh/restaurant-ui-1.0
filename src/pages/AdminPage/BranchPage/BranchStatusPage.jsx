@@ -4,12 +4,10 @@ import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import { useEffect, useMemo, useState } from "react";
 import { createBranchStatus, deleteBranchStatus, getAllBranchStatusPageable, updateBranchStatus } from "../../../services/BranchStatusService/BranchStatusService";
-import ReusableModal from "../../../components/Admin/ReusableModal/ReusableModal";
 import { debounce } from "../../../utils/Debounce";
 import AlertUtils from "../../../utils/AlertUtils";
 import BranchStatusModal from "./Modals/BranchStatusModal";
-import { Button, Dropdown, Form, Table } from "react-bootstrap";
-import { FcDeleteColumn } from "react-icons/fc";
+import { Button, Form, Table } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
 
 const BranchStatusPage = () => {
@@ -38,16 +36,16 @@ const BranchStatusPage = () => {
   }
 
   const handleModalSubmit = async (data) => {
-    const successMessage = initialValues ? 'Cập nhật thành công' : 'Thêm mới thành công';
     if (initialValues) {
       try {
         const response = await updateBranchStatus(initialValues?.id, data);
+        console.log(response);
         if (response?.status) {
           AlertUtils.success('Cập nhật trạng thái thành công!');
           setShowModal(false);
         }
       } catch (error) {
-        AlertUtils.error(error.response?.data?.message);
+        AlertUtils.info(error.response?.data?.message);
       }
     } else {
       try {
@@ -57,7 +55,7 @@ const BranchStatusPage = () => {
           setShowModal(false);
         }
       } catch (error) {
-        AlertUtils.error(error.response?.data?.message);
+        AlertUtils.info(error.response?.data?.message);
       }
 
     }
@@ -73,7 +71,7 @@ const BranchStatusPage = () => {
           AlertUtils.success('Xoá thành công!');
         }
       } catch (error) {
-        AlertUtils.error(error.response?.data?.message);
+        AlertUtils.info(error.response?.data?.message);
       }
     }
     fetchBranchStatuses();
@@ -90,9 +88,11 @@ const BranchStatusPage = () => {
           <Form.Control
             type="text"
             placeholder="Tìm kiếm theo tên"
+            className="rounded-3"
             onChange={(e) => debouncedSearch(e.target.value)}
             style={{
-              maxWidth: '350px',            }}
+              maxWidth: '350px',
+            }}
           />
           <div className="action">
             <Button
@@ -108,8 +108,8 @@ const BranchStatusPage = () => {
           </div>
         </div>
 
-        <Table borderless hover responsive className="rounded-4">
-          <thead style={{ backgroundColor: '#f5f5f5' }}>
+        <Table hover responsive className="rounded-4">
+          <thead >
             <tr>
               <th className="text-center">STT</th>
               <th>Tên trạng thái</th>
@@ -143,27 +143,11 @@ const BranchStatusPage = () => {
                           setInitialValues(row);
                           setShowModal(true);
                         }}
-                        style={{
-                          padding: '8px',
-                          backgroundColor: '#f0f0f0',
-                          borderRadius: '12px',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.3s ease',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                        }}
                       >
                         <BiEdit size={16} />
                       </span>
                       <span
                         onClick={() => { handleDelete(row.id) }}
-                        style={{
-                          padding: '8px',
-                          backgroundColor: '#f0f0f0',
-                          borderRadius: '12px',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.3s ease',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-                        }}
                       >
                         <MdDelete size={16} />
                       </span>

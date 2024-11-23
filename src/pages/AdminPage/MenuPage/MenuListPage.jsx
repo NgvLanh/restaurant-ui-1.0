@@ -59,7 +59,7 @@ const MenuListPage = () => {
         AlertUtils.success(successMessage);
         setShowModal(false);
       } else {
-        AlertUtils.error(response?.message);
+        AlertUtils.info(response?.message);
       }
     } else {
       try {
@@ -69,7 +69,7 @@ const MenuListPage = () => {
           setShowModal(false);
         }
       } catch (error) {
-        AlertUtils.error(error.response?.data?.message);
+        AlertUtils.info(error.response?.data?.message);
       }
     }
     fetchDishes();
@@ -82,16 +82,12 @@ const MenuListPage = () => {
       if (response?.status) {
         AlertUtils.success('Xoá thành công!');
       } else {
-        AlertUtils.error('Xoá thất bại!');
+        AlertUtils.info('Xoá thất bại!');
       }
     }
     fetchDishes();
   }
 
-  const handleToggleStatus = (id, currentStatus) => {
-    console.log(!currentStatus);
-    // handleModalSubmit(id, !currentStatus);
-  };
 
   const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
@@ -104,29 +100,18 @@ const MenuListPage = () => {
           <Form.Control
             type="text"
             placeholder="Tìm kiếm theo tên"
+            className="rounded-3"
             onChange={(e) => debouncedSearch(e.target.value)}
             style={{
               maxWidth: '350px',
-              padding: '10px 16px',
-              borderRadius: '20px',
-              border: '1px solid #e0e0e0',
-              fontSize: '14px',
             }}
           />
           <div className="action d-flex gap-2">
             <Button
-              className="d-flex align-items-center rounded-pill px-4"
+              className="d-flex align-items-center rounded-3 px-3"
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
-              }}
-              style={{
-                fontSize: '14px',
-                padding: '10px 20px',
-                backgroundColor: '#AB7742',
-                borderColor: '#3A8DFF',
-                color: 'white',
-                boxShadow: '0px 4px 8px rgba(58, 141, 255, 0.3)',
               }}
             >
               <BiPlus className="me-2" />
@@ -136,10 +121,7 @@ const MenuListPage = () => {
               className="d-flex align-items-center rounded-3"
               onClick={toggleGridView}
               style={{
-                padding: '10px 16px',
-                backgroundColor: '#f5f5f5',
-                borderColor: '#ddd',
-                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                backgroundColor: 'transparent',
               }}
             >
               {!isGridView ? (
@@ -155,24 +137,15 @@ const MenuListPage = () => {
           <div className="grid-view">
             <div className="row">
               {dishes?.length > 0 ? (
-                dishes.map((item, index) => (
-                  <div key={item.id} className="col-lg-3 mb-4 col-md-6">
-                    <div className="card shadow-sm" style={{ height: '380px' }}>
-                      <img src={item.image} alt={item.name} className="card-img-top"
+                dishes.map((item) => (
+                  <div key={item.id} className="col-lg-2 col-md-4 mb-4 rounded-3">
+                    <div className="card shadow-sm rounded-3" style={{ height: '380px' }}>
+                      <img src={item.image} alt={item.name} className="card-img-top rounded-3"
                         style={{ minHeight: '200px', maxHeight: '200px', objectFit: 'cover' }} />
                       <div className="card-body">
                         <h5 className="card-title">{item.name}</h5>
-                        <small>Giá: {formatCurrency(item.price)}</small>
+                        <small>Giá: {formatCurrency(item.price)} / Số lượng: {item.quantity}</small>
                         <p className="card-text">{item.description}</p>
-                        {/* <div className="d-flex align-items-center gap-2">
-                          <span>Trạng thái:</span>
-                          <Switch
-                            onChange={() => handleToggleStatus(item.id, item.status)}
-                            checked={item.status}
-                            offColor="#ccc"
-                            onColor="#4CAF50"
-                          />
-                        </div> */}
                         <div className="d-flex justify-content-between mt-2">
                           <BiEdit
                             size={16}
@@ -198,7 +171,7 @@ const MenuListPage = () => {
             </div>
           </div>
         ) : (
-          <Table striped bordered hover responsive className="shadow-sm rounded">
+          <Table hover responsive className="shadow-sm">
             <thead>
               <tr>
                 <th>STT</th>
@@ -217,7 +190,7 @@ const MenuListPage = () => {
                     <td>{index + 1}</td>
                     <td>
                       <img src={row.image} alt={row.name}
-                        style={{ minWidth: '250px', maxWidth: '100%', height: '100px' }} />
+                        style={{ maxWidth: '250px', width: '100%', height: '100px' }} />
                     </td>
                     <td>{row.name}</td>
                     <td>{formatCurrency(row.price)}</td>

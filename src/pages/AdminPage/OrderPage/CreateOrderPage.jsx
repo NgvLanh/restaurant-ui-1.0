@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
-import { Button, Form, Modal, Card } from "react-bootstrap";
+import { Button, Form, Card } from "react-bootstrap";
 import { BiPlus } from "react-icons/bi";
 import { useForm } from "react-hook-form";
 import { createOrderManualService, getAllOrdersWithTable } from "../../../services/OrderService/OrderService";
 import { formatDate, formatDateTime } from "../../../utils/FormatUtils";
-import { getTablesByBranchIdAndSeats } from "../../../services/TableService/TableService";
+import { getTablesByBranchIdAndDate } from "../../../services/TableService/TableService";
 import AlertUtils from "../../../utils/AlertUtils";
 import { getAllDishesPageable } from "../../../services/DishService/DishService";
 import OrderModal from "./Modals/OrderModal";
@@ -43,7 +43,7 @@ const CreateOrderPage = () => {
   };
 
   const fetchTables = async () => {
-    const response = await getTablesByBranchIdAndSeats(JSON.parse(localStorage.getItem('branch_info'))?.id);
+    const response = await getTablesByBranchIdAndDate(JSON.parse(localStorage.getItem('branch_info'))?.id, formatDate(selectDate));
     settables(response.data);
   };
 

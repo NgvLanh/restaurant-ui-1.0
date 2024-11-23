@@ -104,12 +104,13 @@ const TableLocationPage = () => {
                     </div>
                 </div>
 
-                <Table striped bordered hover responsive className="shadow-sm rounded">
+                <Table hover responsive className="shadow-sm">
                     <thead>
                         <tr>
                             <th className="text-center">STT</th>
                             <th className="text-center">Khu vực</th>
                             <th className="text-center">Vị trí</th>
+                            <th className="text-center">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,8 +118,8 @@ const TableLocationPage = () => {
                             zones?.map((row, index) => (
                                 <tr key={row.id} className="align-middle">
                                     <td className="text-center">{index + 1}</td>
-                                    <td>{row.name}</td>
-                                    <td>{row.address}</td>
+                                    <td className="text-center">{row.name}</td>
+                                    <td className="text-center">{row.address}</td>
                                     <td className="text-center">
                                         <span className="d-flex justify-content-center align-items-center gap-3" style={{ cursor: 'pointer' }}>
                                             <span onClick={() => {

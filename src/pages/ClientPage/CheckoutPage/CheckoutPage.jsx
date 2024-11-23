@@ -58,11 +58,10 @@ const CheckoutPage = () => {
         if (result) {
             const method = checkoutMethod === 'online' ? 'CONFIRMED' : 'PENDING';
             const request = {
-                user: userInfo,
-                address: defaultAddress,
-                branch: JSON.parse(localStorage.getItem('branch_info')),
-                discount: discountInfo || null,
-                table: null,
+                userId: userInfo?.id,
+                addressId: defaultAddress?.id,
+                branchId: JSON.parse(localStorage.getItem('branch_info'))?.id,
+                discountId: discountInfo || null,
                 orderStatus: method,
                 total: discountInfo?.discountMethod === 'PERCENTAGE'
                     ? calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0)

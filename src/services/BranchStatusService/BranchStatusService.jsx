@@ -20,22 +20,21 @@ export const createBranchStatus = async (request) =>
     });
 
 // Cập nhật một trạng thái theo ID
-export const updateBranchStatus = async (branchStatusId, request) => {
-    return response = await ApiRequest({
+export const updateBranchStatus = async (branchStatusId, request) =>
+    await ApiRequest({
         method: 'PATCH',
         path: `branch-status/${branchStatusId}`,
         data: request,
         headers: 'Bearer '
     });
-};
 
 // Xóa một trạng thái theo ID
 export const deleteBranchStatus = async (branchStatusId) => {
     return await ApiRequest({
-            method: 'DELETE',
-            path: `branch-status/${branchStatusId}`,
-            headers: 'Bearer '
-        });
+        method: 'DELETE',
+        path: `branch-status/${branchStatusId}`,
+        headers: 'Bearer '
+    });
 };
 
 // Lấy danh sách tất cả trạng thái

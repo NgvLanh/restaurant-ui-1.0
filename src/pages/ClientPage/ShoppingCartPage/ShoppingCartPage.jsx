@@ -80,7 +80,12 @@ const ShoppingCartPage = () => {
     };
     const handleUpdateQuantity = async (id, quantity) => {
         if (userInfo) {
-            await updateCartItemQuantity(id, quantity);
+            try {
+                await updateCartItemQuantity(id, quantity);
+            } catch (error) {
+                console.log(error);
+                AlertUtils.info(error.response?.data?.message);
+            }
             fetchUserCart();
         } else {
             const updateCart = localCart.map(e => {
@@ -96,7 +101,8 @@ const ShoppingCartPage = () => {
 
     const handleRemove = async (id) => {
         if (userInfo) {
-            await deleteCartItem(id);
+            const res = await deleteCartItem(id);
+            console.log(res);
             fetchUserCart();
         } else {
             const updateCart = localCart.filter(e => e.id !== id);
