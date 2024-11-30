@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Chart } from 'chart.js/auto';
 import { getMonthlyRevenue } from '../../../services/DashboardService/DashboardService';
+import AlertUtils from '../../../utils/AlertUtils';
 
 export default function SalesChart() {
     const canvasRef = useRef(null);
@@ -9,30 +10,24 @@ export default function SalesChart() {
     const [months, setMonths] = useState([]);
 
     useEffect(() => {
-        // Lấy dữ liệu doanh thu hàng tháng
-        const fetchMonthlyRevenue = async () => {
-            try {
-                const data = await getMonthlyRevenue(); // Dùng hàm getMonthlyRevenue thay cho getCountUser
-                const monthsFromAPI = data?.map((item) => item.thang);
-                const invoicesMonth = data?.map((item) => item.tong_doanh_thu);
-
-                setMonths(monthsFromAPI);
-                setMonthTotalData(invoicesMonth);
-
-            } catch (error) {
-                console.error("Lỗi lấy dữ liệu doanh thu:", error);
-            }
-        };
-
         fetchMonthlyRevenue();
     }, []);
 
+    const fetchMonthlyRevenue = async () => {
+        try {
+            const response = await getMonthlyRevenue();
+            const months = response.data?.map((item) => item.month);
+            const invoicesMonth = response.data?.map((item) => item.totalRevenue);
+            setMonths(months);
+            setMonthTotalData(invoicesMonth);
+        } catch (error) {
+            AlertUtils.info('Lỗi tải dữ liệu');
+        }
+    };
+
     useEffect(() => {
-        // Khởi tạo biểu đồ mới trên canvas chỉ khi có dữ liệu
         if (months.length > 0 && InvoicesMonthData.length > 0) {
             const ctx = canvasRef.current.getContext('2d');
-
-            // Khởi tạo biểu đồ mới trên canvas
             chartRef.current = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -72,14 +67,12 @@ export default function SalesChart() {
                 },
             });
         }
-
-        // Hủy biểu đồ khi component bị gỡ bỏ hoặc khi biểu đồ cần được làm mới
         return () => {
             if (chartRef.current) {
                 chartRef.current.destroy();
             }
         };
-    }, [InvoicesMonthData, months]); // Sử dụng state để làm mới biểu đồ
+    }, [InvoicesMonthData, months]);
 
     return <canvas ref={canvasRef} />;
 }

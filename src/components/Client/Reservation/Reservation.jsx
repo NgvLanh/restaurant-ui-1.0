@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { getAllBranches } from "../../../services/BranchService/BranchService";
 import SelectTableReservation from "../SelectTableReservation/SelectTableReservation";
+import AlertUtils from "../../../utils/AlertUtils";
+import { useNavigate } from "react-router-dom";
 
 const Reservation = () => {
     const [branches, setBranches] = useState([]);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
     const [showModal, setShowModal] = useState(false);
     const [dataRequest, setDataRequest] = useState();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchBranch();
@@ -21,6 +24,11 @@ const Reservation = () => {
         setShowModal(true)
         setDataRequest(data);
     };
+
+    const handleChangeBranch = async (value) => {
+        const branch = branches?.find(e => e.id === parseInt(value))
+        localStorage.setItem('branch_info', JSON.stringify(branch));
+    }
 
     return (
         <div className="container-fluid bg-light overflow-hidden my-5 px-lg-0">
@@ -41,7 +49,11 @@ const Reservation = () => {
                                 <div className="row g-3">
                                     <div className="col-12 col-sm-6">
                                         <div className="form-floating">
-                                            <select className="form-select border-0" {...register("branch", { required: "Vui lòng chọn chi nhánh" })} id="floatingBranch" style={{ height: '55px' }}>
+                                            <select className="form-select border-0"
+                                                {...register("branch", { required: "Vui lòng chọn chi nhánh" })}
+                                                onChange={(e) => handleChangeBranch(e.target.value)}
+                                                defaultValue={JSON.parse(localStorage.getItem('branch_info'))?.id}
+                                                id="floatingBranch">
                                                 {branches?.map((branch) => (
                                                     <option key={branch.id} value={branch.id}>{branch.name}</option>
                                                 ))}
@@ -106,9 +118,6 @@ const Reservation = () => {
                                                         const [hours, minutes] = value.split(":").map(Number);
                                                         if (hours < 9 || (hours === 21 && minutes > 0) || hours > 21) {
                                                             return "Thời gian phải nằm trong khoảng 09:00 AM - 09:00 PM";
-                                                        }
-                                                        if (minutes % 5 !== 0) {
-                                                            return "Thời gian phải không được là phút lẻ";
                                                         }
                                                         return true;
                                                     },

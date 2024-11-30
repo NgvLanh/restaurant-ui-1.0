@@ -70,10 +70,16 @@ const CreateReservationModal = ({ showModal, setShowModal, selectTables, selecte
                         <Form.Label>Thời gian đặt</Form.Label>
                         <Form.Control
                             type="time"
-                            // defaultValue={formatTime(new Date())}
                             placeholder="Chọn thời gian đặt"
                             {...register("startTime", {
                                 required: "Vui lòng chọn thời gian đặt",
+                                validate: value => {
+                                    const selectedTime = new Date();
+                                    const [hours, minutes] = value.split(":");
+                                    selectedTime.setHours(Number(hours), Number(minutes), 0, 0);
+
+                                    return selectedTime <= new Date() ? "Thời gian đặt phải lớn hơn thời gian hiện tại" : true;
+                                }
                             })}
                             isInvalid={!!errors.startTime}
                         />

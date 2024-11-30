@@ -145,7 +145,6 @@ const UserInfoPage = () => {
                                                 placeholder="Nhập tên người dùng"
                                                 {...register("fullName", { required: "Vui lòng nhập tên người dùng" })}
                                                 isInvalid={!!errors.fullName}
-                                                className="border-light"
                                             />
                                             <Form.Control.Feedback type="invalid">
                                                 {errors.fullName?.message}
@@ -161,7 +160,6 @@ const UserInfoPage = () => {
                                                 disabled
                                                 value={user?.email}
                                                 placeholder="Nhập email"
-                                                className="border-light"
                                                 {...register("email")}
                                             />
                                         </Form.Group>
@@ -176,7 +174,6 @@ const UserInfoPage = () => {
                                                 placeholder="Nhập số điện thoại"
                                                 {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại" })}
                                                 isInvalid={!!errors.phoneNumber}
-                                                className="border-light"
                                             />
                                             <Form.Control.Feedback type="invalid">
                                                 {errors.phoneNumber?.message}
@@ -197,7 +194,7 @@ const UserInfoPage = () => {
                     {/* Ảnh đại diện */}
                     <Col md={6} className="mb-4">
                         <Card className="p-4 border-0 shadow rounded text-center">
-                            <Form.Group>
+                            <Form.Group className="d-flex flex-column-reverse">
                                 <Form.Label className="fw-semibold fs-5 text-secondary">
                                     Ảnh đại diện
                                 </Form.Label>

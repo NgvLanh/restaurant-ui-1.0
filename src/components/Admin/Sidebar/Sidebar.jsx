@@ -85,22 +85,23 @@ const Sidebar = ({ isCollapsed }) => {
                     // }
                 ],
             },
-            {
-                title: "Món ăn",
-                url: "/admin/menu",
-                icon: <i className="fas fa-hotdog"></i>,
-                isActive: false,
-                items: [
-                    {
-                        title: "Danh sách món ăn",
-                        url: "/admin/menu",
-                    },
-                    {
-                        title: "Danh mục món ăn",
-                        url: "/admin/menu/categories",
-                    },
-                ],
-            },
+            ...(getRoles === "ADMIN" || getRoles === "NON_ADMIN" ? [
+                {
+                    title: "Món ăn",
+                    url: "/admin/menu",
+                    icon: <i className="fas fa-hotdog"></i>,
+                    isActive: false,
+                    items: [
+                        {
+                            title: "Danh sách món ăn",
+                            url: "/admin/menu",
+                        },
+                        {
+                            title: "Danh mục món ăn",
+                            url: "/admin/menu/categories",
+                        },
+                    ],
+                }] : []),
             {
                 title: "Hoá đơn",
                 url: "/admin/orders",
@@ -120,18 +121,19 @@ const Sidebar = ({ isCollapsed }) => {
                     // }
                 ],
             },
-            {
-                title: "Giảm giá",
-                url: "/admin/discounts",
-                icon: <i className="fas fa-tags"></i>,
-                items: [
-                    {
-                        title: "Phiếu giảm giá",
-                        url: "/admin/discounts",
-                    }
-                ],
-            },
-            {
+            ...(getRoles === "ADMIN" || getRoles === "NON_ADMIN" ? [
+                {
+                    title: "Giảm giá",
+                    url: "/admin/discounts",
+                    icon: <i className="fas fa-tags"></i>,
+                    items: [
+                        {
+                            title: "Phiếu giảm giá",
+                            url: "/admin/discounts",
+                        }
+                    ],
+                }] : []),
+            ...(getRoles === "ADMIN" || getRoles === "NON_ADMIN" ? [{
                 title: "Nhân viên",
                 url: "/admin/users",
                 icon: <i className="fas fa-user"></i>,
@@ -142,7 +144,7 @@ const Sidebar = ({ isCollapsed }) => {
                         url: "/admin/employee",
                     },
                 ],
-            },
+            }] : []),
             // {
             //     title: "Cài đặt",
             //     url: "/admin/settings",
@@ -167,22 +169,22 @@ const Sidebar = ({ isCollapsed }) => {
                         title: "Tổng số bàn đã đặt",
                         url: "/admin/statistical-table",
                     },
-                    {
-                        title: "Tống số khách hàng mới theo tháng",
-                        url: "/admin/statistical-customer",
-                    },
+                    // {
+                    //     title: "Tống số khách hàng mới theo tháng",
+                    //     url: "/admin/statistical-customer",
+                    // },
                     {
                         title: "Tổng số hóa đơn",
                         url: "/admin/statistical-invoice",
                     },
-                    {
-                        title: "Tổng số chi nhánh",
-                        url: "/admin/statistical-branch",
-                    },
-                    {
-                        title: "Tổng số giảm giá hiện có",
-                        url: "/admin/statistical-discount",
-                    }
+                    // {
+                    //     title: "Tổng số chi nhánh",
+                    //     url: "/admin/statistical-branch",
+                    // },
+                    // {
+                    //     title: "Tổng số giảm giá hiện có",
+                    //     url: "/admin/statistical-discount",
+                    // }
                 ],
             },
         ],

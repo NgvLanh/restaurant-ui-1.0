@@ -1,64 +1,44 @@
 import { Bar } from "react-chartjs-2";
 import { Col, Card, Table } from "react-bootstrap";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, BarElement, PointElement, LineElement } from "chart.js";
 import { useEffect, useState } from "react";
-import { getCountTableReversion } from "../../../services/Statistics/Statistics";
-
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement
-);
+import { getReversionByWeek } from "../../../services/Statistics/Statistics";
 
 const StatisticalTablePage = () => {
-  const [TableData, setTableData] = useState([]);
-  const [months, setMonths] = useState([]);
+  ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, BarElement, PointElement, LineElement);
+  const [week, setWeek] = useState(null);
 
   useEffect(() => {
-    const fetchTableData = async () => {
-      try {
-        const data = await getCountTableReversion();
-        const monthsFromAPI = data?.map((item) => item.date);
-        const tableCounts = data?.map((item) => item.total_reservations);
-
-        setMonths(monthsFromAPI);
-        setTableData(tableCounts);
-      } catch (error) {
-        console.error("Lỗi lấy dữ liệu bảng:", error);
-      }
-    };
-    fetchTableData();
+    fetchReservationWeekly();
   }, []);
 
-  const barDataTable = {
-    labels: months.map((date) => `Tháng: ${date}`),
+  const fetchReservationWeekly = async () => {
+    const response = await getReversionByWeek();
+    setWeek(response?.data?.map(e => e[1]));
+  }
+
+  const mockBarDataWeek = {
+    labels: [
+      "Thứ 2",
+      "Thứ 3",
+      "Thứ 4",
+      "Thứ 5",
+      "Thứ 6",
+      "Thứ 7",
+      "Chủ nhật",
+    ],
     datasets: [
       {
         label: "Số bàn đã đặt",
-        data: TableData,
+        data: week || [],
         backgroundColor: [
-          "rgba(255, 99, 132, 0.8)",
-          "rgba(54, 162, 235, 0.8)",
-          "rgba(255, 206, 86, 0.8)",
-          "rgba(75, 192, 192, 0.8)",
-          "rgba(153, 102, 255, 0.8)",
-          "rgba(255, 159, 64, 0.8)",
-          "rgba(201, 203, 207, 0.8)",
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 205, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(153, 102, 255, 0.6)",
+          "rgba(255, 127, 80, 0.6)",
+          "rgba(211, 211, 211, 0.6)",
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
@@ -85,7 +65,7 @@ const StatisticalTablePage = () => {
           <Card.Header className="p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent" style={{ border: "0px" }}>
             <div className="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <Bar
-                data={barDataTable}
+                data={mockBarDataWeek}
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
@@ -107,7 +87,9 @@ const StatisticalTablePage = () => {
             <hr className="dark horizontal" />
             <div className="d-flex">
               <p className="mb-0 text-sm" style={{ fontWeight: "inherit", color: "#342E37" }}>
-                Tổng số bàn đã đặt trong tuần
+                Tổng số bàn đã đặt trong tuần {week?.length > 0 && week?.reduce((accumulator, currentValue) => {
+                  return accumulator + currentValue;
+                }, 0)}
               </p>
             </div>
           </Card.Body>
@@ -128,10 +110,10 @@ const StatisticalTablePage = () => {
                 </tr>
               </thead>
               <tbody>
-                {months.map((label, index) => (
+                {mockBarDataWeek.labels.map((label, index) => (
                   <tr key={index}>
                     <td>{label}</td>
-                    <td>{TableData[index]}</td>
+                    <td>{mockBarDataWeek.datasets[0].data[index]}</td>
                   </tr>
                 ))}
               </tbody>

@@ -6,6 +6,8 @@ import AlertUtils from '../../../utils/AlertUtils';
 import { useCookies } from 'react-cookie';
 import { asyncCartService } from '../../../services/CartService/CartService'
 import { getAllBranches, getBranchByUserId } from '../../../services/BranchService/BranchService';
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 const LoginForm = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -66,6 +68,7 @@ const LoginForm = () => {
         } else {
             navigate('/home');
         }
+        navigate(0);
     };
 
 
@@ -127,11 +130,11 @@ const LoginForm = () => {
                         <div className="mb-1">
                             <button type="submit" className="btn btn-primary w-100">Đăng Nhập</button>
                         </div>
-                        <div className="mb-3">
+                        {/* <div className="mb-3">
                             <button className="btn btn-primary w-100">
                                 <span><i className="fa bi-google me-2"></i>Đăng nhập với Google</span>
                             </button>
-                        </div>
+                        </div> */}
                         <div className="mt-2">
                             <div className="d-flex justify-content-between align-items-center mx-2">
                                 <Link to="/register">Chưa có tài khoản?</Link>
@@ -144,7 +147,7 @@ const LoginForm = () => {
                 {/* Image Section */}
                 <div className="col-md-6">
                     <img
-                        src="https://via.placeholder.com/500x500"
+                        src="src/assets/img/quote.jpg"
                         alt="Login Illustration"
                         className="img-fluid rounded"
                     />

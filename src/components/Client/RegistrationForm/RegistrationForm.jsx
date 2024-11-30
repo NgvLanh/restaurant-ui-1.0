@@ -28,7 +28,7 @@ const RegistrationForm = () => {
                 {/* Image Section */}
                 <div className="col-md-6">
                     <img
-                        src="https://via.placeholder.com/500x500"
+                        src="src/assets/img/carousel-1.jpg"
                         alt="Registration"
                         className="img-fluid rounded h-100"
                     />

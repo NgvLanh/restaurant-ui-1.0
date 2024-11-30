@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import AlertUtils from "../../../../utils/AlertUtils";
 
-const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
+const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
   const {
     register,
     handleSubmit,
@@ -40,12 +41,13 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
     }
   }, [initialValues]);
 
-  // Xử lý sự kiện gửi form
   const onSubmit = (data) => {
-    data = {
-      ...data,
-      branch: JSON.parse(localStorage.getItem("branch_info")),
-    };
+    data.discountMethod = data.discountMethod === '' ? 'FIXED_AMOUNT' : 'PERCENTAGE';
+    if (data.discountMethod === 'FIXED_AMOUNT' && data.quota < data.value) {
+      AlertUtils.info('Giá trị phải lớn hơn hạn mức khi giảm giá trừ tiền (đ)');
+    } else if (data.discountMethod === 'PERCENTAGE' && data.value > 100) {
+      AlertUtils.info('Giá trị giảm phần trăm không được vượt 100%');
+    }
     handleData(data);
   };
 
@@ -85,7 +87,7 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
   };
 
   return (
-    <Modal show={showModal} onHide={() => closeModal(false)} centered>
+    <Modal show={showModal} onHide={() => closeModal(false)} centered size="lg">
       <Modal.Header closeButton>
         <Modal.Title>
           {initialValues ? "Cập nhật mã giảm giá" : "Thêm mã giảm giá"}
@@ -93,8 +95,8 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row className="mb-3">
-            <Col xs={12}>
+          <Row>
+            <Col xs={6} className="mb-1">
               <Form.Group controlId="code">
                 <Form.Label>Mã giảm</Form.Label>
                 <Form.Control
@@ -114,9 +116,7 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col xs={12}>
+            <Col xs={6} className="mb-1">
               <Form.Group controlId="quantity">
                 <Form.Label>Số lượng</Form.Label>
                 <Form.Control
@@ -134,9 +134,7 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col xs={12}>
+            <Col xs={6} className="mb-1">
               <Form.Group controlId="startDate">
                 <Form.Label>Ngày áp dụng</Form.Label>
                 <Form.Control
@@ -163,10 +161,7 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-          </Row>
-
-          <Row className="mb-3">
-            <Col xs={12}>
+            <Col xs={6} className="mb-1">
               <Form.Group controlId="endDate">
                 <Form.Label>Ngày kết thúc</Form.Label>
                 <Form.Control
@@ -197,50 +192,48 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-          </Row>
-
-          <Row className="mb-3">
-            <Col xs={12}>
-              <Form.Group controlId="discountMethod">
-                <Form.Label>Phương thức</Form.Label>
-                <Form.Select
-                  {...register("discountMethod", {
-                    required: "Vui lòng chọn phương thức",
-                  })}
-                  isInvalid={errors.discountMethod}
-                >
-                  <option value="">Chọn loại giảm giá</option>
-                  <option value="PERCENTAGE">Giảm giá phần trăm</option>
-                  <option value="FIXED_AMOUNT">Giảm giá tiền</option>
-                </Form.Select>
+            <Col xs={6} className="mb-1">
+              <Form.Group controlId="discount">
+                <Form.Label>Giá trị và phương thức</Form.Label>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Form.Control
+                    type="number"
+                    placeholder="Nhập giá trị"
+                    style={{ flex: 1 }}
+                    {...register("value", {
+                      required: "Giá trị không được để trống",
+                      min: {
+                        value: 1,
+                        message: "Hạn mức phải từ 1 trở lên",
+                      },
+                      valueAsNumber: true,
+                    })}
+                    isInvalid={errors.value}
+                  />
+                  <Form.Select
+                    {...register("discountMethod")}
+                    style={{ flexBasis: "70px", marginLeft: "" }}
+                  >
+                    <option value="">đ</option>
+                    <option value="PERCENTAGE">%</option>
+                  </Form.Select>
+                </div>
                 <Form.Control.Feedback type="invalid">
-                  {errors.discountMethod?.message}
+                  {errors.value?.message}
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col xs={12}>
+            <Col xs={6} className="mb-1">
               <Form.Group controlId="quota">
                 <Form.Label>Hạn mức</Form.Label>
                 <Form.Control
                   type="number"
-                  placeholder="Nhập số lượng"
+                  placeholder="Nhập hạn mức"
                   {...register("quota", {
                     required: "Hạn mức không được để trống",
                     min: {
                       value: 1000,
                       message: "Hạn mức phải từ 1000 trở lên",
-                    },
-                    validate: {
-                      lessThanValue: (value) => {
-                        const valueField = watch("value");
-                        return (
-                          !valueField || 
-                          parseInt(value) < parseInt(valueField) ||
-                          "Hạn mức phải nhỏ hơn Giá trị"
-                        );
-                      },
                     },
                     valueAsNumber: true,
                   })}
@@ -252,39 +245,14 @@ const TableModal =  ({ showModal, closeModal, initialValues, handleData }) => {
               </Form.Group>
             </Col>
           </Row>
-
-          <Row className="mb-3">
-            <Col xs={12}>
-              <Form.Group controlId="value">
-                <Form.Label>Giá trị</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Nhập giá trị"
-                  {...register("value", {
-                    required: "Giá trị không được để trống",
-                    min: {
-                      value: 1000,
-                      message: "Giá trị phải từ 1000 trở lên",
-                    },
-                    valueAsNumber: true,
-                  })}
-                  isInvalid={errors.value}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.value?.message}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <div className="d-flex justify-content-end gap-3">
+          <Modal.Footer className="d-flex justify-content-end">
             <Button type="button" variant="secondary" onClick={handleReset}>
               Reset
             </Button>
             <Button type="submit" variant="primary">
               Lưu
             </Button>
-          </div>
+          </Modal.Footer>
         </Form>
       </Modal.Body>
     </Modal>

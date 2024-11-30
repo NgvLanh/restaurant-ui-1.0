@@ -4,7 +4,7 @@ import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import { Form, Table } from "react-bootstrap";
 import { getAllOrders, updateOrderStatusService } from "../../../services/OrderService/OrderService";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
-import { formatDateTime } from "../../../utils/FormatUtils";
+import { formatCurrency, formatDateTime } from "../../../utils/FormatUtils";
 
 const OrderStatus = new Map([
   ["READY_TO_SERVE", "Chưa thanh toán"],
@@ -29,7 +29,7 @@ const OrderListPageForEatAtRes = () => {
     try {
       const response = await getAllOrders(selectedStatus, currentPage, pageSize);
       setTotalPages(response.data.totalPages || 1);
-      setOrder(response.data.content);
+      setOrder(response.data.content?.filter(e => e.address == null));
     } catch (error) {
       AlertUtils.error("Không thể tải danh sách đơn hàng.");
     }
@@ -42,7 +42,7 @@ const OrderListPageForEatAtRes = () => {
 
   return (
     <>
-      <PageHeader title="Trạng thái hóa đơn ăn tại nhà hàng" />
+      <PageHeader title="Hóa đơn ăn tại nhà hàng" />
 
       <div className="bg-white shadow-lg p-4 rounded-4">
         <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
@@ -69,28 +69,46 @@ const OrderListPageForEatAtRes = () => {
               <th className="text-center">Trạng thái</th>
               <th className="text-center">Khách hàng</th>
               <th className="text-center">Số điện thoại</th>
+              <th className="text-center">Tổng tiền</th>
             </tr>
           </thead>
           <tbody>
             {order?.length > 0 ? (
-              order?.map((row, index) => {
-                if (row.address) return null;
+              order.map((row, index) => {
                 return (
                   <tr key={row.id} className="align-middle border-bottom">
                     <td className="text-center fw-bold">{index + 1}</td>
                     <td>{formatDateTime(row.time)}</td>
                     <td className="text-center">
-                      {row.orderStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                      <span
+                        className="rounded-3 badge p-2"
+                        style={{
+                          padding: '5px 10px',
+                          color: 'white',
+                          background:
+                            row.orderStatus === 'PAID'
+                              ? '#216a3e'
+                              : row.orderStatus === 'CANCELLED'
+                                ? '#8b1a1a'
+                                : '#b38f1d',
+                        }}
+                      >
+                        {row.orderStatus === 'PAID'
+                          ? 'Đã thanh toán'
+                          : row.orderStatus === 'CANCELLED'
+                            ? 'Đã huỷ'
+                            : 'Chưa thanh toán'}
+                      </span>
                     </td>
                     <td className="text-center">{row.fullName}</td>
                     <td className="text-center">{row.phoneNumber}</td>
-                    <td className="text-center">{row.address}</td>
+                    <td className="text-center">{row.total > 0 && formatCurrency(row.total)}</td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan="6" className="text-center py-3">
+                <td colSpan="6" className="text-center py-4">
                   Không có dữ liệu
                 </td>
               </tr>

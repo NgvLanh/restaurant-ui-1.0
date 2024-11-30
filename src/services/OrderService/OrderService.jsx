@@ -1,22 +1,22 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
-export const orderOffLineService = async (request) =>
-    await ApiRequest({
+export const orderOffLineService = async (request) => {
+    return await ApiRequest({
         method: 'post',
         path: 'orders',
         data: request,
         headers: 'Bearer '
     });
+}
 
-
-export const orderOnLineService = async (request) =>
-    await ApiRequest({
+export const orderOnLineService = async (request) => {
+    return await ApiRequest({
         method: 'post',
         path: 'orders',
         data: request,
         headers: 'Bearer '
     });
-
+}
 
 export const getAllOrders = async (orderStatus = "", currentPage, pageSize) => {
     const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
@@ -27,28 +27,22 @@ export const getAllOrders = async (orderStatus = "", currentPage, pageSize) => {
     });
 };
 
-export const updateOrderStatusService = async (orderId) =>
-    await ApiRequest({
+export const updateOrderStatusService = async (orderId) => {
+    return await ApiRequest({
         method: 'PATCH',
         path: `orders/${orderId}`,
         headers: 'Bearer ',
     });
 
-
+}
 export const cancelOrderStatusService = async (orderId) => {
-    try {
-        const response = await ApiRequest({
-            method: 'PATCH',
-            path: `orders/${orderId}/cancel`,
-            headers: 'Bearer ',
-        });
+    const response = await ApiRequest({
+        method: 'PATCH',
+        path: `orders/${orderId}/cancel`,
+        headers: 'Bearer ',
+    });
+    return response?.data;
 
-        // Đảm bảo trả về đúng cấu trúc
-        return response?.data || response;
-    } catch (error) {
-        console.error("Lỗi khi cập nhật trạng thái:", error);
-        throw error;
-    }
 };
 
 export const getAllOrdersByUserId = async (orderStatus) => {
@@ -60,13 +54,13 @@ export const getAllOrdersByUserId = async (orderStatus) => {
     });
 };
 
-export const cancelOrder = async (orderId, reason) =>
-    await ApiRequest({
+export const cancelOrder = async (orderId, reason) => {
+    return await ApiRequest({
         method: 'patch',
         path: `orders/cancel/${orderId}?reason=${reason}`,
         headers: `Bearer `
     });
-
+}
 
 export const getAllOrdersWithTable = async (date) => {
     const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
@@ -76,17 +70,19 @@ export const getAllOrdersWithTable = async (date) => {
     });
 }
 
-export const createOrderManualService = async (data) =>
-    await ApiRequest({
+export const createOrderManualService = async (data) => {
+    return await ApiRequest({
         method: 'post',
         path: `orders/manual`,
         data: data,
         headers: `Bearer `
     });
+}
 
-export const updateServedOrder = async (orderId, total) =>
-    await ApiRequest({
+export const updateServedOrder = async (orderId, total) => {
+    return await ApiRequest({
         method: 'PATCH',
         path: `orders/served/${orderId}/${total}`,
         headers: 'Bearer ',
     });
+}

@@ -1,55 +1,55 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
-// Lấy danh sách tất cả bàn
-const getAllTables = async () => {
+export const getAllTables = async () => {
     const response = await ApiRequest({
         path: 'tables',
     });
     return response?.data?.content;
 };
 
-// Tạo mới một bàn
-const createTable = async (request) =>
-    await ApiRequest({
+export const createTable = async (request) => {
+    return await ApiRequest({
         method: 'POST',
         path: 'tables',
         data: request,
         headers: 'Bearer '
     });
+}
 
-// Cập nhật một bàn theo ID
-const updateTable = async (tableId, request) =>
-    await ApiRequest({
+export const updateTable = async (tableId, request) => {
+    return await ApiRequest({
         method: 'PATCH',
         path: `tables/${tableId}`,
         data: request,
         headers: 'Bearer '
     });
+}
 
-
-// Xóa một bàn theo ID
-const deleteTable = async (tableId) =>
-    await ApiRequest({
+export const deleteTable = async (tableId) => {
+    return await ApiRequest({
         method: 'DELETE',
         path: `tables/${tableId}`,
         headers: 'Bearer '
     });
+}
 
-
-// Lấy danh sách tất cả bàn
-const getAllTablesPageable = async (currentPage, pageSize) => {
+export const getAllTablesPageable = async (currentPage, pageSize) => {
+    const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
     return await ApiRequest({
-        path: `tables?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
+        path: `tables?branch=${branchId}&page=${currentPage}&size=${pageSize}`,
     });
 };
 
-// Lấy bàn để chọn đặt bàn
-export const getTablesByBranchIdAndDate = async (branchId, date) =>
-    await ApiRequest({
+export const getTablesByBranchIdAndDate = async (branchId, date) => {
+    return await ApiRequest({
         path: `tables/reservations?branch=${branchId}&date=${date}`,
     });
+};
 
+export const getTablesByZoneId = async (zoneId) => {
+    const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
+    return await ApiRequest({
+        path: `tables?branch=${branchId}&zoneId=${zoneId}`,
+    });
+};
 
-
-
-export { getAllTables, createTable, updateTable, deleteTable, getAllTablesPageable };

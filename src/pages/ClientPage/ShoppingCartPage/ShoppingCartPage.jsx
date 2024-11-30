@@ -20,6 +20,7 @@ const ShoppingCartPage = () => {
 
     const [addresses, setAddresses] = useState([]);
     const [discountCode, setDiscountCode] = useState("");
+    const [discount, setDiscount] = useState(JSON.parse(localStorage.getItem('discount_info')));
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -79,25 +80,33 @@ const ShoppingCartPage = () => {
         checkAllSelect();
     };
     const handleUpdateQuantity = async (id, quantity) => {
+
+        if (quantity > 20) {
+            AlertUtils.info('Bạn chỉ có thể thêm tối đa là 20 sản phẩm');
+            return;
+        }
+
         if (userInfo) {
             try {
                 await updateCartItemQuantity(id, quantity);
+                fetchUserCart();
             } catch (error) {
                 console.log(error);
-                AlertUtils.info(error.response?.data?.message);
+                AlertUtils.info(error.response?.data?.message || 'Lỗi không xác định');
             }
-            fetchUserCart();
         } else {
             const updateCart = localCart.map(e => {
                 if (e.id === id) {
-                    return { ...e, quantity: quantity };
+                    return { ...e, quantity };
                 }
                 return e;
             });
+
             setLocalCart(updateCart);
             localStorage.setItem('cart_temps', JSON.stringify(updateCart));
         }
     };
+
 
     const handleRemove = async (id) => {
         if (userInfo) {
@@ -154,7 +163,6 @@ const ShoppingCartPage = () => {
     };
 
     const handlePlaceOrder = () => {
-
         if (userInfo) {
             const userAdress = addresses?.find((e) => e.id === parseInt(selectedAddress));
             setSelectedAddress(userAdress);
@@ -173,33 +181,26 @@ const ShoppingCartPage = () => {
     };
 
     const handleDiscount = async (code) => {
-        const response = await checkDiscount(code);
-        if (response?.status) {
-            localStorage.setItem('discount_info', JSON.stringify(response?.data))
-            if (new Date(response?.data?.endDate) < new Date()) {
-                AlertUtils.info('Mã giảm giá này đã hết hạn');
-            } else if (response?.data?.quantity == 0) {
-                AlertUtils.info('Số lượng giảm giá này đã hết');
-            } else if (response?.data?.quota > total) {
-                AlertUtils.info(`Đơn hàng của bạn cần từ ${formatCurrency(response?.data?.quota)} mới dùng được giảm giá này`);
-            } else {
-                AlertUtils.success(`Áp mã giảm giá thành công 
-                    ${response?.data?.discountMethod === 'FIXED_AMOUNT'
-                        ? `-${formatCurrency(response?.data?.value)}` : `${response?.data?.value}%`} `);
+        try {
+            const response = await checkDiscount(code);
+            if (response?.status) {
+                if (response.data?.quota > total) {
+                    AlertUtils.info(`Hoá đơn từ ${formatCurrency(response.data?.quota)} mới dùng được giảm giá này`);
+                } else {
+                    AlertUtils.success(`Áp mã giảm giá thành công 
+                        ${response?.data?.discountMethod === 'FIXED_AMOUNT'
+                            ? `-${formatCurrency(response?.data?.value)}` : `${response?.data?.value}%`} `);
+                    localStorage.setItem('discount_info', JSON.stringify(response?.data))
+                    setDiscount(response?.data);
+                }
+                setShowDiscountModal(false);
             }
-            setShowDiscountModal(false);
-            console.log(code, showDiscountModal);
-        } else {
-            AlertUtils.info('Mã giảm giá không đúng');
+        } catch (error) {
+            AlertUtils.info(error.response?.data?.message);
         }
 
     }
 
-    const confirmOrder = (data) => {
-        alert('Đặt hàng thành công!');
-        console.log(data);
-        setShowOrderModal(false);
-    };
 
     return (
         <>
@@ -246,8 +247,12 @@ const ShoppingCartPage = () => {
                         <div className="row">
                             {userInfo &&
                                 <div className="row mb-2 align-items-center">
-                                    <div className="col-md-10 d-flex d-flex justify-content-end">
-                                        Giảm giá
+                                    <div className="col-md-10 d-flex justify-content-end">
+                                        Giảm giá {localCart?.length > 0 && (
+                                            discount?.discountMethod === 'FIXED_AMOUNT'
+                                                ? `-${formatCurrency(discount?.value)}`
+                                                : `${discount?.value}%`
+                                        )}
                                     </div>
                                     <div className="col-md-2 d-flex justify-content-end">
                                         <button className="btn btn-ghost border border-2 w-100"

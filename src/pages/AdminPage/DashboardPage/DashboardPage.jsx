@@ -174,7 +174,7 @@ const DashboardPage = () => {
                                 <tbody>
                                     {orders?.length > 0 ? (
                                         orders
-                                            ?.slice(-5)
+                                            ?.slice(0, 5)
                                             ?.map((row, index) => (
                                                 <tr key={row.id}>
                                                     <td>{index + 1}</td>
@@ -190,9 +190,10 @@ const DashboardPage = () => {
                                                             {row.orderStatus === 'PAID' ? 'Đã thanh toán' :
                                                                 row.orderStatus === 'PENDING' ? 'Chờ xác nhận' :
                                                                     row.orderStatus === 'CONFIRMED' ? 'Đã xác nhận' :
-                                                                        row.orderStatus === 'CANCELLED' ? 'Đã huỷ' :
-                                                                            row.orderStatus === 'READY_TO_SERVE' ? 'Đang phục vụ' :
-                                                                                'Không xác định'}
+                                                                        row.orderStatus === 'DELIVERED' ? 'Đã giao' :
+                                                                            row.orderStatus === 'CANCELLED' ? 'Đã huỷ' :
+                                                                                row.orderStatus === 'READY_TO_SERVE' ? 'Đang phục vụ' :
+                                                                                    `${row.orderStatus}`}
                                                         </span>
                                                     </td>
                                                     <td>

@@ -39,7 +39,6 @@ const BranchStatusPage = () => {
     if (initialValues) {
       try {
         const response = await updateBranchStatus(initialValues?.id, data);
-        console.log(response);
         if (response?.status) {
           AlertUtils.success('Cập nhật trạng thái thành công!');
           setShowModal(false);

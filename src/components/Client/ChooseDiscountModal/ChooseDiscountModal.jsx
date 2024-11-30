@@ -10,7 +10,7 @@ const ChooseDiscountModal = ({ showModal, setShowModal, handle }) => {
             AlertUtils.info('Vui lòng nhập mã giảm giá');
         } else {
             handle(discountCode);
-            discountCode('');
+            // discountCode('');
         }
     }
 

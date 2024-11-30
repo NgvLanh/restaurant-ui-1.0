@@ -2,36 +2,41 @@ import { useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Button, Form, Table } from "react-bootstrap";
-import { BiPlus } from "react-icons/bi";
+import { BiEdit, BiPlus } from "react-icons/bi";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader"
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
-import { debounce } from "../../../utils/Debounce";
 import AlertUtils from "../../../utils/AlertUtils";
-import { createTable, deleteTable, getAllTablesPageable, updateTable } from "../../../services/TableService/TableService";
+import { createTable, deleteTable, getAllTablesPageable, getTablesByZoneId, updateTable } from "../../../services/TableService/TableService";
 import TableModal from "./Modals/TableModal";
-import { CiEdit, CiViewList, CiViewTable } from "react-icons/ci";
-import { GoTrash } from "react-icons/go";
+import { CiViewList, CiViewTable } from "react-icons/ci";
+import { MdDelete } from "react-icons/md";
+import { getAllZonesPageable } from "../../../services/zoneservice/ZoneService";
 
 
 const TableListPage = () => {
-
+    const [zones, setZones] = useState([]);
     const [tables, settables] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState({});
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
-    const [viewMode, setViewMode] = useState('card');
-
+    const [viewMode, setViewMode] = useState('list');
 
     useEffect(() => {
         fetchtables();
+        fetchZones();
     }, [currentPage]);
 
     const fetchtables = async () => {
         const response = await getAllTablesPageable(currentPage, pageSize);
         setTotalPages(response?.data?.totalPages);
         settables(response?.data?.content);
+    }
+
+    const fetchZones = async () => {
+        const response = await getAllZonesPageable();
+        setZones(response?.data?.content);
     }
 
     const handleModalSubmit = async (data) => {
@@ -74,6 +79,11 @@ const TableListPage = () => {
         setCurrentPage(0);
     }
 
+    const feichTablesByZoneId = async (zoneId) => {
+        const response = await getTablesByZoneId(zoneId);
+        settables(response.data?.content);
+    }
+
 
     return (
         <>
@@ -81,18 +91,17 @@ const TableListPage = () => {
 
             <div className="bg-white shadow-lg p-4 rounded-4">
                 <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-                    <Form.Select
-                        onChange={(e) => {}}
-                        style={{
-                            maxWidth: '350px',
-                        }}
-                        className="rounded-3"
-                    >
-                        <option value="">Tất cả</option>
-                        <option value="1">Trống</option>
-                        <option value="2">Đẵ đặt</option>
-                    </Form.Select>
-
+                    <div>
+                        {zones?.length > 0 &&
+                            <Form.Select className="rounded-3"
+                                onChange={(e) => feichTablesByZoneId(e.target.value)}>
+                                <option value={0}>Tất cả</option>
+                                {zones?.map(zone => (
+                                    <option key={zone.id} value={zone.id}>{zone.name} / {zone.address}</option>
+                                ))}
+                            </Form.Select>
+                        }
+                    </div>
                     <div className="action d-flex gap-2">
                         <Button
                             className="d-flex align-items-center rounded-3"
@@ -141,14 +150,6 @@ const TableListPage = () => {
                                                 <h5 className="card-title">Bàn: {row.number}</h5>
                                                 <p className="card-text">Số ghế: {row.seats}</p>
                                                 <p className="card-text">
-                                                    Trạng thái:{" "}
-                                                    {row.tableStatus ? (
-                                                        <span className="badge bg-success p-2 rounded-3">Trống</span>
-                                                    ) : (
-                                                        <span className="badge bg-danger p-2 rounded-3">Đã đặt</span>
-                                                    )}
-                                                </p>
-                                                <p className="card-text">
                                                     Khu vực:{" "}
                                                     {row.zone?.name ? (
                                                         `${row.zone.name} / ${row.zone.address}`
@@ -165,13 +166,13 @@ const TableListPage = () => {
                                                         setShowModal(true);
                                                     }}
                                                 >
-                                                    <CiEdit size={20} color="brown" />
+                                                    <BiEdit size={16} />
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
                                                     onClick={() => handleDelete(row.id)}
                                                 >
-                                                    <GoTrash size={20} color="red" />
+                                                    <MdDelete size={16} />
                                                 </Button>
                                             </div>
                                         </div>
@@ -183,7 +184,7 @@ const TableListPage = () => {
                         )}
                     </div>
                 ) : (
-                    <Table hover responsive className="rounded-4">
+                    <Table Table responsive className="rounded-4">
                         <thead >
                             <tr>
                                 <th className="text-center">Số bàn</th>
@@ -214,12 +215,12 @@ const TableListPage = () => {
                                                         setShowModal(true);
                                                     }}
                                                 >
-                                                    <CiEdit size={20} color="brown" />
+                                                    <BiEdit size={16} />
                                                 </span>
                                                 <span
                                                     onClick={() => { handleDelete(row.id) }}
                                                 >
-                                                    <GoTrash size={20} color="red" />
+                                                    <MdDelete size={16} />
                                                 </span>
                                             </span>
                                         </td>
@@ -233,8 +234,7 @@ const TableListPage = () => {
                         </tbody>
                     </Table>
                 )}
-
-            </div>
+            </div >
 
             <TableModal
                 showModal={showModal}

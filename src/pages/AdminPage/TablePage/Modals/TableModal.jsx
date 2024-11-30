@@ -13,7 +13,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
         if (initialValues) {
             setValue('number', initialValues.number);
             setValue('seats', initialValues.seats);
-            setValue('tableStatus', initialValues.status);
+            setValue('zoneId', initialValues.zone?.id);
         } else {
             reset();
         }
@@ -35,7 +35,13 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
 
     // Xử lý reset form
     const handleReset = async () => {
-        reset();
+        if (initialValues) {
+            setValue('number', initialValues.number);
+            setValue('seats', initialValues.seats);
+            setValue('zoneId', initialValues.zone?.id);
+        } else {
+            reset();
+        }   
     };
 
     return (

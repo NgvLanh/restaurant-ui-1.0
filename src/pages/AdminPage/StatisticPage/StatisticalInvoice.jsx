@@ -8,65 +8,57 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { getInvoinceCount } from "../../../services/Statistics/Statistics";
 import React, { useEffect, useState } from "react";
+import { getMonthlyOrderStatistics } from "../../../services/Statistics/Statistics";
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const StatisticalInvoice = () => {
   const [invoiceData, setInvoiceData] = useState([]);
+  const [invoiceData2, setInvoiceData2] = useState([]);
   const [months, setMonths] = useState([]);
+  const [data, setData] = useState(null);
 
-  
+
+  const fakeData = [
+    { month: "January", totalInvoices: 150 },
+    { month: "February", totalInvoices: 120 },
+    { month: "March", totalInvoices: 180 },
+    { month: "April", totalInvoices: 200 },
+    { month: "May", totalInvoices: 250 },
+    { month: "June", totalInvoices: 210 },
+  ];
+
   useEffect(() => {
-    const fetchInvoiceData = async () => {
-      try {
-        const data = await getInvoinceCount();
-        const monthsFromAPI = data?.map((item) => item.month);
-        const invoiceCounts = data?.map((item) => item.totalInvoices);
-        setMonths(monthsFromAPI);
-        setInvoiceData(invoiceCounts);
-      } catch (error) {
-        console.error("Lỗi lấy dữ liệu giảm giá:", error);
-      }
-    };
-    fetchInvoiceData();
+    fetchMonthOrders();
   }, []);
 
+  const fetchMonthOrders = async () => {
+    const response = await getMonthlyOrderStatistics();
+    console.log(response.data);
+    const months = response.data?.map((item) => item[0]);
+    const invoiceCounts = response.data?.map((item) => item[1]);
+    const invoiceCounts2 = response.data?.map((item) => item[2]);
+    setMonths(months);
+    setInvoiceData(invoiceCounts);
+    setInvoiceData2(invoiceCounts2);
+  }
 
   const barDataInvoice = {
-    labels: months.map((month) => `Tháng: ${month}`),
+    labels: months.map((month) => `${month}`),
     datasets: [
       {
-        label: "Số hóa đơn",
+        label: "Hoá đơn ăn tại nhà hàng",
         data: invoiceData,
-        backgroundColor: [
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
-          "rgba(255, 159, 64, 0.6)",
-          "rgba(255, 205, 86, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(201, 203, 207, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
-          "rgba(255, 159, 64, 0.6)",
-          "rgba(255, 205, 86, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-        ],
-        borderColor: [
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 159, 64, 1)",
-          "rgba(255, 205, 86, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 99, 132, 1)",
-          "rgba(201, 203, 207, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 159, 64, 1)",
-          "rgba(255, 205, 86, 1)",
-          "rgba(54, 162, 235, 1)",
-        ],
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Hoá đơn mua online",
+        data: invoiceData2,
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+        borderColor: "rgba(153, 102, 255, 1)",
         borderWidth: 1,
       },
     ],
@@ -91,7 +83,7 @@ const StatisticalInvoice = () => {
                   maintainAspectRatio: false,
                   plugins: {
                     legend: {
-                      display: false,
+                      display: true,
                     },
                   },
                   scales: {
@@ -128,16 +120,17 @@ const StatisticalInvoice = () => {
 
       {/* Bảng thống kê */}
       <Col lg={12} md={12}>
-        <Card style={{ backgroundColor: "#FFFFFF"}}>
+        <Card style={{ backgroundColor: "#FFFFFF" }}>
           <Card.Body>
             <h6 className="mb-4" style={{ fontSize: "20px", fontWeight: "bold", color: "#342E37" }}>
               Bảng thống kê số hóa đơn
-            </h6 >
+            </h6>
             <Table striped bordered={false} hover responsive>
               <thead style={{ backgroundColor: "#FFFFFF" }}>
                 <tr>
                   <th>Tháng</th>
-                  <th>Số hóa đơn</th>
+                  <th>Số hóa đơn tại nhà hàng</th>
+                  <th>Số hóa đơn mua online</th>
                 </tr>
               </thead>
               <tbody>
@@ -145,6 +138,7 @@ const StatisticalInvoice = () => {
                   <tr key={index}>
                     <td>{month}</td>
                     <td>{invoiceData[index]}</td>
+                    <td>{invoiceData2[index]}</td>
                   </tr>
                 ))}
               </tbody>
