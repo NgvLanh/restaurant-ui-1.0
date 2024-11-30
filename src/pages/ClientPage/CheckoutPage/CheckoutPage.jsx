@@ -61,12 +61,14 @@ const CheckoutPage = () => {
                 userId: userInfo?.id,
                 addressId: defaultAddress?.id,
                 branchId: JSON.parse(localStorage.getItem('branch_info'))?.id,
-                discountId: discountInfo || null,
+                discountId: discountInfo?.id || null,
                 orderStatus: method,
                 total: discountInfo?.discountMethod === 'PERCENTAGE'
                     ? calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0)
                     : calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0)
             }
+            console.log(request);
+
             if (method === 'PENDING') {
                 const response = await orderOffLineService(request);
                 if (response.status) {
@@ -217,11 +219,14 @@ const CheckoutPage = () => {
                             Phí giao hàng: {formatCurrency(defaultAddress?.fee)}
                         </div>
                         <div className="text-end">
+                            Tổng cộng: {formatCurrency(calculateTotal() + defaultAddress?.fee)}
+                        </div>
+                        <div className="text-end">
                             Giảm giá:
                             {discountInfo?.discountMethod === 'PERCENTAGE'
-                                ? `-${discountInfo?.value}%`
+                                ? ` -${discountInfo?.value}%`
                                 : discountInfo?.value
-                                    ? `-${formatCurrency(discountInfo?.value)}`
+                                    ? ` -${formatCurrency(discountInfo?.value)}`
                                     : formatCurrency(0)}
                         </div>
 

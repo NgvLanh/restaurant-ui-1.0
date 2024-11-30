@@ -46,7 +46,7 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
 
     const fetchBranches = async () => {
         const allBranches = await getAllBranches();
-        setBranches(allBranches);
+        setBranches(allBranches || []);
         setBranch(allBranches.find((e) => e.id === parseInt(dataRequest?.branch)));
     };
 
@@ -78,7 +78,7 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
         }));
     };
 
-    const filteredTables = tables.filter((table) => {
+    const filteredTables = tables?.filter((table) => {
         const matchesSeats = filters.seats ? table.seats === parseInt(filters.seats) : true;
         const matchesZone = filters.zone ? table.zone.name === filters.zone : true;
         const matchesStatus = filters.status ? table.tableStatus.toString() === filters.status : true;
@@ -114,7 +114,7 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     return (
         <>
             {/* Modal chọn bàn */}
-            <Modal show={showSelectModal} onHide={handleClose} fullscreen>
+            <Modal show={showSelectModal} onHide={handleClose} fullscreen animation>
                 <Modal.Header className="d-flex flex-column">
                     <Modal.Title>Chọn Bàn Đặt</Modal.Title>
                     <Row className="w-100">
@@ -173,12 +173,10 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
                     </Row>
                 </Modal.Header>
                 <Modal.Body>
-
                     <Row>
                         {filteredTables?.length > 0 &&
                             filteredTables.map((table) => {
                                 const reservation = table.reservations?.[0];
-
 
                                 let borderColor = "lightgray";
                                 let cursorStyle = "not-allowed";

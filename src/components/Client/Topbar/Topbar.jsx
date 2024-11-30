@@ -27,7 +27,6 @@ const Topbar = () => {
 
   const fetchBranches = async () => {
     const responese = await getAllBranches();
-    localStorage.setItem('branch_info', JSON.stringify(responese[0]));
     setBranches(responese);
   }
 
@@ -42,12 +41,12 @@ const Topbar = () => {
         <div className="col-lg-7 px-5 text-start">
           <div className="h-100 d-inline-flex align-items-center py-3 me-4">
             <small className="fa fa-map-marker-alt text-primary me-2"></small>
-            {/* <small>Cái Răng, Cần Thơ, Việt Nam</small> */}
             <Form.Select className="rounded-3" style={{ border: 'none' }}
+              defaultValue={JSON.parse(localStorage.getItem('branch_info'))?.id}
               onChange={(e) => { handleChandeBranch(e.target.value) }}>
-              {branches?.length > 0 && branches?.map(e => (
+              {branches?.length > 0 ? (branches?.map(e => (
                 <option key={e.id} value={e.id}>{e.name}</option>
-              ))}
+              ))) : (<div>Không có chi nhánh nào</div>)}
             </Form.Select>
           </div>
           <div className="h-100 d-inline-flex align-items-center py-3">

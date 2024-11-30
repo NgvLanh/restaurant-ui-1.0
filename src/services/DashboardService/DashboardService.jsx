@@ -77,17 +77,11 @@ export { getTotalOrders };
 // };
 
 const getMonthlyRevenue = async (request) => {
-    try {
-        const response = await ApiRequest({
-            path: 'invoices/monthly-revenue',
-            data: request,
-            headers: 'Bearer '
-        })
-        return response?.data.content;
-    } catch (error) {
-        console.error(`Lỗi đỗ danh sách: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi tạo đặt bàn' };
-    }
+    return await ApiRequest({
+        path: 'invoices/monthly-revenue',
+        data: request,
+        headers: 'Bearer '
+    })
 }
 
 export { getMonthlyRevenue };

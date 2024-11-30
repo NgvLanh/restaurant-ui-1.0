@@ -12,6 +12,7 @@ const Navbar = () => {
     useEffect(() => {
         fetchUserInfo();
     }, []);
+    
     const fetchUserInfo = async () => {
         try {
             const response = await getUserService();
@@ -21,6 +22,7 @@ const Navbar = () => {
             navigate('/login');
         }
     }
+
     const handleLogout = () => {
         localStorage.removeItem('user_info');
         removeCookie('user_token');
@@ -66,7 +68,7 @@ const Navbar = () => {
 
                         </div>
                     </div>
-                    <Link to="/contact" className="nav-item nav-link">Liên Hệ</Link>
+                    {/* <Link to="/contact" className="nav-item nav-link">Liên Hệ</Link> */}
                 </div>
                 <Link to="/reservations" className="btn btn-primary py-4 px-lg-5 d-none d-lg-block">
                     Đặt bàn ngay<i className="fa fa-arrow-right ms-3" />

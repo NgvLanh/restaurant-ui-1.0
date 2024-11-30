@@ -23,6 +23,7 @@ const EmployeeListPage = () => {
     useEffect(() => {
         fetchEmployee();
     }, [currentPage, pageSize]);
+
     const handleModalSubmit = async (data) => {
         const branch = JSON.parse(localStorage.getItem('branch_info'));
         const { confirmPassword, ...dataWithoutConfirmPassword } = data;
@@ -99,8 +100,8 @@ const EmployeeListPage = () => {
                     </Button>
                 </div>
 
-                <Table borderless hover responsive className="rounded-4">
-                    <thead style={{ backgroundColor: "#f5f5f5" }}>
+                <Table hover responsive className="rounded-4">
+                    <thead >
                         <tr>
                             <th className="text-center">STT</th>
                             <th>Tên nhân viên</th>

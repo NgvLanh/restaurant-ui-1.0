@@ -1,121 +1,63 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
+import { formatDate } from "../../utils/FormatUtils";
 
-const getAllDiscounts = async () => {
-  try {
-    const response = await ApiRequest({
-      path: "discounts",
-    });
-    return response?.data?.content;
-  } catch (error) {
-    console.error(
-      `Lỗi lấy danh sách giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
-      }`
-    );
-    return {
-      status: false,
-      message: error?.response?.data?.message || "Lỗi lấy danh sách chi nhánh",
-    };
-  }
+export const getAllDiscounts = async () => {
+  const response = await ApiRequest({
+    path: "discounts",
+  });
+  return response?.data?.content;
 };
-const createDiscount = async (request) => {
-  try {
-    const response = await ApiRequest({
-      method: "POST",
-      path: "discounts",
-      data: request,
-      headers: "Bearer ",
-    });
-    return response;
-  } catch (error) {
-    console.error(
-      `Lỗi tạo mã giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
-      }`
-    );
-    return {
-      status: false,
-      message: error?.response?.data?.message || "Mã giảm giá bị trùng",
-    };
-  }
+
+export const createDiscount = async (request) => {
+  const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
+  return await ApiRequest({
+    method: "POST",
+    path: "discounts",
+    data: {
+      ...request,
+      branchId: branchId
+    },
+    headers: "Bearer ",
+  });
 };
-const updateDiscount = async (discountId, request) => {
-  try {
-    const response = await ApiRequest({
-      method: "PATCH",
-      path: `discounts/${discountId}`,
-      data: request,
-      headers: "Bearer ",
-    });
-    return response;
-  } catch (error) {
-    console.error(
-      `Lỗi cập nhật mã giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
-      }`
-    );
-    return {
-      status: false,
-      message: error?.response?.data?.message || "Lỗi cập nhật giảm giá",
-    };
-  }
+
+export const updateDiscount = async (discountId, request) => {
+  return await ApiRequest({
+    method: "PATCH",
+    path: `discounts/${discountId}`,
+    data: request,
+    headers: "Bearer ",
+  });
 };
-const deleteDiscount = async (discountId) => {
-  try {
-    const response = await ApiRequest({
-      method: "DELETE",
-      path: `discounts/${discountId}`,
-      headers: "Bearer ",
-    });
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
+
+export const deleteDiscount = async (discountId) => {
+  return await ApiRequest({
+    method: "DELETE",
+    path: `discounts/${discountId}`,
+    headers: "Bearer ",
+  });
 };
-const getAllDiscountsPage = async (currentPage, pageSize, code = "") => {
-  try {
-    const response = await ApiRequest({
-      path: `discounts?page=${currentPage}&size=${pageSize}&code=${code}`, // Thêm code vào URL
-      headers: `Bearer `
-    });
-    return response;
-  } catch (error) {
-    console.error(
-      `Lỗi lấy danh sách giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
-      }`
-    );
-    return {
-      status: false,
-      message: error?.response?.data?.message || "Lỗi lấy danh sách giảm giá",
-    };
-  }
+
+export const getAllDiscountsPage = async (currentPage, pageSize, code = "") => {
+  return await ApiRequest({
+    path: `discounts?page=${currentPage}&size=${pageSize}&code=${code}`,
+    headers: `Bearer `
+  });
 };
-const getAllDiscountsByBranchId = async (currentPage, pageSize,) => {
-  try {
-    const response = await ApiRequest({
-      path: `discounts?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
-      headers: `Bearer `
-    });
-    return response;
-  } catch (error) {
-    console.error(
-      `Lỗi lấy danh sách giảm giá: ${error?.response?.data?.message || "Lỗi chưa cấu hình"
-      }`
-    );
-    return {
-      status: false,
-      message: error?.response?.data?.message || "Lỗi lấy danh sách giảm giá",
-    };
-  }
+
+export const getAllDiscountsByBranchIdAndMonth = async (month, currentPage, pageSize) => {
+  const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
+  return await ApiRequest({
+    path: `discounts?branchId=${branchId}&month=${formatDate(month)}&page=${currentPage}&size=${pageSize}`,
+    headers: `Bearer `
+  });
 };
 
 export const checkDiscount = async (code) => {
-  try {
-    const response = await ApiRequest({
-      path: `discounts/${code}`,
-      headers: `Bearer `
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-}
+  return await ApiRequest({
+    path: `discounts/${code}`,
+    headers: `Bearer `
+  });
+};
 
-export { getAllDiscounts, createDiscount, updateDiscount, deleteDiscount, getAllDiscountsPage, getAllDiscountsByBranchId };
+

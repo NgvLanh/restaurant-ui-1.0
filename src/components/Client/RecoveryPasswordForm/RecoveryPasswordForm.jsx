@@ -171,7 +171,7 @@ const RecoveryPasswordForm = () => {
 
                 <div className="col-md-6">
                     <img
-                        src="https://via.placeholder.com/500x500"
+                        src="src/assets/img/service-2.jpg"
                         alt="Login Illustration"
                         className="img-fluid rounded"
                     />

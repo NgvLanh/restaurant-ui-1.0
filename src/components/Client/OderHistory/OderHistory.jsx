@@ -102,13 +102,11 @@ const OrderHistory = () => {
                             ? 'Chờ xác nhận'
                             : order.orderStatus === 'CONFIRMED'
                               ? 'Đã xác nhận'
-                              : order.orderStatus === 'DELIVERY'
+                              : order.orderStatus === 'SHIPPED'
                                 ? 'Đang giao'
-                                : order.orderStatus === 'DELIVERY'
-                                  ? 'Đang giao'
-                                  : order.orderStatus === 'DELIVERED'
-                                    ? 'Đã giao'
-                                    : 'Đã huỷ'}
+                                : order.orderStatus === 'DELIVERED'
+                                  ? 'Đã giao'
+                                  : 'Đã huỷ'}
 
                         </small>
 

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import AlertUtils from "../../../utils/AlertUtils";
-import { debounce } from "../../../utils/Debounce";
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import { Button, Form, Table } from "react-bootstrap";
 import { BiEdit, BiPlus } from "react-icons/bi";
@@ -10,8 +9,7 @@ import DiscountModal from "./Modals/DiscountModal";
 import {
   createDiscount,
   deleteDiscount,
-  getAllDiscountsByBranchId,
-  getAllDiscountsPage,
+  getAllDiscountsByBranchIdAndMonth,
   updateDiscount,
 } from "../../../services/DiscountService/DiscountService";
 import { formatCurrency, formatDate } from "../../../utils/FormatUtils";
@@ -27,7 +25,9 @@ const DiscountListPage = () => {
 
   const fetchDiscount = async () => {
     try {
-      const response = await getAllDiscountsByBranchId(currentPage, pageSize);
+      const response = await getAllDiscountsByBranchIdAndMonth('', currentPage, pageSize);
+      console.log(response);
+
       setDiscount(response?.data?.content);
       setTotalPages(response?.data?.totalPages);
     } catch (e) {
@@ -57,24 +57,29 @@ const DiscountListPage = () => {
         AlertUtils.error(response?.message);
       }
     } catch (e) {
-      AlertUtils.error("Có lỗi xảy ra khi gửi yêu cầu.");
+      AlertUtils.error(e);
     }
   };
 
   const handleDelete = async (id) => {
-    const result = await AlertUtils.confirm(
-      "Bạn có chắc chắn muốn xoá mã giảm giá này"
-    );
+    const result = await AlertUtils.confirm("Bạn có chắc chắn muốn xoá mã giảm giá này");
     if (result) {
-      const response = await deleteDiscount(id);
-      if (response?.status) {
-        AlertUtils.success("Xoá thành công!");
-        fetchDiscount();
-      } else {
-        AlertUtils.error("Xoá thất bại!");
+      try {
+        const response = await deleteDiscount(id);
+        if (response?.status) {
+          AlertUtils.success("Xoá thành công!");
+          fetchDiscount();
+        }
+      } catch (error) {
+        AlertUtils.error(error.response?.data?.message);
       }
     }
   };
+
+  const handleFilterDiscount = async (value) => {
+    const response = await getAllDiscountsByBranchIdAndMonth(value, currentPage, pageSize);
+    setDiscount(response?.data?.content);
+  }
 
   // const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
@@ -82,10 +87,25 @@ const DiscountListPage = () => {
     <>
       <PageHeader title="Danh sách mã giảm giá" />
       <div className="bg-white shadow rounded-lg p-4">
-        <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
-          <div className="action d-flex gap-2 ms-auto">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex justify-content-center align-items-center mt-4">
+            <Form className="d-flex gap-3">
+              <Form.Group controlId="fromDate">
+                <Form.Label>Thời gian</Form.Label>
+                <Form.Control
+                  type="date"
+                  defaultValue={new Date().toISOString().slice(0, 7)}
+                  className="rounded-3 shadow-sm"
+                  style={{ minWidth: '250px' }}
+                  lang="vi"
+                  onChange={(e) => handleFilterDiscount(e.target.value)}
+                />
+              </Form.Group>
+            </Form>
+          </div>
+          <div className="mt-5">
             <Button
-              className=" rounded-3 "
+              className="rounded-3"
               onClick={() => {
                 setInitialValues(null);
                 setShowModal(true);
@@ -97,7 +117,7 @@ const DiscountListPage = () => {
           </div>
         </div>
 
-        <Table striped bordered hover responsive className="shadow-sm rounded">
+        <Table hover responsive className="shadow-sm rounded">
           <thead>
             <tr>
               <th>STT</th>
@@ -105,7 +125,6 @@ const DiscountListPage = () => {
               <th>Số lượng</th>
               <th>Ngày áp dụng</th>
               <th>Ngày kết thúc</th>
-              <th>Phương thức</th>
               <th>Hạn mức giảm giá</th>
               <th>Giá trị giảm giá</th>
               <th>Hành động</th>
@@ -120,13 +139,6 @@ const DiscountListPage = () => {
                   <td>{row.quantity}</td>
                   <td>{formatDate(row.startDate)}</td>
                   <td>{formatDate(row.endDate)}</td>
-                  <td>
-                    {row.discountMethod === "PERCENTAGE"
-                      ? "Giảm giá phần trăm"
-                      : row.discountMethod === "FIXED_AMOUNT"
-                      ? "Giảm giá cụ thể"
-                      : "Chưa xác định"}
-                  </td>
                   <td>{formatCurrency(row.quota)}</td>
                   <td>
                     {row.discountMethod === "PERCENTAGE"
@@ -135,17 +147,8 @@ const DiscountListPage = () => {
                   </td>
                   <td className="text-center">
                     <span
-                      className="d-flex justify-content-center align-items-center gap-3"
                       style={{ cursor: "pointer" }}
                     >
-                      <span
-                        onClick={() => {
-                          setInitialValues(row);
-                          setShowModal(true);
-                        }}
-                      >
-                        <BiEdit size={16} />
-                      </span>
                       <span
                         onClick={() => {
                           handleDelete(row.id);
@@ -159,7 +162,7 @@ const DiscountListPage = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={9} className="text-center">
+                <td colSpan={9} className="text-center py-3">
                   Không có dữ liệu
                 </td>
               </tr>

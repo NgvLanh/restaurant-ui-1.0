@@ -6,12 +6,10 @@ import { debounce } from "../../../utils/Debounce";
 import AlertUtils from "../../../utils/AlertUtils";
 import { Button, Form, Table } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
-import CategoryModal from "./Modals/CategoryModal";
 import { uploadFile } from "../../../services/UploadFileService/UploadFileService";
 import { CiBoxList } from "react-icons/ci";
 import { createDish, deleteDish, getAllDishesPageable, updateDish } from "../../../services/DishService/DishService";
-import { formatCurrency, formatDate } from "../../../utils/FormatUtils";
-import Switch from "react-switch";
+import { formatCurrency } from "../../../utils/FormatUtils";
 import MenuModal from "./Modals/MenuModal";
 
 const MenuListPage = () => {
@@ -22,7 +20,7 @@ const MenuListPage = () => {
   const [searchKey, setSearchKey] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE - 4 || 6);
+  const [pageSize] = useState(18);
   const [isGridView, setIsGridView] = useState(true);
 
   const toggleGridView = () => {
@@ -138,14 +136,48 @@ const MenuListPage = () => {
             <div className="row">
               {dishes?.length > 0 ? (
                 dishes.map((item) => (
-                  <div key={item.id} className="col-lg-2 col-md-4 mb-4 rounded-3">
+                  <div key={item.id} className="col-xl-2 col-lg-4 col-md-6 col-sm-6 mb-4 rounded-3">
                     <div className="card shadow-sm rounded-3" style={{ height: '380px' }}>
-                      <img src={item.image} alt={item.name} className="card-img-top rounded-3"
-                        style={{ minHeight: '200px', maxHeight: '200px', objectFit: 'cover' }} />
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="card-img-top rounded-3"
+                        style={{
+                          minHeight: '200px',
+                          maxHeight: '200px',
+                          objectFit: 'cover',
+                        }}
+                      />
                       <div className="card-body">
-                        <h5 className="card-title">{item.name}</h5>
-                        <small>Giá: {formatCurrency(item.price)} / Số lượng: {item.quantity}</small>
-                        <p className="card-text">{item.description}</p>
+                        <div
+                          className="card-title"
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {item.name}
+                        </div>
+                        <small>
+                          Giá: {formatCurrency(item.price)} / Số lượng: {item.quantity}
+                        </small>
+                        <p
+                          className="card-text"
+                          style={{
+                            fontSize: '14px',
+                            lineHeight: '1.5',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                          }}
+                        >
+                          {item.description}
+                        </p>
                         <div className="d-flex justify-content-between mt-2">
                           <BiEdit
                             size={16}
@@ -157,7 +189,9 @@ const MenuListPage = () => {
                           />
                           <MdDelete
                             size={16}
-                            onClick={() => { handleDelete(item.id) }}
+                            onClick={() => {
+                              handleDelete(item.id);
+                            }}
                             style={{ cursor: 'pointer' }}
                           />
                         </div>

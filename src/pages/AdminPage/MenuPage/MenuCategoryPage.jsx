@@ -130,36 +130,72 @@ const MenuCategoryPage = () => {
         </div>
 
         {isGridView ? (
-          <div className="grid-view">
+          <div className="grid-view" style={{ padding: '20px', backgroundColor: '#f8f9fa' }}>
             <div className="row">
               {categories?.length > 0 ? (
                 categories.map((item) => (
-                  <div key={item.id} className="col-lg-2 col-md-4 mb-4">
-                    <div className="card shadow-sm rounded-3">
+                  <div
+                    key={item.id}
+                    className="col-lg-3 col-md-4 col-sm-6 mb-4"
+                    style={{ display: 'flex', justifyContent: 'center' }}
+                  >
+                    <div
+                      className="card rounded-3"
+                      style={{
+                        width: '100%',
+                        border: '1px solid #ddd',
+                        overflow: 'hidden',
+                        transition: 'transform 0.3s, box-shadow 0.3s',
+                      }}
+                    >
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="card-img-top"
-                        style={{ height: '150px', objectFit: 'cover' }}
+                        style={{
+                          height: '180px',
+                          width: '100%',
+                          objectFit: 'cover',
+                          borderBottom: '1px solid #ddd',
+                        }}
                       />
-                      <div className="card-body">
-                        <h5 className="card-title">{item.name}</h5>
-                        <p className="card-text">{item.description}</p>
-                        <div className="d-flex justify-content-between">
+                      <div style={{ padding: '15px' }}>
+                        <h5
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#333',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {item.name}
+                        </h5>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: '#555',
+                            maxHeight: '40px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                          }}
+                        >
+                          {item.description}
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <BiEdit
-                            size={16}
+                            size={18}
                             onClick={() => {
                               setInitialValues(item);
                               setShowModal(true);
                             }}
-                            style={{ cursor: 'pointer' }}
                           />
                           <MdDelete
-                            size={16}
-                            onClick={() => {
-                              handleDelete(item.id);
-                            }}
-                            style={{ cursor: 'pointer' }}
+                            size={18}
+                            onClick={() => handleDelete(item.id)}
                           />
                         </div>
                       </div>
@@ -167,7 +203,12 @@ const MenuCategoryPage = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center">Không có dữ liệu</p>
+                <p
+                  className="text-center w-100"
+                  style={{ fontSize: '18px', fontWeight: 'bold', color: '#999' }}
+                >
+                  Không có dữ liệu
+                </p>
               )}
             </div>
           </div>

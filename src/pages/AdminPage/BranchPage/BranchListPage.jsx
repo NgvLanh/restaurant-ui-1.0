@@ -13,8 +13,6 @@ import BranchModal from "./Modals/BranchModal";
 import UserModal from "./Modals/UserModal";
 import { updateEmployee } from "../../../services/UserService/UserService"
 const BranchListPage = () => {
-    // const userInfo = JSON.parse(localStorage.getItem('user_info'));
-    // const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
     const [branches, setBranches] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState({});
@@ -23,8 +21,7 @@ const BranchListPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
     const [showUserModal, setShowUserModal] = useState(false);
-    const [showUserDataModal, setShowUserDataModal] = useState(false);
-    const [selectedUserData, setSelectedUserData] = useState(null);
+
     useEffect(() => {
         fetchBranches();
     }, [currentPage, searchKey]);
@@ -52,7 +49,7 @@ const BranchListPage = () => {
                 }
             } catch (error) {
                 AlertUtils.error(error.response?.data?.message);
-                return false; 
+                return false;
             }
         } else {
             try {
@@ -67,7 +64,7 @@ const BranchListPage = () => {
                 return false;
             }
         }
-        return true; 
+        return true;
     };
 
     const handleSetRole = async (data) => {
@@ -131,8 +128,8 @@ const BranchListPage = () => {
     };
 
     const handleUserModalOpen = (branch) => {
-        setInitialValues(branch); 
-        setShowUserModal(true);    
+        setInitialValues(branch);
+        setShowUserModal(true);
     };
 
     const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
@@ -146,9 +143,11 @@ const BranchListPage = () => {
                     <Form.Control
                         type="text"
                         placeholder="Tìm kiếm theo tên"
+                        className="rounded-3"
                         onChange={(e) => debouncedSearch(e.target.value)}
                         style={{
-                            maxWidth: '350px',}}
+                            maxWidth: '350px',
+                        }}
                     />
                     <div className="action">
                         <Button
@@ -164,8 +163,8 @@ const BranchListPage = () => {
                     </div>
                 </div>
 
-                <Table borderless hover responsive className="rounded-4">
-                    <thead style={{ backgroundColor: '#f5f5f5' }}>
+                <Table hover responsive>
+                    <thead>
                         <tr>
                             <th className="text-center">STT</th>
                             <th>Tên chi nhánh</th>
@@ -252,8 +251,8 @@ const BranchListPage = () => {
             <UserModal
                 showModal={showUserModal}
                 closeModal={() => setShowUserModal(false)}
-                initialValues={initialValues}  // Truyền thông tin chi nhánh (bao gồm branchId)
-                handleData={handleSetRole}         // Gửi dữ liệu người dùng và branchId đến handleSetRole
+                initialValues={initialValues}
+                handleData={handleSetRole}
             />
 
             <RenderPagination
