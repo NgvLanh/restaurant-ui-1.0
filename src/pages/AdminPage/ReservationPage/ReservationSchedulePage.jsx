@@ -44,7 +44,6 @@ const ReservationSchedulePage = () => {
     };
 
 
-
     const convertReservationsToEvents = (reservations, tables) => {
         const formattedEvents = reservations.map((reservation) => {
             const isCanceled = !!reservation?.cancelReason;
