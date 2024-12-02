@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginService } from '../../../services/AuthService/AuthService';
+import { loginGoogleService, loginService } from '../../../services/AuthService/AuthService';
 import AlertUtils from '../../../utils/AlertUtils';
 import { useCookies } from 'react-cookie';
 import { asyncCartService } from '../../../services/CartService/CartService'
 import { getAllBranches, getBranchByUserId } from '../../../services/BranchService/BranchService';
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
 const LoginForm = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -26,14 +25,15 @@ const LoginForm = () => {
     }
 
     const onSubmit = async (request) => {
-        const response = await loginService(request);
-        if (response?.status) {
-            AlertUtils.success('Đăng nhập thành công');
-            saveLocalAndCookie(response?.data);
-            syncCartWithServer(response?.data);
-
-        } else {
-            AlertUtils.error('Email hoặc mật khẩu chưa chính xác');
+        try {
+            const response = await loginService(request);
+            if (response?.status) {
+                AlertUtils.success('Đăng nhập thành công');
+                saveLocalAndCookie(response?.data);
+                syncCartWithServer(response?.data);
+            }
+        } catch (error) {
+            AlertUtils.error(error.response?.data?.message);
         }
     };
 
@@ -41,7 +41,6 @@ const LoginForm = () => {
         localStorage.setItem('user_info', JSON.stringify(data?.info));
         setCookie('user_token', data?.accessToken);
     }
-
 
     const roleRoute = async (data) => {
         const role = data?.roles[0];
@@ -79,8 +78,40 @@ const LoginForm = () => {
             await asyncCartService(request, data?.info?.id);
         }
         localStorage.removeItem('cart_temps');
-        roleRoute(data?.info);
+        setTimeout(() => {
+            roleRoute(data?.info);
+        }, 200);
     }
+
+    const handleSuccess = async (response) => {
+        const credential = response.credential;
+        const userProfile = await getEmailInfo(credential);
+        const request = {
+            googleId: userProfile.sub,
+            email: userProfile.email,
+            name: userProfile.name,
+            picture: userProfile.picture
+        };
+        try {
+            const response = await loginGoogleService(request);
+            if (response?.status) {
+                AlertUtils.success('Đăng nhập thành công');
+                saveLocalAndCookie(response?.data);
+                syncCartWithServer(response?.data);
+            }
+        } catch (error) {
+            AlertUtils.error(error);
+        }
+    };
+
+    const handleError = () => {
+        AlertUtils.error('Google Login Failed');
+    };
+
+    const getEmailInfo = async (token) => {
+        const res = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`);
+        return await res.json();
+    };
 
     return (
         <div className="container my-5">
@@ -130,11 +161,13 @@ const LoginForm = () => {
                         <div className="mb-1">
                             <button type="submit" className="btn btn-primary w-100">Đăng Nhập</button>
                         </div>
-                        {/* <div className="mb-3">
-                            <button className="btn btn-primary w-100">
-                                <span><i className="fa bi-google me-2"></i>Đăng nhập với Google</span>
-                            </button>
-                        </div> */}
+                        <GoogleOAuthProvider
+                            clientId="667969808008-a4rid9kmarq9t44ukj0sjmgc25po8cio.apps.googleusercontent.com">
+                            <GoogleLogin
+                                onSuccess={handleSuccess}
+                                onError={handleError}
+                                scope="profile email" />
+                        </GoogleOAuthProvider>
                         <div className="mt-2">
                             <div className="d-flex justify-content-between align-items-center mx-2">
                                 <Link to="/register">Chưa có tài khoản?</Link>
