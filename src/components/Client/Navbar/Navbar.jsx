@@ -18,7 +18,6 @@ const Navbar = () => {
             const response = await getUserService();
             setUserInfo(response);
         } catch (error) {
-            AlertUtils.info('Vui lòng đăn nhập lại', 'Phiên bản của bạn đã hết hạn');
             navigate('/login');
         }
     }

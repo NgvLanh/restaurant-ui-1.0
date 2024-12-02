@@ -1,64 +1,50 @@
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
 const getUserService = async () => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'users/info',
-            headers: 'Bearer '
-        });
-        return response?.data;
-    } catch (error) {
-        return null;
-    }
+    const response = await ApiRequest({
+        method: 'POST',
+        path: 'users/info',
+        headers: 'Bearer '
+    });
+    return response?.data;
 };
 
 const registerService = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'users',
-            data: request,
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
-    }
+    return await ApiRequest({
+        method: 'POST',
+        path: 'users',
+        data: request,
+    });
 };
 
 const loginService = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'auth/login',
-            data: request
-        });
-        return response;
-    } catch (error) {
-        // console.error(`Lỗi đăng nhập: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        console.log(error);
-        // return { status: false, message: error || 'Lỗi đăng nhập' };
-    }
+    return await ApiRequest({
+        method: 'POST',
+        path: 'auth/login',
+        data: request
+    });
+};
+
+
+const loginGoogleService = async (request) => {
+    return await ApiRequest({
+        method: 'POST',
+        path: 'auth/login-google',
+        data: request
+    });
 };
 
 const createEmployee = async (request) => {
-    try {
-        const response = await ApiRequest({
-            method: 'POST',
-            path: 'users/employee',
-            data: request,
-            headers : 'Bearer '
-        });
-        return response;
-    } catch (error) {
-        console.error(`Lỗi đăng ký thông tin người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi đăng ký thông tin người dùng' };
-    }
+    return await ApiRequest({
+        method: 'POST',
+        path: 'users/employee',
+        data: request,
+        headers: 'Bearer '
+    });
 };
 
 
 
 
 
-export { getUserService, registerService, loginService, createEmployee, };
+export { getUserService, registerService, loginService, createEmployee, loginGoogleService };
