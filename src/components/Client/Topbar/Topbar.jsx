@@ -16,12 +16,8 @@ const Topbar = () => {
   }, []);
 
   const fetchUserInfo = async () => {
-    try {
-      const response = await getUserService();
-      setUserInfo(response);
-    } catch (error) {
-      navigate('/login');
-    }
+    const response = await getUserService();
+    setUserInfo(response);
   }
 
   const fetchBranches = async () => {
