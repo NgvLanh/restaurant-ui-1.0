@@ -93,7 +93,7 @@ const DiscountListPage = () => {
               <Form.Group controlId="fromDate">
                 <Form.Label>Thời gian</Form.Label>
                 <Form.Control
-                  type="date"
+                  type="month"
                   defaultValue={new Date().toISOString().slice(0, 7)}
                   className="rounded-3 shadow-sm"
                   style={{ minWidth: '250px' }}
