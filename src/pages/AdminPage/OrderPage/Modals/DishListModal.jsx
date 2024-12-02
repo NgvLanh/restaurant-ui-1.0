@@ -41,9 +41,6 @@ const DishListModal = ({ showDetailsModal, setShowDetailsModal, selectTables }) 
     const fetchOrder = async () => {
         const response = await getAllOrders();
         const current = response.data.content.find(e => e.id === parseInt(selectTables[0]?.reservations[0]?.order?.id));
-
-        console.log(current);
-        
         setCart(current?.orderItems);
 
     }

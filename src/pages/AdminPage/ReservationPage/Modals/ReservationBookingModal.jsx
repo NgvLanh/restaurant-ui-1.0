@@ -31,6 +31,18 @@ const ReservationBookingModal = ({ showModal, handleClose, selectedDate }) => {
     useEffect(() => {
         if (showMainModal) {
             fetchTables();
+            // nodejs socket
+            const ws = new WebSocket('ws://localhost:3001');
+            ws.onmessage = (event) => {
+                if (event) {
+                    console.log('Received from WebSocket:', event.data);
+                    const userInfo = event.data;
+                    //
+                    fetchTables();
+                }
+            };
+            //
+
         }
     }, [showMainModal]);
 
@@ -54,9 +66,9 @@ const ReservationBookingModal = ({ showModal, handleClose, selectedDate }) => {
     const handleSelectTable = (table) => {
         const isTableSelected = selectedTables?.some((t) => t.id === table.id);
         if (isTableSelected) {
-            setSelectedTables(selectedTables.filter((t) => t.id !== table.id));
+            setSelectedTables(selectedTables?.filter((t) => t.id !== table.id));
         } else {
-            const hasSameReservationCount = selectedTables.some((t) => t?.reservations.length === table.reservations.length);
+            const hasSameReservationCount = selectedTables?.some((t) => t?.reservations?.length === table.reservations.length);
 
             if (hasSameReservationCount || selectedTables.length === 0) {
                 setSelectedTables((prevSelectedTables) => [...prevSelectedTables, table]);
@@ -118,8 +130,8 @@ const ReservationBookingModal = ({ showModal, handleClose, selectedDate }) => {
 
     const filteredTables = tables?.filter((table) => {
         const matchesSeats = filters.seats ? table.seats === parseInt(filters.seats) : true;
-        const matchesZone = filters.zone ? table.zone.name === filters.zone : true;
-        const matchesStatus = filters.status ? table.tableStatus.toString() === filters.status : true;
+        const matchesZone = filters.zone ? table.zone?.name === filters.zone : true;
+        const matchesStatus = filters.status ? table.tableStatus === filters.status : true;
 
         return matchesSeats && matchesZone && matchesStatus;
     });

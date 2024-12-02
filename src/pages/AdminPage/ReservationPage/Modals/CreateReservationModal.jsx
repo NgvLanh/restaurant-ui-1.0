@@ -20,6 +20,13 @@ const CreateReservationModal = ({ showModal, setShowModal, selectTables, selecte
                 setSelectTables(null);
                 reset();
                 AlertUtils.success(`Thêm đặt bàn thành công!`);
+
+                // nodejs socket
+                const ws = new WebSocket('ws://localhost:3001');
+                ws.onopen = () => {
+                    ws.send(JSON.stringify('admin thêm'));
+                };
+                //
             }
         } catch (error) {
             AlertUtils.info(error.response?.data?.message);

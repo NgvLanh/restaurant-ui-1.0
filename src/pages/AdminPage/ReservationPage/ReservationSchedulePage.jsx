@@ -3,7 +3,6 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import ReservationDetailsModal from "../../../components/Admin/ReservationDetailsModal/ReservationDetailsModal";
 import { getAllReservations } from "../../../services/ReservationService/ReservationService";
 import { formatTime } from "../../../utils/FormatUtils";
 import listPlugin from '@fullcalendar/list';
@@ -18,6 +17,18 @@ const ReservationSchedulePage = () => {
 
     useEffect(() => {
         fetchReservations();
+        // nodejs socket
+        const ws = new WebSocket('ws://localhost:3001');
+        ws.onmessage = (event) => {
+            if (event) {
+                console.log('Received from WebSocket:', event.data);
+                const userInfo = event.data;
+                //
+                fetchReservations();
+            }
+        };
+        //
+
     }, []);
 
     const fetchReservations = async () => {
@@ -42,6 +53,7 @@ const ReservationSchedulePage = () => {
             const table = tables.find(
                 (t) => t.reservations.some((r) => r.id === parseInt(reservation.id))
             );
+            
 
             return {
                 id: `${reservation?.id}`,

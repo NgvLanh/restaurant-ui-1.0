@@ -24,6 +24,19 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
 
     useEffect(() => {
         fetchTables(dataRequest);
+        // nodejs socket
+        const ws = new WebSocket('ws://localhost:3001');
+        ws.onmessage = (event) => {
+            if (event) {
+                console.log('Received from WebSocket:', event.data);
+                console.log('đã chạy');
+                const userInfo = event.data;
+                //
+                fetchTables(dataRequest);
+            }
+        };
+        //
+
     }, [dataRequest]);
 
     useEffect(() => {
@@ -102,6 +115,12 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
             setShowConfirmModal(false);
             handleClose();
             AlertUtils.success('Đặt bàn thành công');
+            // nodejs socket
+            const ws = new WebSocket('ws://localhost:3001');
+            ws.onopen = () => {
+                ws.send(JSON.stringify(request));
+            };
+            //
         } catch (error) {
             AlertUtils.error('Lỗi đặt bàn');
         } finally {
