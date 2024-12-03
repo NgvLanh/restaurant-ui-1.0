@@ -7,7 +7,7 @@ const Footer = () => {
                 <div className="row g-5">
                     <div className="col-lg-3 col-md-6">
                         <h4 className="text-light mb-4">Liên Hệ</h4>
-                        <p className="mb-2"><i className="fa fa-map-marker-alt me-3"></i>123 Nhà Hàng, Phố 1, Hà Nội, Việt Nam</p>
+                        <p className="mb-2"><i className="fa fa-map-marker-alt me-3"></i>123 Nhà Hàng, Phố 1, Cần Thơ, Việt Nam</p>
                         <p className="mb-2"><i className="fa fa-phone-alt me-3"></i>+012 345 67890</p>
                         <p className="mb-2"><i className="fa fa-envelope me-3"></i>info@nhahang.com</p>
                         <div className="d-flex pt-2">
@@ -39,18 +39,6 @@ const Footer = () => {
                         <div className="position-relative mx-auto" style={{ maxWidth: '400px' }}>
                             <input className="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Email của bạn" />
                             <button type="button" className="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Đăng Ký</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="container">
-                <div className="copyright">
-                    <div className="row">
-                        <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a className="border-bottom" href="#">Nhà Hàng Của Bạn</a>, All Rights Reserved.
-                        </div>
-                        <div className="col-md-6 text-center text-md-end">
-                            Designed By <a className="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
                         </div>
                     </div>
                 </div>
