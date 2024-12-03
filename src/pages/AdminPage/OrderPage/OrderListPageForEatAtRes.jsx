@@ -5,6 +5,7 @@ import { Form, Table } from "react-bootstrap";
 import { getAllOrders, updateOrderStatusService } from "../../../services/OrderService/OrderService";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import { formatCurrency, formatDateTime } from "../../../utils/FormatUtils";
+import { OrderItemModal } from "./Modals/OrderItemModal";
 
 const OrderStatus = new Map([
   ["READY_TO_SERVE", "Chưa thanh toán"],
@@ -13,11 +14,13 @@ const OrderStatus = new Map([
 ]);
 
 const OrderListPageForEatAtRes = () => {
-  const [order, setOrder] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
+  const [showOrderItemModal, setShowOrderItemModal] = useState(false);
+  const [order, setOrder] = useState(null);
 
 
 
@@ -29,7 +32,7 @@ const OrderListPageForEatAtRes = () => {
     try {
       const response = await getAllOrders(selectedStatus, currentPage, pageSize);
       setTotalPages(response.data.totalPages || 1);
-      setOrder(response.data.content?.filter(e => e.address == null));
+      setOrders(response.data.content?.filter(e => e.address == null));
     } catch (error) {
       AlertUtils.error("Không thể tải danh sách đơn hàng.");
     }
@@ -70,11 +73,12 @@ const OrderListPageForEatAtRes = () => {
               <th className="text-center">Khách hàng</th>
               <th className="text-center">Số điện thoại</th>
               <th className="text-center">Tổng tiền</th>
+              <th className="text-center">Tùy chọn</th>
             </tr>
           </thead>
           <tbody>
-            {order?.length > 0 ? (
-              order.map((row, index) => {
+            {orders?.length > 0 ? (
+              orders.map((row, index) => {
                 return (
                   <tr key={row.id} className="align-middle border-bottom">
                     <td className="text-center fw-bold">{index + 1}</td>
@@ -103,6 +107,19 @@ const OrderListPageForEatAtRes = () => {
                     <td className="text-center">{row.fullName}</td>
                     <td className="text-center">{row.phoneNumber}</td>
                     <td className="text-center">{row.total > 0 && formatCurrency(row.total)}</td>
+                    <td className="text-center">
+                      <div className="d-flex justify-content-center gap-2">
+                        <button
+                          className="btn btn-primary btn-sm"
+                          onClick={() => {
+                            setOrder(row);
+                            setShowOrderItemModal(true);
+                          }}
+                        >
+                          Chi tiết
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 );
               })
@@ -117,6 +134,12 @@ const OrderListPageForEatAtRes = () => {
         </Table>
       </div>
 
+      <OrderItemModal
+        showModal={showOrderItemModal}
+        setShowModal={() => setShowOrderItemModal(false)}
+        orderData={order}
+        handleConfirm={null}
+      />
       <RenderPagination
         currentPage={currentPage}
         pageSize={pageSize}

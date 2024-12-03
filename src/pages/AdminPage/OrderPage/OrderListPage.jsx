@@ -5,6 +5,7 @@ import { Form, Table } from "react-bootstrap";
 import { cancelOrderStatusService, getAllOrders, updateOrderStatusService } from "../../../services/OrderService/OrderService";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import { formatDateTime } from "../../../utils/FormatUtils";
+import { OrderItemModal } from "./Modals/OrderItemModal";
 
 // Map trạng thái
 const OrderStatus = new Map([
@@ -13,22 +14,24 @@ const OrderStatus = new Map([
   ["SHIPPED", "Đang giao (giao hàng)"],
   ["DELIVERED", "Đã giao (giao hàng)"],
   ["CANCELLED", "Đã hủy"],
-  ["PAID", "Đã thanh toán"]
+  ["PAID", "Đã thanh toán"],
 ]);
 
 const OrderListPage = () => {
-  const [order, setOrder] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
+  const [showOrderItemModal, setShowOrderItemModal] = useState(false);
+  const [order, setOrder] = useState(null);
 
   // Hàm lấy danh sách đơn hàng
   const fetchOrders = async () => {
     try {
       const response = await getAllOrders(selectedStatus, currentPage, pageSize);
       setTotalPages(response.data.totalPages || 1);
-      setOrder(response.data.content?.filter(e => e.address != null));
+      setOrders(response.data.content?.filter(e => e.address != null));
     } catch (error) {
       AlertUtils.error("Không thể tải danh sách đơn hàng.");
     }
@@ -36,6 +39,8 @@ const OrderListPage = () => {
 
   // Hàm xử lý khi nhấn vào trạng thái của đơn hàng
   const handleStatusClick = async (orderId, currentStatus) => {
+    AlertUtils.warning(orderId);
+
     try {
       // Kiểm tra nếu trạng thái hiện tại là CANCELLED hoặc PAID
       if (currentStatus === 'CANCELLED' || currentStatus === 'PAID') {
@@ -140,8 +145,8 @@ const OrderListPage = () => {
             </tr>
           </thead>
           <tbody>
-            {(order && order.length > 0) ? (
-              order.map((row, index) => {
+            {(orders && orders.length > 0) ? (
+              orders.map((row, index) => {
                 return (
                   <tr key={row.id} className="align-middle border-bottom">
                     <td className="text-center fw-bold">{index + 1}</td>
@@ -174,9 +179,12 @@ const OrderListPage = () => {
                         {row.orderStatus !== 'CANCELLED' && (
                           <button
                             className="btn btn-primary btn-sm"
-                            onClick={() => handleStatusClick(row.id, row.orderStatus)}
+                            onClick={() => {
+                              setOrder(row);
+                              setShowOrderItemModal(true);
+                            }}
                           >
-                            xác nhận
+                            Chi tiết
                           </button>
                         )}
                         {row.orderStatus === 'PENDING' && (
@@ -200,6 +208,14 @@ const OrderListPage = () => {
           </tbody>
         </Table>
       </div>
+
+      <OrderItemModal
+        showModal={showOrderItemModal}
+        setShowModal={() => setShowOrderItemModal(false)}
+        orderData={order}
+        handleConfirm={handleStatusClick}
+      />
+
       <RenderPagination
         currentPage={currentPage}
         pageSize={pageSize}
