@@ -69,7 +69,7 @@ const TableLocationPage = () => {
             if (response?.status) {
                 AlertUtils.success('Xoá thành công!');
             } else {
-                AlertUtils.error('Xoá thất bại!');
+                AlertUtils.error('Xoá thất bại do ràng buộc dữ liệu');
             }
         }
         fetchZones();

@@ -10,14 +10,15 @@ const RegistrationForm = () => {
 
     const onSubmit = async (reuqest) => {
         const { confirmPassword, ...reRequest } = reuqest;
-        const response = await registerService(reRequest);
-        if (response?.status) {
-            AlertUtils.success("Đăng ký thành công!");
-            navigate('/login');
-        } else {
-            AlertUtils.error(response?.message);
+        try {
+            const response = await registerService(reRequest);
+            if (response?.status) {
+                AlertUtils.success("Đăng ký thành công!");
+                navigate('/login');
+            }
+        } catch (error) {
+            AlertUtils.error(error?.response?.data?.message);
         }
-
     };
 
     const password = watch("password");

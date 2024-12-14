@@ -56,8 +56,9 @@ const getCountUser = async (request) => {
 }
 
 const getReversionByWeek = async (request) => {
+    const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
     return await ApiRequest({
-        path: "invoices/reservations-weekly",
+        path: `invoices/reservations-weekly?branchId=${branchId}`,
         data: request,
         headers: 'Bearer '
     })
