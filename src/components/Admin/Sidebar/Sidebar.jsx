@@ -108,11 +108,11 @@ const Sidebar = ({ isCollapsed }) => {
                 icon: <i className="fas fa-file-invoice"></i>,
                 items: [
                     {
-                        title: "Hoá đơn (món ăn)",
+                        title: "Hoá đơn trực tuyến",
                         url: "/admin/orders",
                     },
                     {
-                        title: "Hoá đơn (đặt bàn)",
+                        title: "Hoá đơn tại quầy",
                         url: "/admin/orders/orders-at-res",
                     },
                     // {

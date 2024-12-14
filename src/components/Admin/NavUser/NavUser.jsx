@@ -4,13 +4,13 @@ import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 export function NavUser({ user }) {
-    const [cookie, setCookie, removeCookie] = useCookies(['user_token']);
+    const [cookies, setCookie, removeCookie] = useCookies(['user_token']);
     const userInfo = JSON.parse(localStorage.getItem('user_info'));
     const navigate = useNavigate();
 
     const logout = () => {
         localStorage.removeItem('user_info');
-        removeCookie('user_token');
+        removeCookie('user_token', { path: '/' });
         navigate("/home");
     };
 
@@ -56,13 +56,6 @@ export function NavUser({ user }) {
                         </div>
                     </div>
                 </Dropdown.Header>
-                <Dropdown.Item
-                    className="py-2 px-3">
-                    <i className="far fa-bell me-2"></i>
-                    <span style={{ fontSize: "0.8em" }}>
-                        Thông báo
-                    </span>
-                </Dropdown.Item>
                 <Dropdown.Item
                     className="py-2 px-3"
                     onClick={logout}>
