@@ -3,26 +3,29 @@ import { MdDelete } from "react-icons/md"; // Import MdDelete for delete icon
 import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
 import { Button, Form, Table } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import EmployeeModal from "./Modals/EmployeeModal";
 import { getEmployee, deleteEmployee, updateEmployee, createEmployee } from "../../../services/UserService/UserService";
 import AlertUtils from "../../../utils/AlertUtils"; // Import AlertUtils
+import { debounce } from "../../../utils/Debounce";
 
 const EmployeeListPage = () => {
     const [employees, setEmployees] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+    const [searchKey, setSearchKey] = useState('');
     const [pageSize] = useState(10);
     const [showModal, setShowModal] = useState(false);
     const [initialValues, setInitialValues] = useState(null);
+
     const fetchEmployee = async () => {
-        const response = await getEmployee(currentPage, pageSize);
+        const response = await getEmployee(currentPage, pageSize, searchKey);
         setTotalPages(response?.data?.totalPages);
         setEmployees(response?.data?.content);
     };
     useEffect(() => {
         fetchEmployee();
-    }, [currentPage, pageSize]);
+    }, [currentPage, pageSize, searchKey]);
 
     const handleModalSubmit = async (data) => {
         const branch = JSON.parse(localStorage.getItem('branch_info'));
@@ -75,6 +78,13 @@ const EmployeeListPage = () => {
         }
     };
 
+    const handleSearch = (key) => {
+        setSearchKey(key);
+        setCurrentPage(0);
+    };
+
+    const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
+
     return (
         <>
             <PageHeader title="Danh sách nhân viên" />
@@ -86,6 +96,7 @@ const EmployeeListPage = () => {
                         style={{
                             maxWidth: "350px",
                         }}
+                        onChange={(e) => debouncedSearch(e.target.value)}
                     />
                     <Button
                         className="d-flex align-items-center rounded-3 px-4"
@@ -93,7 +104,6 @@ const EmployeeListPage = () => {
                             setInitialValues(null);
                             setShowModal(true);
                         }}
-
                     >
                         <BiPlus className="me-2" />
                         Thêm

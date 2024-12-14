@@ -62,6 +62,7 @@ const OrderListPage = () => {
           if (response?.status === true) {
             AlertUtils.success("Cập nhật trạng thái thành công!");
             await fetchOrders(); // Lấy lại danh sách đơn hàng (chờ hoàn thành)
+            setShowOrderItemModal(false);
           } else {
             console.error("Response không hợp lệ:", response);
             AlertUtils.error("Cập nhật trạng thái thất bại!");

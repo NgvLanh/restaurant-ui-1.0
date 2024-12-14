@@ -121,7 +121,7 @@ const BranchListPage = () => {
                     AlertUtils.success('Xoá thành công!');
                 }
             } catch (error) {
-                AlertUtils.error(error.response?.data?.message);
+                AlertUtils.error('Xoá thất bại do ràng buộc dữ liệu');
             }
         }
         fetchBranches();

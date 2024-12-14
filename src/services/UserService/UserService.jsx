@@ -43,10 +43,10 @@ export const updateUser = async (userId, request) => {
     }
 }
 
-export const getEmployee = async (currentPage, pageSize) => {
+export const getEmployee = async (currentPage, pageSize, phoneNumber) => {
     try {
         const response = await ApiRequest({
-            path: `users/employee?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&page=${currentPage}&size=${pageSize}`,
+            path: `users/employee?branch=${JSON.parse(localStorage.getItem('branch_info'))?.id}&phoneNumber=${phoneNumber}&page=${currentPage}&size=${pageSize}`,
             headers: 'Bearer '
         });
         return response;
@@ -68,10 +68,10 @@ export const createEmployee = async (request) =>
 
 export const deleteEmployee = async (employeeId) => {
     return await ApiRequest({
-            method: 'DELETE',
-            path: `users/${employeeId}`,
-            headers: 'Bearer '
-        });
+        method: 'DELETE',
+        path: `users/${employeeId}`,
+        headers: 'Bearer '
+    });
 };
 
 export const updateEmployee = async (employeeId, request) => {

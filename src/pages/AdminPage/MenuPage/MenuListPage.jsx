@@ -80,7 +80,7 @@ const MenuListPage = () => {
       if (response?.status) {
         AlertUtils.success('Xoá thành công!');
       } else {
-        AlertUtils.info('Xoá thất bại!');
+        AlertUtils.info('Xoá thất bại do ràng buộc dữ liệu');
       }
     }
     fetchDishes();

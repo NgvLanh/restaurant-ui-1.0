@@ -19,8 +19,7 @@ const ShoppingCartPage = () => {
     const [localCart, setLocalCart] = useState(JSON.parse(localStorage.getItem('cart_temps')) || []);
 
     const [addresses, setAddresses] = useState([]);
-    const [discountCode, setDiscountCode] = useState("");
-    const [discount, setDiscount] = useState(JSON.parse(localStorage.getItem('discount_info')));
+    const [discount, setDiscount] = useState(JSON.parse(localStorage.getItem('discount_info')) || null);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -191,7 +190,7 @@ const ShoppingCartPage = () => {
                         ${response?.data?.discountMethod === 'FIXED_AMOUNT'
                             ? `-${formatCurrency(response?.data?.value)}` : `${response?.data?.value}%`} `);
                     localStorage.setItem('discount_info', JSON.stringify(response?.data))
-                    setDiscount(response?.data);
+                    setDiscount(response?.data || null);
                 }
                 setShowDiscountModal(false);
             }
@@ -251,7 +250,7 @@ const ShoppingCartPage = () => {
                                         Giảm giá {localCart?.length > 0 && (
                                             discount?.discountMethod === 'FIXED_AMOUNT'
                                                 ? `-${formatCurrency(discount?.value)}`
-                                                : `${discount?.value}%`
+                                                : discount?.discountMethod === 'PERCENTAGE' ? `${discount?.value}%` : ''
                                         )}
                                     </div>
                                     <div className="col-md-2 d-flex justify-content-end">

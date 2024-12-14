@@ -71,7 +71,7 @@ const DiscountListPage = () => {
           fetchDiscount();
         }
       } catch (error) {
-        AlertUtils.error(error.response?.data?.message);
+        AlertUtils.error('Xoá thất bại do ràng buộc dữ liệu');
       }
     }
   };

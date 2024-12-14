@@ -70,7 +70,7 @@ const BranchStatusPage = () => {
           AlertUtils.success('Xoá thành công!');
         }
       } catch (error) {
-        AlertUtils.info(error.response?.data?.message);
+        AlertUtils.info('Xoá thất bại do ràng buộc dữ liệu');
       }
     }
     fetchBranchStatuses();
