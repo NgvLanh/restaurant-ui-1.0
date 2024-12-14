@@ -15,7 +15,7 @@ const OrderHistory = () => {
     { key: 'PENDING', label: 'Chờ xác nhận' },
     { key: 'CONFIRMED', label: 'Đã xác nhận' },
     { key: 'SHIPPED', label: 'Đang giao' },
-    { key: 'DELIVERED', label: 'Hoàn thành' },
+    { key: 'PAID', label: 'Hoàn thành' },
     { key: 'CANCELLED', label: 'Đã hủy' },
   ];
 
@@ -104,7 +104,7 @@ const OrderHistory = () => {
                               ? 'Đã xác nhận'
                               : order.orderStatus === 'SHIPPED'
                                 ? 'Đang giao'
-                                : order.orderStatus === 'DELIVERED'
+                                : order.orderStatus === 'DELIVERED' || order.orderStatus === 'PAID'
                                   ? 'Đã giao'
                                   : 'Đã huỷ'}
 
