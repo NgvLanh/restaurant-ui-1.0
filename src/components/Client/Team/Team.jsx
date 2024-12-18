@@ -17,7 +17,7 @@ const Teams = () => {
                                 </div>
                             </div>
                             <div className="text-center border border-5 border-light border-top-0 p-4">
-                                <h5 className="mb-0">Nguyễn Văn A</h5>
+                                <h5 className="mb-0">Nguyễn Văn An</h5>
                                 <small>Bếp Trưởng</small>
                             </div>
                         </div>
@@ -33,7 +33,7 @@ const Teams = () => {
                                 </div>
                             </div>
                             <div className="text-center border border-5 border-light border-top-0 p-4">
-                                <h5 className="mb-0">Trần Thị B</h5>
+                                <h5 className="mb-0">Trần Văn Bảo</h5>
                                 <small>Bếp Phó</small>
                             </div>
                         </div>
@@ -49,7 +49,7 @@ const Teams = () => {
                                 </div>
                             </div>
                             <div className="text-center border border-5 border-light border-top-0 p-4">
-                                <h5 className="mb-0">Phạm Văn C</h5>
+                                <h5 className="mb-0">Phạm Văn Cường</h5>
                                 <small>Quản Lý</small>
                             </div>
                         </div>
@@ -65,7 +65,7 @@ const Teams = () => {
                                 </div>
                             </div>
                             <div className="text-center border border-5 border-light border-top-0 p-4">
-                                <h5 className="mb-0">Lê Thị D</h5>
+                                <h5 className="mb-0">Lê Thị Dịu</h5>
                                 <small>Bartender</small>
                             </div>
                         </div>
