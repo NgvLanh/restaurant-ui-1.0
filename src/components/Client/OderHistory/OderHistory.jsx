@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Nav, Tab, Card, ListGroup, Button, Image, Modal } from 'react-bootstrap';
+import { Row, Col, Nav, Tab, Card, ListGroup, Button, Image } from 'react-bootstrap';
 import { cancelOrder, getAllOrdersByUserId } from '../../../services/OrderService/OrderService';
 import { formatCurrency, formatDateTime } from '../../../utils/FormatUtils';
 import AlertUtils from '../../../utils/AlertUtils';
@@ -7,8 +7,9 @@ import AlertUtils from '../../../utils/AlertUtils';
 const OrderHistory = () => {
   const [key, setKey] = useState('ALL');
   const [selectedOrder, setSelectedOrder] = useState('ALL');
-  const [showModal, setShowModal] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Quản lý trang hiện tại
+  const itemsPerPage = 5; // Số đơn hàng hiển thị trên mỗi trang
 
   const tabs = [
     { key: 'ALL', label: 'Tất cả' },
@@ -23,16 +24,15 @@ const OrderHistory = () => {
     fetchOrder();
   }, [selectedOrder]);
 
-
   const fetchOrder = async () => {
     const response = await getAllOrdersByUserId(selectedOrder);
     setOrders(response.data || []);
-  }
+    setCurrentPage(1); // Reset về trang đầu khi thay đổi bộ lọc
+  };
 
   const handleTabClick = (tabKey) => {
     setSelectedOrder(tabKey);
   };
-
 
   const handleCancelOrder = async (order) => {
     const result = await AlertUtils.input(`Bạn có chắc muốn huỷ hoá đơn #${order.id}?`, 'Nhập lý do');
@@ -44,10 +44,16 @@ const OrderHistory = () => {
           fetchOrder();
         }
       } catch (error) {
-        AlertUtils.error(`Lỗi huỷ hoá đơn`, error);
+        AlertUtils.error(`Lỗi huỷ hoá đơn`, error.response?.data?.message);
+        fetchOrder();
       }
     }
   };
+
+  // Tính toán các đơn hàng hiển thị dựa trên trang hiện tại
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div>
@@ -82,7 +88,7 @@ const OrderHistory = () => {
             <Tab.Content>
               {tabs.map((tab) => (
                 <Tab.Pane eventKey={tab.key} key={tab.key}>
-                  {orders?.length > 0 && orders?.map((order) => (
+                  {currentOrders?.length > 0 && currentOrders?.map((order) => (
                     <Card
                       key={order.id}
                       className="mb-4 border-0 rounded-lg shadow-lg"
@@ -95,9 +101,7 @@ const OrderHistory = () => {
                         <Card.Subtitle className="text-muted">
                           Ngày đặt: {formatDateTime(order.time)} - <small>{order.address.address}</small>
                         </Card.Subtitle>
-                        <small
-                          className="d-flex justify-content-end"
-                        >
+                        <small className="d-flex justify-content-end">
                           {order.orderStatus === 'PENDING'
                             ? 'Chờ xác nhận'
                             : order.orderStatus === 'CONFIRMED'
@@ -107,7 +111,6 @@ const OrderHistory = () => {
                                 : order.orderStatus === 'DELIVERED' || order.orderStatus === 'PAID'
                                   ? 'Đã giao'
                                   : 'Đã huỷ'}
-
                         </small>
 
                         <ListGroup variant="flush" className="mt-3">
@@ -126,11 +129,11 @@ const OrderHistory = () => {
                                 <Col sm={3} className="d-flex align-items-center justify-content-center">
                                   <Image
                                     src={`http://localhost:8080/api/files/${item.dish?.image}`}
-                                    className='rounded-3'
+                                    className="rounded-3"
                                     style={{
                                       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
                                       maxHeight: '120px',
-                                      maxWidth: '200px'
+                                      maxWidth: '200px',
                                     }}
                                   />
                                 </Col>
@@ -156,7 +159,6 @@ const OrderHistory = () => {
                                 </Col>
                               </Row>
                             </ListGroup.Item>
-
                           ))}
                         </ListGroup>
                         <hr />
@@ -164,7 +166,7 @@ const OrderHistory = () => {
                           <h5 className="fw-bold" style={{ color: '#ab7442' }}>
                             Tổng cộng: {formatCurrency(order.total)}
                           </h5>
-                          {order.orderStatus === 'PENDING' &&
+                          {order.orderStatus === 'PENDING' && (
                             <Button
                               variant="dark"
                               className="shadow-sm"
@@ -175,12 +177,13 @@ const OrderHistory = () => {
                               onClick={() => handleCancelOrder(order)}
                             >
                               Huỷ đơn
-                            </Button>}
+                            </Button>
+                          )}
                         </div>
                       </Card.Body>
                     </Card>
                   ))}
-                  {orders.length === 0 && (
+                  {currentOrders.length === 0 && (
                     <Card className="text-center shadow-lg border-0" style={{ background: '#fff' }}>
                       <Card.Body>
                         <h2 className="m-2 text-primary">FooDY</h2>
@@ -189,10 +192,32 @@ const OrderHistory = () => {
                       </Card.Body>
                     </Card>
                   )}
+                  {/* Phân trang */}
+                  {orders.length > itemsPerPage && (
+                    <div className="d-flex justify-content-between mt-3">
+                      <Button
+                        variant="dark"
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                      >
+                        Lui
+                      </Button>
+                      <Button
+                        variant="dark"
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, Math.ceil(orders.length / itemsPerPage))
+                          )
+                        }
+                        disabled={currentPage === Math.ceil(orders.length / itemsPerPage)}
+                      >
+                        Tới
+                      </Button>
+                    </div>
+                  )}
                 </Tab.Pane>
               ))}
             </Tab.Content>
-
           </Col>
         </Row>
       </Tab.Container>

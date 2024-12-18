@@ -214,9 +214,11 @@ const DishListModal = ({ showDetailsModal, setShowDetailsModal, selectTables }) 
                                                     />
                                                     <div>
                                                         <strong>{item.dish?.name}</strong><br />
-                                                        <small>{item.quantity} x {formatCurrency(item.price)}</small>
+
+                                                        <small>{item.quantity} x {formatCurrency(item.price)} (Kho {item.dish.quantity})</small>
                                                     </div>
                                                 </div>
+
                                                 <div className="border">
                                                     <Button variant="ghost"
                                                         onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</Button>

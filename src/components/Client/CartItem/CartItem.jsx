@@ -52,7 +52,9 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, onToggleSelect }) => {
                     />
                     <button className="btn btn-sm"
                         onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}>+</button>
-
+                </div>
+                <div className="d-flex align-items-center justify-content-center">
+                    Còn lại {item.dish.quantity}
                 </div>
             </td>
             <td className="text-center align-content-center">

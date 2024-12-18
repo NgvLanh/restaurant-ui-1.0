@@ -45,31 +45,52 @@ const ReservationSchedulePage = () => {
 
 
     const convertReservationsToEvents = (reservations, tables) => {
-        const formattedEvents = reservations.map((reservation) => {
-            const isCanceled = !!reservation?.cancelReason;
-            const isDone = !!reservation?.endTime;
+        const groupedReservations = {};
 
-            const table = tables.find(
-                (t) => t.reservations.some((r) => r.id === parseInt(reservation.id))
+        reservations.forEach((reservation) => {
+            const key = `${reservation?.bookingDate}T${reservation?.startTime}`;
+            if (!groupedReservations[key]) {
+                groupedReservations[key] = [];
+            }
+            const table = tables.find((t) =>
+                t.reservations.some((r) => r.id === parseInt(reservation.id))
             );
-            
+            groupedReservations[key].push({
+                reservation,
+                tableNumber: table?.number,
+                cancelReason: reservation?.cancelReason,
+                isDone: !!reservation?.endTime,
+            });
+        });
+
+        const formattedEvents = Object.entries(groupedReservations).map(([key, group]) => {
+            const start = key;
+            const end = `${group[0]?.reservation?.bookingDate}T${formatTime(group[0]?.reservation?.endTime)}`;
+            const tableNumbers = group.map((item) => item.tableNumber).join(", ");
+            const cancelReasons = group
+                .filter((item) => item.cancelReason)
+                .map((item) => item.cancelReason)
+                .join(", ");
+            const isCanceled = group.some((item) => !!item.cancelReason);
+            const isDone = group.every((item) => item.isDone);
 
             return {
-                id: `${reservation?.id}`,
-                title: `${'#: ' + table?.number} \n ${' / ' + reservation?.fullName}
-                 ${isCanceled ? ` / ${reservation?.cancelReason}` : ''}`,
-                start: `${reservation?.bookingDate}T${reservation?.startTime}`,
-                end: `${reservation?.bookingDate}T${formatTime(reservation?.endTime)}`,
+                id: group[0]?.reservation?.id,
+                title: `Bàn: ${tableNumbers} / ${group[0]?.reservation?.fullName}${isCanceled ? ` / Hủy: ${cancelReasons}` : ""
+                    }`,
+                start,
+                end,
                 backgroundColor: isCanceled ? "rgba(114, 28, 36, 0.7)" : isDone ? "rgba(21, 87, 36, 0.7)" : undefined,
                 borderColor: isCanceled ? "rgba(114, 28, 36, 0.7)" : isDone ? "rgba(21, 87, 36, 0.7)" : undefined,
                 extendedProps: {
-                    table: table,
+                    tables: group.map((item) => item.tableNumber),
                 },
             };
         });
 
         setEvents(formattedEvents);
     };
+
 
 
     const handleEventClick = (info) => {

@@ -161,10 +161,10 @@ const Sidebar = ({ isCollapsed }) => {
                 url: "/admin/statistics",
                 icon: <i className="fas fa-chart-line"></i>,
                 items: [
-                    // {
-                    //     title: "Thống kê...",
-                    //     url: "/admin/settings",
-                    // },
+                    {
+                        title: "Thống kê hôm nay",
+                        url: "/admin/statistical-today",
+                    },
                     {
                         title: "Tổng số bàn đã đặt",
                         url: "/admin/statistical-table",
@@ -189,23 +189,24 @@ const Sidebar = ({ isCollapsed }) => {
             },
         ],
         projects: [
-            {
-                name: "Dashboard",
-                url: "/admin/dashboard",
-                icon: <i className="fas fa-terminal"></i>,
-            },
-            // {
-            //     name: "Thống kê",
-            //     url: "/admin/statistics",
-            //     icon: <i className="fas fa-chart-line"></i>,
-            // },
-            // {
-            //     name: "Bản đồ",
-            //     url: "/admin/map",
-            //     icon: <i className="fas fa-map-marked-alt"></i>,
-            // },
+            ...(getRoles === "ADMIN" ? [
+                {
+                    name: "Dashboard",
+                    url: "/admin/dashboard",
+                    icon: <i className="fas fa-terminal"></i>,
+                },
+                // {
+                //     name: "Thống kê",
+                //     url: "/admin/statistics",
+                //     icon: <i className="fas fa-chart-line"></i>,
+                // },
+                // {
+                //     name: "Bản đồ",
+                //     url: "/admin/map",
+                //     icon: <i className="fas fa-map-marked-alt"></i>,
+                // },
 
-        ],
+            ] : [])],
     }
 
     return (

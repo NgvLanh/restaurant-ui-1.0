@@ -29,6 +29,7 @@ const breadcrumbMap = {
     '/admin/statistical-discount': 'Tổng giảm giá',
     '/admin/map': 'Bản đồ',
     '/admin/employee': 'Nhân viên',
+    '/admin/statistical-today': 'Thống kê hôm nay'
 };
 
 export const Header = ({ toggleSidebar }) => {

@@ -18,7 +18,7 @@ const ProtectRoute = ({ element, admin = true }) => {
         if (admin) {
             if (!userInfo) {
                 navigate('/login');
-                AlertUtils.info('Localstroge #: KO', 'Quyền truy cập bị từ chối!');
+                AlertUtils.info('Vui lòng đăng nhập', 'Quyền truy cập bị từ chối!');
             } else {
                 const introspect = await getUserService();
                 if (introspect === undefined) {
@@ -28,7 +28,7 @@ const ProtectRoute = ({ element, admin = true }) => {
                     && introspect.roles[0] !== 'NON_ADMIN'
                     && introspect.roles[0] !== 'EMPLOYEE') {
                     navigate('/login');
-                    AlertUtils.info('Localstroge #: CÓ, TOKEN ko phải ADMIN', 'Quyền truy cập bị từ chối!');
+                    AlertUtils.info('Bạn không có quyền', 'Quyền truy cập bị từ chối!');
                 }
             }
         } else {

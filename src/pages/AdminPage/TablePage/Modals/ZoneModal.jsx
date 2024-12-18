@@ -23,7 +23,6 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
         handleData(data);
     };
 
-    // Xử lý reset form
     const handleReset = async () => {
         if (initialValues) {
             setValue('name', initialValues.name);

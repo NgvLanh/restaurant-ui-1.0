@@ -2,7 +2,7 @@ import moment from 'moment';
 
 export const formatDateTime = (dateString) => {
     if (!dateString) return '';
-    return moment(dateString).format('DD/MM/YYYY - HH:mm:ss');
+    return moment(dateString).format('DD/MM/YYYY - HH:mm');
 };
 
 export const formatDate = (dateString) => {

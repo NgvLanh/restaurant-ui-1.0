@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import ApiRequest from "../../configs/ApiRequest/ApiRequest";
 
 const getDiscountCount = async (request) => {
@@ -67,6 +66,13 @@ const getReversionByWeek = async (request) => {
 const getMonthlyOrderStatistics = async () => {
     return await ApiRequest({
         path: "invoices/monthly-orders",
+        headers: 'Bearer '
+    })
+}
+
+export const getDailyOrderStatistics = async () => {
+    return await ApiRequest({
+        path: "invoices/daily-orders",
         headers: 'Bearer '
     })
 }
