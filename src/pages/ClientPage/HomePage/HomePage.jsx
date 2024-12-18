@@ -17,7 +17,7 @@ const HomePage = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
     const [branches, setBranches] = useState([]);
-    const branchInfo = JSON.parse(localStorage.getItem('branch_info'));
+    const branchInfo = JSON.parse(localStorage.getItem('branch_info') !== 'undefined' && localStorage.getItem('branch_info'));
 
     useEffect(() => {
         if (!branchInfo) {

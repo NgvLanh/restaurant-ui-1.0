@@ -9,7 +9,7 @@ export const SidebarHeader = ({ teams }) => {
 
     useEffect(() => {
         if (teams.length > 0) {
-            setActiveTeam(JSON.parse(localStorage.getItem('branch_info')) || teams[0]);
+            setActiveTeam(JSON.parse(localStorage.getItem('branch_info') === 'undefined' ? JSON.stringify(teams[0]) : localStorage.getItem('branch_info')));
         }
     }, [teams]);
 
