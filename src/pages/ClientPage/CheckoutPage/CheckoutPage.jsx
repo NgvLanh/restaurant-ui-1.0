@@ -53,6 +53,9 @@ const CheckoutPage = () => {
         if (!defaultAddress) {
             AlertUtils.info('Bạn chưa cung cấp địa chỉ giao hàng');
             return;
+        } else if (!defaultAddress?.phoneNumber) {
+            AlertUtils.info('Bạn chưa cung cấp số điện thoại giao hàng');
+            return;
         }
         const result = await AlertUtils.confirm('Bạn có chắn chắn đặt đơn hàng này');
         if (result) {

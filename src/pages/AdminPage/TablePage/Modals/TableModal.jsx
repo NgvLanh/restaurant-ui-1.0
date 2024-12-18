@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { getAllZones } from '../../../../services/zoneservice/ZoneService';
+import { getAllZones, getAllZonesPageable } from '../../../../services/zoneservice/ZoneService';
 
 const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
     const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm();
@@ -20,7 +20,8 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
     }, [initialValues]);
 
     const fetchZone = async () => {
-        setZones(await getAllZones());
+        const res = await getAllZonesPageable();
+        setZones(res.data?.content || []);
     }
 
     // Xử lý sự kiện gửi form
@@ -41,7 +42,7 @@ const TableModal = ({ showModal, closeModal, initialValues, handleData }) => {
             setValue('zoneId', initialValues.zone?.id);
         } else {
             reset();
-        }   
+        }
     };
 
     return (

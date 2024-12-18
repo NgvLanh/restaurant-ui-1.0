@@ -23,6 +23,8 @@ const EmployeeListPage = () => {
     const [initialValues, setInitialValues] = useState(null);
     const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
+    const getUser = JSON.parse(localStorage.getItem('user_info'));
+    const getUserRoles = getUser?.roles[0] || null;
 
     const fetchEmployee = async () => {
         const response = await getEmployee(currentPage, pageSize, searchKey);
@@ -92,38 +94,41 @@ const EmployeeListPage = () => {
 
     const handleChangeRole = async (role, userId) => {
         setUserId(userId);
-        if (role === 'EMPLOYEE') {
-            const result = await AlertUtils.confirm('Bạn có chắc chắn muốn đổi quyền?');
-            if (result) {
+        const result = await AlertUtils.confirm('Bạn có chắc chắn muốn đổi quyền?');
+        if (result) {
+            if (role === 'EMPLOYEE') {
                 const res = await changeRoleService(userId, 0, 'NON_ADMIN');
                 if (res.status) {
-                    AlertUtils.success('Câp quyền thành công');
-                    setShowChoseBranchModal(false);
-                    fetchEmployee();
-                    navigate(0);
+                    AlertUtils.success('Cấp quyền thành công');
+                }
+            } else if (role === 'NON_ADMIN') {
+                const res = await changeRoleService(userId, JSON.parse(localStorage.getItem('branch_info'))?.id || null, 'EMPLOYEE');
+                if (res.status) {
+                    AlertUtils.success('Cấp quyền thành công');
                 }
             }
-        } else {
-            setShowChoseBranchModal(true);
+            fetchEmployee();
+            navigate(0);
         }
     }
 
-    const handleChoseBranchModalSubmit = async (branchId, userId) => {
-        const result = await AlertUtils.confirm('Bạn có chắc chắn muốn đổi quyền?');
-        if (result) {
-            try {
-                const res = await changeRoleService(userId, branchId, 'EMPLOYEE');
-                if (res.status) {
-                    AlertUtils.success('Câp quyền thành công');
-                    setShowChoseBranchModal(false);
-                    fetchEmployee();
-                    navigate(0);
-                }
-            } catch (error) {
-                AlertUtils.error(error);
-            }
-        }
-    }
+
+    // const handleChoseBranchModalSubmit = async (branchId, userId) => {
+    //     const result = await AlertUtils.confirm('Bạn có chắc chắn muốn đổi quyền?');
+    //     if (result) {
+    //         try {
+    //             const res = await changeRoleService(userId, branchId, 'EMPLOYEE');
+    //             if (res.status) {
+    //                 AlertUtils.success('Cấp quyền thành công');
+    //                 setShowChoseBranchModal(false);
+    //                 fetchEmployee();
+    //                 navigate(0);
+    //             }
+    //         } catch (error) {
+    //             AlertUtils.error(error);
+    //         }
+    //     }
+    // }
 
     const debouncedSearch = useMemo(() => debounce(handleSearch, 500), []);
 
@@ -189,16 +194,19 @@ const EmployeeListPage = () => {
                                             >
                                                 <MdDelete />
                                             </span>
-                                            <span>
-                                                <Form.Select
-                                                    className="rounded-3"
-                                                    defaultValue={employee.roles[0]}
-                                                    onChange={(e) => handleChangeRole(e.target.value, employee.id)}
-                                                >
-                                                    <option value="NON_ADMIN">QL Chi nhánh</option>
-                                                    <option value="EMPLOYEE">Nhân viên</option>
-                                                </Form.Select>
-                                            </span>
+                                            {
+                                                getUserRoles === 'ADMIN' &&
+                                                <span>
+                                                    <Form.Select
+                                                        className="rounded-3"
+                                                        defaultValue={employee.roles[0]}
+                                                        onChange={(e) => handleChangeRole(e.target.value, employee.id)}
+                                                    >
+                                                        <option value="NON_ADMIN">QL Chi nhánh</option>
+                                                        <option value="EMPLOYEE">Nhân viên</option>
+                                                    </Form.Select>
+                                                </span>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
@@ -230,7 +238,6 @@ const EmployeeListPage = () => {
                 showModal={showChoseBranchModal}
                 closeModal={() => { setShowChoseBranchModal(false); navigate(0) }}
                 userId={userId}
-                handleData={handleChoseBranchModalSubmit}
             />
 
         </>

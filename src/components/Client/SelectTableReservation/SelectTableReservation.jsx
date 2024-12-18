@@ -285,7 +285,7 @@ const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
                                 <div className="col-md-6">
                                     <p><strong>Số lượng bàn:</strong> {selectedTables?.length} bàn</p>
                                     <p><strong>Ngày:</strong> {formatDate(dataRequest?.bookingDate)}</p>
-                                    <p><strong>Thời gian:</strong> {dataRequest?.startTime}</p>
+                                    <p><strong>Thời gian nhận bàn:</strong> {dataRequest?.startTime}</p>
                                 </div>
                             </div>
                         </Card.Body>

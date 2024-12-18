@@ -37,7 +37,7 @@ const Topbar = () => {
           <div className="h-100 d-inline-flex align-items-center py-3 me-4">
             <small className="fa fa-map-marker-alt text-primary me-2"></small>
             <Form.Select className="rounded-3" style={{ border: 'none' }}
-              defaultValue={JSON.parse(localStorage.getItem('branch_info'))?.id}
+              defaultValue={localStorage.getItem('branch_info') === 'undefined' ? 1 : JSON.parse(localStorage.getItem('branch_info'))?.id}
               onChange={(e) => { handleChandeBranch(e.target.value) }}>
               {branches?.length > 0 ? (branches?.map(e => (
                 <option key={e.id} value={e.id}>{e.name}</option>

@@ -10,7 +10,7 @@ import { getAddressByUserId } from "../../../services/AddressService/AddressServ
 import { FaInbox } from "react-icons/fa";
 import AlertUtils from "../../../utils/AlertUtils";
 import { getUserService } from "../../../services/AuthService/AuthService";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ChooseDiscountModal from "../../../components/Client/ChooseDiscountModal/ChooseDiscountModal";
 import { checkDiscount } from "../../../services/DiscountService/DiscountService";
 

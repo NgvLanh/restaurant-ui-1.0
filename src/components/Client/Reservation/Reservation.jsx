@@ -132,8 +132,8 @@ const Reservation = () => {
                                                     required: "Vui lòng chọn giờ đặt bàn",
                                                     validate: (value) => {
                                                         const [hours, minutes] = value.split(":").map(Number);
-                                                        if (hours < 9 || (hours === 21 && minutes > 0) || hours > 21) {
-                                                            return "Thời gian phải nằm trong khoảng 09:00 AM - 09:00 PM";
+                                                        if (hours < 9 || (hours === 20 && minutes > 30) || hours > 20) {
+                                                            return "Thời gian phải nằm trong khoảng 09:00 AM - 08:30 PM";
                                                         }
                                                         return true;
                                                     },
