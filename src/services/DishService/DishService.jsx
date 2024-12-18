@@ -34,7 +34,7 @@ export const deleteDish = async (dishId) => {
 };
 
 export const getAllDishesByCategoryId = async (categoryId) => {
-    const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
+    const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id || 0;
     const response = await ApiRequest({
         path: `dishes/${branchId}/${categoryId}`
     });

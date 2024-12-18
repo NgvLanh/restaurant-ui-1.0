@@ -5,7 +5,7 @@ import "./SidebarHeader.css"
 export const SidebarHeader = ({ teams }) => {
     const [activeTeam, setActiveTeam] = useState(teams[0] || null);
     const getUser = JSON.parse(localStorage.getItem('user_info'));
-    const getUserRoles = getUser?.roles[0];
+    const getUserRoles = getUser?.roles[0] || null;
 
     useEffect(() => {
         if (teams.length > 0) {
