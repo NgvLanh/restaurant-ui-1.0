@@ -67,13 +67,13 @@ const CheckoutPage = () => {
                     ? calculateTotal() * (1 - discountInfo?.value / 100) + (defaultAddress?.fee || 0)
                     : calculateTotal() + (defaultAddress?.fee || 0) - (discountInfo?.value || 0)
             }
-            console.log(request);
 
             if (method === 'PENDING') {
                 const response = await orderOffLineService(request);
                 if (response.status) {
                     AlertUtils?.success('Đặt hàng thành công!');
                     deleteCartItem(userInfo?.id);
+                    localStorage.removeItem('discount_info');
                     navigate(0);
                 }
             } else if (method === 'CONFIRMED') {
@@ -89,6 +89,7 @@ const CheckoutPage = () => {
                 const res = await vnPayService(data);
                 if (res.status) {
                     window.location.href = `${res.data?.url}`;
+                    localStorage.removeItem('discount_info');
                 }
             }
         }
@@ -96,7 +97,6 @@ const CheckoutPage = () => {
 
     const deleteCartItem = async (id) => {
         const response = await deleteCartItemByUserId(id);
-        console.log(response);
     }
 
     return (

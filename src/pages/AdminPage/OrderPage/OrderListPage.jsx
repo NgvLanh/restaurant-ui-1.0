@@ -11,8 +11,8 @@ import { OrderItemModal } from "./Modals/OrderItemModal";
 const OrderStatus = new Map([
   ["PENDING", "Chờ xác nhận"],
   ["CONFIRMED", "Đã xác nhận"],
-  ["SHIPPED", "Đang giao (giao hàng)"],
-  ["DELIVERED", "Đã giao (giao hàng)"],
+  ["SHIPPED", "Đang giao"],
+  ["DELIVERED", "Đã giao"],
   ["CANCELLED", "Đã hủy"],
   ["PAID", "Đã thanh toán"],
 ]);
@@ -22,7 +22,7 @@ const OrderListPage = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
+  const [pageSize] = useState(50);
   const [showOrderItemModal, setShowOrderItemModal] = useState(false);
   const [order, setOrder] = useState(null);
 

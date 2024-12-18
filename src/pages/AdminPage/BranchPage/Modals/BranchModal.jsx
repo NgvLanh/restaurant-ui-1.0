@@ -111,8 +111,6 @@ const BranchModal = ({ showModal, closeModal, initialValues, handleData }) => {
     };
     const onSubmit = (data) => {
         handleData(data);
-        closeModal(false);
-        reset();
     };
 
 

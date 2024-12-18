@@ -3,13 +3,13 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 
 const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
-    const { 
-        register, 
-        handleSubmit, 
-        setValue, 
-        reset, 
-        formState: { errors }, 
-        watch 
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        reset,
+        formState: { errors },
+        watch
     } = useForm();
 
     const password = watch("password");
@@ -175,11 +175,11 @@ const UserModal = ({ showModal, closeModal, initialValues, handleData }) => {
                         </Row>
                     )}
 
-                    <div className="d-flex justify-content-end gap-3">
+                    {/* <div className="d-flex justify-content-end gap-3">
                         <Button type="submit" variant="primary">
                             {initialValues?.email ? 'Lưu' : 'Thêm'}
                         </Button>
-                    </div>
+                    </div> */}
                 </Form>
             </Modal.Body>
         </Modal>

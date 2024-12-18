@@ -124,6 +124,7 @@ export const router = createBrowserRouter((
                 </Route>
 
                 <Route path="statistics" element={<StatisticPage />} />
+                <Route path="statistical-today" element={<SettingPage />} />
                 <Route path="statistical-table" element={<StatisticalTablePage />} />
                 <Route path="statistical-customer" element={<StatisticalCusSumMonth />} />
                 <Route path="statistical-invoice" element={<StatisticalInvoice />} />

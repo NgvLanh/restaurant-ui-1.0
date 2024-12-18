@@ -214,7 +214,7 @@ const BranchListPage = () => {
                                             </span>
 
                                             <span
-                                                onClick={() => row.user ? handleUserModalOpen(row?.user) : handleUserModalOpen(row)}
+                                                onClick={() => row.user && handleUserModalOpen(row?.user)}
                                                 style={{
                                                     padding: '8px',
                                                     backgroundColor: '#F1F3F4',

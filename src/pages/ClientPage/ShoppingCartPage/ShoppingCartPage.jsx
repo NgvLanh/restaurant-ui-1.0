@@ -80,11 +80,6 @@ const ShoppingCartPage = () => {
     };
     const handleUpdateQuantity = async (id, quantity) => {
 
-        if (quantity > 20) {
-            AlertUtils.info('Bạn chỉ có thể thêm tối đa là 20 sản phẩm');
-            return;
-        }
-
         if (userInfo) {
             try {
                 await updateCartItemQuantity(id, quantity);
@@ -94,6 +89,11 @@ const ShoppingCartPage = () => {
                 AlertUtils.info(error.response?.data?.message || 'Lỗi không xác định');
             }
         } else {
+            if (quantity > 20) {
+                AlertUtils.info('Bạn chỉ có thể thêm tối đa là 20 sản phẩm');
+                return;
+            }
+
             const updateCart = localCart.map(e => {
                 if (e.id === id) {
                     return { ...e, quantity };
@@ -108,16 +108,18 @@ const ShoppingCartPage = () => {
 
 
     const handleRemove = async (id) => {
-        if (userInfo) {
-            const res = await deleteCartItem(id);
-            console.log(res);
-            fetchUserCart();
-        } else {
-            const updateCart = localCart.filter(e => e.id !== id);
-            setLocalCart(updateCart);
-            localStorage.setItem('cart_temps', JSON.stringify(updateCart));
+        const result = await AlertUtils.confirm('Bạn có mốn xoá sản phẩm này ra khỏi giỏ hàng?');
+        if (result) {
+            if (userInfo) {
+                const res = await deleteCartItem(id);
+                console.log(res);
+                fetchUserCart();
+            } else {
+                const updateCart = localCart.filter(e => e.id !== id);
+                setLocalCart(updateCart);
+                localStorage.setItem('cart_temps', JSON.stringify(updateCart));
+            }
         }
-
     };
 
     const handleSelectAll = async (checked) => {

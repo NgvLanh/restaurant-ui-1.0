@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { getAllBranches } from "../../../services/BranchService/BranchService";
 import SelectTableReservation from "../SelectTableReservation/SelectTableReservation";
-import AlertUtils from "../../../utils/AlertUtils";
 import { useNavigate } from "react-router-dom";
 
 const Reservation = () => {
@@ -11,6 +10,8 @@ const Reservation = () => {
     const [showModal, setShowModal] = useState(false);
     const [dataRequest, setDataRequest] = useState();
     const navigate = useNavigate();
+    const userInfo = JSON.parse(localStorage.getItem('user_info')) || null;
+
 
     useEffect(() => {
         fetchBranch();
@@ -64,21 +65,27 @@ const Reservation = () => {
                                     </div>
                                     <div className="col-12 col-sm-6">
                                         <div className="form-floating">
-                                            <input type="text" className="form-control border-0" placeholder="Tên Của Bạn" {...register("fullName", { required: "Vui lòng nhập tên của bạn" })} id="floatingFullName" />
+                                            <input type="text" className="form-control border-0"
+                                                defaultValue={userInfo?.fullName}
+                                                placeholder="Tên Của Bạn" {...register("fullName", { required: "Vui lòng nhập tên của bạn" })} id="floatingFullName" />
                                             <label htmlFor="floatingFullName">Tên Của Bạn</label>
                                             {errors.fullName && <span className="text-danger">{errors.fullName.message}</span>}
                                         </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
                                         <div className="form-floating">
-                                            <input type="email" className="form-control border-0" placeholder="Email Của Bạn" {...register("email", { pattern: { value: /^\S+@\S+$/i, message: "Email không hợp lệ" } })} id="floatingEmail" />
+                                            <input type="email" className="form-control border-0"
+                                                defaultValue={userInfo?.email}
+                                                placeholder="Email Của Bạn" {...register("email", { pattern: { value: /^\S+@\S+$/i, message: "Email không hợp lệ" } })} id="floatingEmail" />
                                             <label htmlFor="floatingEmail">Email Của Bạn</label>
                                             {errors.email && <span className="text-danger">{errors.email.message}</span>}
                                         </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
                                         <div className="form-floating">
-                                            <input type="text" className="form-control border-0" placeholder="Số Điện Thoại" {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại của bạn" })} id="floatingPhoneNumber" />
+                                            <input type="text" className="form-control border-0"
+                                                defaultValue={userInfo?.phoneNumber}
+                                                placeholder="Số Điện Thoại" {...register("phoneNumber", { required: "Vui lòng nhập số điện thoại của bạn" })} id="floatingPhoneNumber" />
                                             <label htmlFor="floatingPhoneNumber">Số Điện Thoại</label>
                                             {errors.phoneNumber && <span className="text-danger">{errors.phoneNumber.message}</span>}
                                         </div>
@@ -89,14 +96,23 @@ const Reservation = () => {
                                                 type="date"
                                                 className="form-control border-0"
                                                 defaultValue={new Date().toISOString().split("T")[0]}
+                                                max={new Date(new Date().setMonth(new Date().getMonth() + 1))
+                                                    .toISOString()
+                                                    .split("T")[0]}
                                                 {...register("bookingDate", {
                                                     required: "Vui lòng chọn ngày đặt bàn",
                                                     validate: (value) => {
                                                         const today = new Date();
                                                         const selectedDate = new Date(value);
+                                                        const maxDate = new Date();
+                                                        maxDate.setMonth(maxDate.getMonth() + 1);
                                                         today.setHours(0, 0, 0, 0);
+
                                                         if (selectedDate < today) {
                                                             return "Ngày đặt bàn phải là hôm nay hoặc trong tương lai";
+                                                        }
+                                                        if (selectedDate > maxDate) {
+                                                            return "Ngày đặt bàn không được quá 1 tháng từ ngày hôm nay";
                                                         }
                                                         return true;
                                                     },

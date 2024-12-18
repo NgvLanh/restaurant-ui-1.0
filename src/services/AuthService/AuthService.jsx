@@ -44,6 +44,14 @@ const createEmployee = async (request) => {
 };
 
 
+export const changeRoleService = async (userId, branchId, role) => {
+    return await ApiRequest({
+        path: `users/change-role?userId=${userId}&branchId=${branchId}&role=${role}`,
+        headers: 'Bearer '
+    });
+};
+
+
 
 
 

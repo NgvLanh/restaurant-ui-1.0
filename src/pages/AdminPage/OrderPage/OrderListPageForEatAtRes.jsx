@@ -18,7 +18,7 @@ const OrderListPageForEatAtRes = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize] = useState(import.meta.env.VITE_PAGE_SIZE || 10);
+  const [pageSize] = useState(15);
   const [showOrderItemModal, setShowOrderItemModal] = useState(false);
   const [order, setOrder] = useState(null);
 

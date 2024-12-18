@@ -1,123 +1,212 @@
-import { useState } from "react";
-import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
-import { Form, Button, Card, Col, Row, Container } from "react-bootstrap";
+import { Bar } from "react-chartjs-2";
+import { Col, Card } from "react-bootstrap";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import React, { useEffect, useState } from "react";
+import { getDailyOrderStatistics } from "../../../services/Statistics/Statistics";
+import { formatCurrency, formatDate } from "../../../utils/FormatUtils";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const SettingPage = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    name: "Nguyễn Văn A",
-    email: "nguyenvana@example.com",
-    phone: "0123456789",
-  });
+  const [invoiceData, setInvoiceData] = useState([]);
+  const [invoiceData2, setInvoiceData2] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [date, setDate] = useState("");
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  useEffect(() => {
+    fetchDailyOrders();
+  }, []);
 
-  const handleSave = (event) => {
-    event.preventDefault();
-    const form = event.target;
-    const updatedInfo = {
-      name: form.elements.name.value,
-      email: form.elements.email.value,
-      phone: form.elements.phone.value,
-    };
-    setUserInfo(updatedInfo);
-    setIsEditing(false);
+  const fetchDailyOrders = async () => {
+    const response = await getDailyOrderStatistics();
+    console.log(response.data);
+
+    const day = response.data[0]?.[0]; // Ngày hiện tại
+    const invoiceCount = response.data[0]?.[1]; // Số hóa đơn tại nhà hàng
+    const invoiceCount2 = response.data[0]?.[2]; // Số hóa đơn mua online
+    const total = response.data[0]?.[3]; // Tổng số tiền
+
+    setDate(day);
+    setInvoiceData(invoiceCount);
+    setInvoiceData2(invoiceCount2);
+    setTotalAmount(total);
   };
 
   return (
-    <>
-      <PageHeader title="Cài đặt" />
-      <Container className="mt-4">
-        {/* Thông tin cá nhân */}
-        <Row>
-          <Col md={6}>
-            <Card className="mb-4">
-              <Card.Header>
-                <h5>Thông tin cá nhân</h5>
-              </Card.Header>
-              <Card.Body>
-                <Form onSubmit={handleSave}>
-                  <Form.Group controlId="name">
-                    <Form.Label>Tên</Form.Label>
-                    <Form.Control
-                      type="text"
-                      defaultValue={userInfo.name}
-                      disabled={!isEditing}
-                    />
-                  </Form.Group>
+    <div className="container mt-4">
+      {/* Tiêu đề */}
+      <h6
+        className="mb-4"
+        style={{ fontSize: "25px", fontWeight: "bold", color: "#342E37" }}
+      >
+        Thống kê số hóa đơn theo ngày: {formatDate(date)}
+      </h6>
 
-                  <Form.Group controlId="email" className="mt-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      defaultValue={userInfo.email}
-                      disabled={!isEditing}
-                    />
-                  </Form.Group>
+      {/* Biểu đồ Bar */}
+      <Col lg={12} md={12} className="mb-4">
+        <Card
+          className="z-index-2"
+          style={{
+            backgroundColor: "#F9F9F9",
+            border: "0px",
+            minHeight: "300px",
+          }}
+        >
+          <Card.Header
+            className="p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent"
+            style={{ border: "0px" }}
+          >
+            <div
+              className="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Bar
+                data={{
+                  labels: [date],
+                  datasets: [
+                    {
+                      label: "Hoá đơn trực tuyến",
+                      data: [invoiceData],
+                      backgroundColor: "rgba(75, 192, 192, 0.6)",
+                      borderColor: "rgba(75, 192, 192, 1)",
+                      borderWidth: 1,
+                    },
+                    {
+                      label: "Hoá đơn ăn tại nhà hàng",
+                      data: [invoiceData2],
+                      backgroundColor: "rgba(153, 102, 255, 0.6)",
+                      borderColor: "rgba(153, 102, 255, 1)",
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: true,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                  },
+                }}
+                className="chart-canvas"
+                style={{ maxWidth: "100%", width: "100%", height: "250px" }}
+              />
+            </div>
+          </Card.Header>
+          <Card.Body>
+            <h6
+              className="mb-0"
+              style={{ fontSize: "20px", fontWeight: "bold", color: "#342E37" }}
+            >
+              Số hóa đơn trong ngày
+            </h6>
+            <hr className="dark horizontal" />
+          </Card.Body>
+        </Card>
+      </Col>
 
-                  <Form.Group controlId="phone" className="mt-3">
-                    <Form.Label>Số điện thoại</Form.Label>
-                    <Form.Control
-                      type="text"
-                      defaultValue={userInfo.phone}
-                      disabled={!isEditing}
-                    />
-                  </Form.Group>
+      {/* Thông tin chi tiết dưới dạng Card */}
+      <div className="d-flex justify-content-between">
+        {/* Card 1 */}
+        <Card
+          className="mb-4"
+          style={{
+            backgroundColor: "#F9F9F9",
+            border: "0px",
+            width: "30%",
+          }}
+        >
+          <Card.Body className="text-center">
+            <h6
+              style={{
+                fontSize: "18px",
+                fontWeight: "bold",
+                color: "#342E37",
+              }}
+            >
+              Hoá đơn trực tuyến
+            </h6>
+            <p style={{ fontSize: "30px", fontWeight: "bold", color: "#4CAF50" }}>
+              {invoiceData}
+            </p>
+          </Card.Body>
+        </Card>
 
-                  <Col className="text-center mt-4">
-                    {isEditing ? (
-                      <Button variant="primary" type="submit">
-                        Lưu
-                      </Button>
-                    ) : (
-                      <Button variant="secondary" onClick={handleEdit}>
-                        Chỉnh sửa
-                      </Button>
-                    )}
-                  </Col>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
+        {/* Card 2 */}
+        <Card
+          className="mb-4"
+          style={{
+            backgroundColor: "#F9F9F9",
+            border: "0px",
+            width: "30%",
+          }}
+        >
+          <Card.Body className="text-center">
+            <h6
+              style={{
+                fontSize: "18px",
+                fontWeight: "bold",
+                color: "#342E37",
+              }}
+            >
+              Hoá đơn ăn tại nhà hàng
+            </h6>
+            <p style={{ fontSize: "30px", fontWeight: "bold", color: "#FF9800" }}>
+              {invoiceData2}
+            </p>
+          </Card.Body>
+        </Card>
 
-          {/* Cài đặt tùy chọn */}
-          <Col md={6}>
-            <Card className="mb-4">
-              <Card.Header>
-                <h5>Cài đặt tùy chọn</h5>
-              </Card.Header>
-              <Card.Body>
-                <Form>
-                  {/* Ví dụ: Thêm các tùy chọn như đổi mật khẩu */}
-                  <Form.Group controlId="password" className="mt-3">
-                    <Form.Label>Đổi mật khẩu</Form.Label>
-                    <Form.Control type="password" placeholder="Nhập mật khẩu mới" />
-                  </Form.Group>
-
-                  {/* Ví dụ: Thêm các tùy chọn như chọn ngôn ngữ */}
-                  <Form.Group controlId="language" className="mt-3">
-                    <Form.Label>Chọn ngôn ngữ</Form.Label>
-                    <Form.Control as="select">
-                      <option>Tiếng Việt</option>
-                      <option>Tiếng Anh</option>
-                      <option>Tiếng Nhật</option>
-                    </Form.Control>
-                  </Form.Group>
-
-                  <Col className="text-center mt-4">
-                    <Button variant="primary" type="submit">
-                      Lưu cài đặt
-                    </Button>
-                  </Col>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </>
+        {/* Card 3 */}
+        <Card
+          className="mb-4"
+          style={{
+            backgroundColor: "#F9F9F9",
+            border: "0px",
+            width: "30%",
+          }}
+        >
+          <Card.Body className="text-center">
+            <h6
+              style={{
+                fontSize: "18px",
+                fontWeight: "bold",
+                color: "#342E37",
+              }}
+            >
+              Tổng số tiền (VNĐ)
+            </h6>
+            <p style={{ fontSize: "30px", fontWeight: "bold", color: "#E91E63" }}>
+              {formatCurrency(totalAmount)}
+            </p>
+          </Card.Body>
+        </Card>
+      </div>
+    </div>
   );
 };
 

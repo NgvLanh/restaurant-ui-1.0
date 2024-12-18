@@ -20,6 +20,7 @@ const BranchStatusModal = ({ showModal, closeModal, initialValues, handleData })
     const onSubmit = (data) => {
         handleData(data);
     };
+
     const handleReset = async () => {
         if (initialValues) {
             setValue('name', initialValues?.name);

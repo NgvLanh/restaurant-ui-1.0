@@ -48,14 +48,14 @@ const StatisticalInvoice = () => {
     labels: months.map((month) => `${month}`),
     datasets: [
       {
-        label: "Hoá đơn ăn tại nhà hàng",
+        label: "Hoá đơn trực tuyến",
         data: invoiceData,
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
       },
       {
-        label: "Hoá đơn mua online",
+        label: "Hoá đơn ăn tại nhà hàng",
         data: invoiceData2,
         backgroundColor: "rgba(153, 102, 255, 0.6)",
         borderColor: "rgba(153, 102, 255, 1)",
@@ -129,8 +129,8 @@ const StatisticalInvoice = () => {
               <thead style={{ backgroundColor: "#FFFFFF" }}>
                 <tr>
                   <th>Tháng</th>
-                  <th>Số hóa đơn tại nhà hàng</th>
-                  <th>Số hóa đơn mua online</th>
+                  <th>Số hóa đơn trực tuyến</th>
+                  <th>Số hóa đơn ăn tại nhà hàng</th>
                 </tr>
               </thead>
               <tbody>
