@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Modal, Button, Card, Col, Row, Image, Form } from "react-bootstrap";
+import { Button, Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { getAllBranches } from "../../../services/BranchService/BranchService";
-import { formatDate, formatDateTime } from "../../../utils/FormatUtils";
 import { createReservation } from "../../../services/ReservationService/ReservationService";
-import AlertUtils from "../../../utils/AlertUtils";
 import { getTablesByBranchIdAndDate } from "../../../services/TableService/TableService";
+import AlertUtils from "../../../utils/AlertUtils";
+import { formatDate } from "../../../utils/FormatUtils";
 
 const SelectTableReservation = ({ showModal, handleClose, dataRequest }) => {
     const [tables, setTables] = useState([]);
