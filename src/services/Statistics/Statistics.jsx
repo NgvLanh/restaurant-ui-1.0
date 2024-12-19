@@ -64,16 +64,19 @@ const getReversionByWeek = async (request) => {
 }
 
 const getMonthlyOrderStatistics = async () => {
+    const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
     return await ApiRequest({
-        path: "invoices/monthly-orders",
+        path: `invoices/monthly-orders?branchId=${branchId}`,
         headers: 'Bearer '
     })
 }
 
 export const getDailyOrderStatistics = async () => {
+    const branchId = JSON.parse(localStorage.getItem('branch_info'))?.id;
     return await ApiRequest({
-        path: "invoices/daily-orders",
+        path: `invoices/daily-orders?branchId=${branchId}`,
         headers: 'Bearer '
     })
 }
-export { getDiscountCount, getBranchesCount, getInvoinceCount, getCountUser, getReversionByWeek, getMonthlyOrderStatistics };
+export { getBranchesCount, getCountUser, getDiscountCount, getInvoinceCount, getMonthlyOrderStatistics, getReversionByWeek };
+

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
+import { getAllBranches } from "../../../services/BranchService/BranchService"
 import { NavGeneral } from "../NavGeneral/NavGeneral"
 import { NavMain } from "../NavMain/NavMain"
 import { NavUser } from "../NavUser/NavUser"
 import { SidebarHeader } from "../SidebarHeader/SidebarHeader"
-import { getAllBranches } from "../../../services/BranchService/BranchService"
 
 const Sidebar = ({ isCollapsed }) => {
 
@@ -156,7 +156,7 @@ const Sidebar = ({ isCollapsed }) => {
             //         }
             //     ],
             // },
-            {
+            ...(getRoles === "ADMIN" || getRoles === "NON_ADMIN" ? [{
                 title: "Thống kê",
                 url: "/admin/statistics",
                 icon: <i className="fas fa-chart-line"></i>,
@@ -186,7 +186,7 @@ const Sidebar = ({ isCollapsed }) => {
                     //     url: "/admin/statistical-discount",
                     // }
                 ],
-            },
+            }] : []),
         ],
         projects: [
             ...(getRoles === "ADMIN" ? [
