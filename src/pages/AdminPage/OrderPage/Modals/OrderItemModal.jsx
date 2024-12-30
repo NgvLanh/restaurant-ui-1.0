@@ -1,4 +1,4 @@
-import { Modal, Button, Table, Alert } from 'react-bootstrap';
+import { Alert, Button, Modal, Table } from 'react-bootstrap';
 import { formatCurrency, formatDateTime } from '../../../../utils/FormatUtils';
 
 const OrderStatus = new Map([
@@ -12,7 +12,9 @@ const OrderStatus = new Map([
 ]);
 
 export const OrderItemModal = ({ showModal, setShowModal, orderData, handleConfirm }) => {
-    const totalAmount = orderData?.orderItems?.reduce((total, item) => total + (item.quantity * item.price), 0);
+    const totalAmount = orderData?.orderItems?.reduce((total, item) => total + (item.quantity * item.price), 0) + orderData?.address?.fee;
+
+    
 
     return (
         <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
@@ -60,7 +62,7 @@ export const OrderItemModal = ({ showModal, setShowModal, orderData, handleConfi
                                                 <img
                                                     src={`http://localhost:8080/api/files/${item.dish?.image}`}
                                                     className='rounded-3'
-                                                    style={{ maxWidth: '120px' }}
+                                                    style={{ maxWidth: '120px', minWidth:'120px', minHeight:'80px', maxHeight:'80px' }}
                                                     alt={item.dish?.image}
                                                 />
                                             </td>
@@ -98,8 +100,9 @@ export const OrderItemModal = ({ showModal, setShowModal, orderData, handleConfi
                 )}
 
                 {totalAmount > 0 && (
-                    <div className="mt-4 d-flex justify-content-end me-4">
-                        <strong>Tổng cộng: </strong>{formatCurrency(totalAmount)}
+                    <div className="mt-4 d-flex flex-column me-4 text-end">
+                        <strong>Phí giao hàng: {formatCurrency(orderData?.address?.fee)}</strong>
+                        <strong>Tổng cộng: {formatCurrency(totalAmount)}</strong>
                     </div>
                 )}
             </Modal.Body>

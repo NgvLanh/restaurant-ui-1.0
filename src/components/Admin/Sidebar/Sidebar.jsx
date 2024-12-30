@@ -71,10 +71,10 @@ const Sidebar = ({ isCollapsed }) => {
                         title: "Đặt bàn - Gọi món",
                         url: "/admin/reservations/booking-order",
                     },
-                    {
-                        title: "Lịch đặt bàn",
-                        url: "/admin/reservations/schedule",
-                    },
+                    // {
+                    //     title: "Lịch đặt bàn",
+                    //     url: "/admin/reservations/schedule",
+                    // },
                     // {
                     //     title: "Thêm đặt bàn",
                     //     url: "/admin/reservations/create",

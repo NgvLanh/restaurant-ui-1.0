@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Nav, Tab, Card, ListGroup, Button, Image } from 'react-bootstrap';
+import { Button, Card, Col, Image, ListGroup, Nav, Row, Tab } from 'react-bootstrap';
 import { cancelOrder, getAllOrdersByUserId } from '../../../services/OrderService/OrderService';
-import { formatCurrency, formatDateTime } from '../../../utils/FormatUtils';
 import AlertUtils from '../../../utils/AlertUtils';
+import { formatCurrency, formatDateTime } from '../../../utils/FormatUtils';
 
 const OrderHistory = () => {
   const [key, setKey] = useState('ALL');
@@ -132,8 +132,8 @@ const OrderHistory = () => {
                                     className="rounded-3"
                                     style={{
                                       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                                      maxHeight: '120px',
-                                      maxWidth: '200px',
+                                      height: '120px',
+                                      width: '200px',
                                     }}
                                   />
                                 </Col>

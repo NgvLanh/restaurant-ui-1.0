@@ -29,7 +29,6 @@ export const passwordRecoveryVerifyCode = async (request) => {
 }
 
 export const updateUser = async (userId, request) => {
-    try {
         const response = await ApiRequest({
             method: 'PATCH',
             path: `users/${userId}`,
@@ -37,10 +36,6 @@ export const updateUser = async (userId, request) => {
             headers: 'Bearer '
         });
         return response;
-    } catch (error) {
-        console.error(`Lỗi cập nhật người dùng: ${error?.response?.data?.message || 'Lỗi chưa cấu hình'}`);
-        return { status: false, message: error?.response?.data?.message || 'Lỗi cập nhật người dùng' };
-    }
 }
 
 export const getEmployee = async (currentPage, pageSize, phoneNumber) => {
