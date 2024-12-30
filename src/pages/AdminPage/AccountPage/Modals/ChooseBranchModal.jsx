@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Card, Button, Row, Col } from "react-bootstrap";
+import { Button, Card, Col, Modal, Row } from "react-bootstrap";
 import { getAllBranchesPageable } from "../../../../services/BranchService/BranchService";
 
 const ChooseBranchModal = ({ showModal, closeModal, userId, handleData }) => {
@@ -24,7 +24,9 @@ const ChooseBranchModal = ({ showModal, closeModal, userId, handleData }) => {
     };
 
     return (
-        <Modal show={showModal} onHide={closeModal} centered>
+        <Modal show={showModal} onHide={closeModal} 
+        size={branches.length > 4 ? "xl" : branches.length > 2 ? "lg" : "md"}
+        scrollable>
             <Modal.Header closeButton>
                 <Modal.Title>Chọn Chi Nhánh</Modal.Title>
             </Modal.Header>

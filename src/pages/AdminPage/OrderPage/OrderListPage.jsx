@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import AlertUtils from "../../../utils/AlertUtils";
-import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import { Form, Table } from "react-bootstrap";
-import { cancelOrderStatusService, getAllOrders, updateOrderStatusService } from "../../../services/OrderService/OrderService";
+import PageHeader from "../../../components/Admin/PageHeader/PageHeader";
 import RenderPagination from "../../../components/Admin/RenderPagination/RenderPagination";
+import { cancelOrderStatusService, getAllOrders, updateOrderStatusService } from "../../../services/OrderService/OrderService";
+import AlertUtils from "../../../utils/AlertUtils";
 import { formatDateTime } from "../../../utils/FormatUtils";
 import { OrderItemModal } from "./Modals/OrderItemModal";
 
@@ -14,7 +14,7 @@ const OrderStatus = new Map([
   ["SHIPPED", "Đang giao"],
   ["DELIVERED", "Đã giao"],
   ["CANCELLED", "Đã hủy"],
-  ["PAID", "Đã thanh toán"],
+  ["PAID", "Đã giao"],
 ]);
 
 const OrderListPage = () => {
@@ -141,7 +141,7 @@ const OrderListPage = () => {
               <th className="text-center">Trạng thái</th>
               <th className="text-center">Khách hàng</th>
               <th className="text-center">Số điện thoại</th>
-              <th className="text-center">Địa chỉ</th>
+              <th className="text-center">Phương thức</th>
               <th className="text-center">Tùy chọn</th>
             </tr>
           </thead>
@@ -174,7 +174,7 @@ const OrderListPage = () => {
                     </td>
                     <td className="text-center">{row.user?.fullName}</td>
                     <td className="text-center">{row.user?.phoneNumber}</td>
-                    <td className="text-center">{row.address?.address}</td>
+                    <td className="text-center">{row.paymentStatus?'Thanh toán trực tuyến':'Thanh toán khi nhận hàng'}</td>
                     <td className="text-center">
                       <div className="d-flex justify-content-center gap-2">
                         {row.orderStatus !== 'CANCELLED' && (

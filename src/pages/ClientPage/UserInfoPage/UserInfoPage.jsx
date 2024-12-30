@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Button, Form, Modal, Container, Row, Col, Image, Card } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
-import Footer from "../../../components/client/footer/Footer";
-import PageHeader from "../../../components/Client/PageHeader/PageHeader";
+import { useForm } from "react-hook-form";
 import { BiPlus, BiUser } from "react-icons/bi";
-import { updateUser } from "../../../services/UserService/UserService";
-import { uploadFile } from "../../../services/UploadFileService/UploadFileService";
-import AlertUtils from "../../../utils/AlertUtils";
-import { getUserService } from "../../../services/AuthService/AuthService";
 import { useNavigate } from "react-router-dom";
-import { createAddress, deleteAddress, getAddressByUserId, updateAddress } from "../../../services/AddressService/AddressService";
+import Footer from "../../../components/client/footer/Footer";
 import AddressModal from "../../../components/Client/Modals/AddressModal";
+import PageHeader from "../../../components/Client/PageHeader/PageHeader";
+import { createAddress, deleteAddress, getAddressByUserId, updateAddress } from "../../../services/AddressService/AddressService";
+import { getUserService } from "../../../services/AuthService/AuthService";
+import { uploadFile } from "../../../services/UploadFileService/UploadFileService";
+import { updateUser } from "../../../services/UserService/UserService";
+import AlertUtils from "../../../utils/AlertUtils";
 
 const UserInfoPage = () => {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
@@ -54,13 +54,15 @@ const UserInfoPage = () => {
             image: file?.name
         }
         await uploadFile(formData);
-        const response = await updateUser(user?.id, request);
-        localStorage.setItem('user_info', JSON.stringify(response?.data))
-        navigate(0);
-        if (response?.status) {
-            AlertUtils.success('Cập nhật tài khoản thành công');
-        } else {
-            AlertUtils.error('Cập nhật tài khoản thất bại');
+        try {
+            const response = await updateUser(user?.id, request);
+            if (response.status) {
+                AlertUtils.success('Cập nhật tài khoản thành công');
+                localStorage.setItem('user_info', JSON.stringify(response?.data));
+            }
+        // navigate(0);
+        } catch (error) {
+            AlertUtils.error(error.responese?.data?.message||'Cập nhật thất bại');
         }
     };
 
